@@ -33,31 +33,31 @@
 
 //-----------------------------------------------------------------------------
 //
-// class RGroupBP<cGroup,cObj,cGroupData>
+// class RGroupBP<cGroup,cObj,cGroupData,cChromo>
 //
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RGroupBP<cGroup,cObj,cGroupData>::RGroupBP(RGroupBP* grp)
-		: RGGA::RGroup<cGroup,cObj,cGroupData>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(RGroupBP* grp)
+		: RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
 {
 }
 
 
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RGroupBP<cGroup,cObj,cGroupData>::RGroupBP(RGGA::RGroups<cGroup,cObj,cGroupData>* owner,const unsigned int id,const cGroupData* data)
-		: RGGA::RGroup<cGroup,cObj,cGroupData>(owner,id,data), Size(0), MaxSize(data->MaxSize)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(cChromo* owner,const unsigned int id,const cGroupData* data)
+		: RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>(owner,id,data), Size(0), MaxSize(data->MaxSize)
 {
 }
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	bool RGroupBP<cGroup,cObj,cGroupData>::Verify(void)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void)
 {
-	if(!RGGA::RGroup<cGroup,cObj,cGroupData>::Verify())
+	if(!RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Verify())
 		return(false);
 	if(Size>MaxSize)
 	{
@@ -69,25 +69,25 @@ template<class cGroup,class cObj,class cGroupData>
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	void RGroupBP<cGroup,cObj,cGroupData>::Clear(void)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Clear(void)
 {
-	RGGA::RGroup<cGroup,cObj,cGroupData>::Clear();
+	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Clear();
 	Size=0;
 }
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	bool RGroupBP<cGroup,cObj,cGroupData>::CanInsert(const cObj* obj)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::CanInsert(const cObj* obj)
 {
 	return(Size+obj->GetSize()<=MaxSize);
 }
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	bool RGroupBP<cGroup,cObj,cGroupData>::TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size)
 {
 	unsigned int newsize,maxsize;
 	unsigned int s1,s2,s3;
@@ -184,8 +184,8 @@ template<class cGroup,class cObj,class cGroupData>
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	bool RGroupBP<cGroup,cObj,cGroupData>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
 {
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.
@@ -276,11 +276,11 @@ template<class cGroup,class cObj,class cGroupData>
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RGroupBP<cGroup,cObj,cGroupData>& RGroupBP<cGroup,cObj,cGroupData>::operator=(const RGroupBP<cGroup,cObj,cGroupData>& grp)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	RGroupBP<cGroup,cObj,cGroupData,cChromo>& RGroupBP<cGroup,cObj,cGroupData,cChromo>::operator=(const RGroupBP<cGroup,cObj,cGroupData,cChromo>& grp)
 
 {
-	RGGA::RGroup<cGroup,cObj,cGroupData>::operator=(grp);
+	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::operator=(grp);
 	MaxSize=grp.MaxSize;
 	Size=grp.Size;
 	return(*this);
@@ -288,7 +288,7 @@ template<class cGroup,class cObj,class cGroupData>
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RGroupBP<cGroup,cObj,cGroupData>::~RGroupBP(void)
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	RGroupBP<cGroup,cObj,cGroupData,cChromo>::~RGroupBP(void)
 {
 }

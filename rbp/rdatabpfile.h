@@ -54,7 +54,7 @@ class RFThreadDataBP;
 
 
 //-----------------------------------------------------------------------------
-class RFGroupBP : public RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>
+class RFGroupBP : public RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>
 {
 public:
 	/**
@@ -63,15 +63,15 @@ public:
 	* @param id             Identificator of the group.
 	* @param data           Data for the group.
 	*/
-	RFGroupBP(RGGA::RGroups<RFGroupBP,RObjBP,RGroupDataBP>* owner,const unsigned int id,RGroupDataBP* data)
-		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>(owner,id,data) {}
+	RFGroupBP(RFChromoBP* owner,const unsigned int id,RGroupDataBP* data)
+		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(owner,id,data) {}
 
 	/**
 	* Construct the group.
 	* @param grp            Group used as source.
 	*/
 	RFGroupBP(RFGroupBP* grp)
-		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>(grp) {}
+		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(grp) {}
 };
 
 

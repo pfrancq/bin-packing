@@ -52,8 +52,8 @@ namespace RBP{
 * @author Pascal Francq
 * @short First Fit Descending Heuristic.
 */
-template<class cGroup,class cObj,class cGroupData>
-	class RFirstFitDesHeuristic : public RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>
+template<class cGroup,class cObj,class cGroupData,class cGroups>
+	class RFirstFitDesHeuristic : public RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>
 {
 	/**
 	* This function is used to make a sort of the objects based on their size.
@@ -76,7 +76,7 @@ public:
 	* Initialize the heuristic.
 	* @param groups         Pointer to the groups.
 	*/
-	virtual void Init(RGGA::RGroups<cGroup,cObj,cGroupData>* groups);
+	virtual void Init(cGroups* groups);
 
 	/**
 	* Destruct the grouping heuristic.

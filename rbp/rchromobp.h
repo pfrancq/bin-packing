@@ -61,7 +61,7 @@ protected:
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFD;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
 
 	/**
 	* Temporary array of objects used for the local optimisation. Thread-depend
@@ -127,7 +127,7 @@ public:
 	virtual ~RChromoBP(void);
 
 	friend class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>;
-	friend class RGroupBP<cGroup,cObj,cGroupData>;
+	friend class RGroupBP<cGroup,cObj,cGroupData,cChromo>;
 };
 
 

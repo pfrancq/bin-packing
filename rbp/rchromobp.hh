@@ -55,7 +55,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	bool RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2)
 {
 	bool ret;
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* Hold;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Change default heuristic to FFB
 	Hold=Heuristic;
@@ -78,7 +78,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
 	bool ret;
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* Hold;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Find the less filled group and release it
 	for(Used.Start();!Used.End();Used.Next())

@@ -33,21 +33,21 @@
 
 //-----------------------------------------------------------------------------
 //
-// RFirstFitDesHeuristic<cGroup,cObj,cGroupData>
+// class RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>
 //
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs)
-	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>(r,objs)
+template<class cGroup,class cObj,class cGroupData,class cGroups>
+	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs)
+	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs)
 {
 }
 
 
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::sort_function_cObjs( const void *a, const void *b)
+template<class cGroup,class cObj,class cGroupData,class cGroups>
+	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::sort_function_cObjs( const void *a, const void *b)
 {
 	double as=(*(cObj**)a)->GetSize();
 	double bs=(*(cObj**)b)->GetSize();
@@ -62,17 +62,18 @@ template<class cGroup,class cObj,class cGroupData>
 
 
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::Init(RGGA::RGroups<cGroup,cObj,cGroupData>* groups)
+template<class cGroup,class cObj,class cGroupData,class cGroups>
+	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(cGroups* groups)
 {
-	RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>::Init(groups);
+	RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(groups);
 
 	// Order by size descending
 	qsort(static_cast<void*>(Order),NbObjs,sizeof(cObj*),sort_function_cObjs);
 }
 
+
 //-----------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::~RFirstFitDesHeuristic(void)
+template<class cGroup,class cObj,class cGroupData,class cGroups>
+	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::~RFirstFitDesHeuristic(void)
 {
 }

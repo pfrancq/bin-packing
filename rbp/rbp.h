@@ -58,7 +58,7 @@ namespace RBP{
 //-----------------------------------------------------------------------------
 // Forward class declaration
 class RObjBP;
-template<class cGroup,class cObj,class cGroupData> class RGroupBP;
+template<class cGroup,class cObj,class cGroupData,class cChromo> class RGroupBP;
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RThreadDataBP;
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RChromoBP;
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RInstBP;

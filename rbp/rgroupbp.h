@@ -82,8 +82,8 @@ public:
 * @author Pascal Francq
 * @short Bin Packing Group.
 */
-template<class cGroup,class cObj,class cGroupData>
-	class RGroupBP : public RGGA::RGroup<cGroup,cObj,cGroupData>
+template<class cGroup,class cObj,class cGroupData,class cChromo>
+	class RGroupBP : public RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>
 {
 protected:
 
@@ -111,7 +111,7 @@ public:
 	* @param id             Identificator of the group.
 	* @param data           Data needed for the group.
 	*/
-	RGroupBP(RGGA::RGroups<cGroup,cObj,cGroupData>* owner,const unsigned int id,const cGroupData* data);
+	RGroupBP(cChromo* owner,const unsigned int id,const cGroupData* data);
 
 	/**
 	* Verify if the group is not violating the integrity of the system.

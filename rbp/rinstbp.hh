@@ -31,7 +31,7 @@
 
 //-----------------------------------------------------------------------------
 //
-// RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
+// class RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
 //-----------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
 	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
-	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->Objs);
+	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(Owner->Random,Owner->Objs);
 	tmpObjs=new cObj*[Owner->Objs->GetNb()];
 }
 
@@ -68,7 +68,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //-----------------------------------------------------------------------------
 //
-// RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
+// class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
 //-----------------------------------------------------------------------------
 
