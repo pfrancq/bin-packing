@@ -37,6 +37,11 @@
 
 
 //-----------------------------------------------------------------------------
+// include files for ANSI C/C++
+#include <math.h>
+
+
+//-----------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rgroups.h>
 
@@ -161,10 +166,18 @@ public:
 	*/
 	RGroupBP& operator=(const RGroupBP& grp);
 
-    /**
-    * Destruct the group.
-    */
+	/**
+	* Destruct the group.
+	*/
 	virtual ~RGroupBP(void);
+
+protected:
+
+	/**
+	* Test if a new better size can be assigned to group by deleting maximum 3
+	* objects.
+	*/
+	bool TestNewSize(cObj** del,unsigned int& nbdel,double addsize,double size);
 };
 
 

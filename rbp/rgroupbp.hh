@@ -59,9 +59,9 @@ template<class cGroup,class cObj,class cGroupData>
 {
 	if(!RGGA::RGroup<cGroup,cObj,cGroupData>::Verify())
 		return(false);
-	if(Size>MaxSize)
+	if(Size-MaxSize>0.00001)
 	{
-		cout<<"Size>MaxSize for group "<<Id<<endl;
+		cout<<"Size("<<Size<<") > MaxSize("<<MaxSize<<") for group "<<Id<<endl;
 		return(false);
 	}
 	return(true);
@@ -86,118 +86,179 @@ template<class cGroup,class cObj,class cGroupData>
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
+	bool RGroupBP<cGroup,cObj,cGroupData>::TestNewSize(cObj** del,unsigned int& nbdel,double addsize,double size)
+{
+	double newsize;
+	double s1,s2,s3;
+	cObj* cur1;
+	cObj* cur2;
+	cObj* cur3;
+	unsigned int i,j,k;
+
+	// New Size if addsize is added.
+	newsize=Size+size+addsize;
+//	if(size==0.0)
+//		size=addsize;
+//	for(i=0;i<nbdel;i++)
+//		if(del[i])
+//			newsize-=del[i]->GetSize();
+
+	// If MaxSize is not reach, look if the new size is greather or lesser than
+	// the old ize.
+	if(newsize<=MaxSize)
+	{
+		if(newsize>Size)
+			return(true);
+		else
+			return(false);
+	}
+
+	// Try to del 1 object with Max 3 Objects deleted.
+	if((nbdel>=3)||(!NbSubObjects)) return(false);
+	for(i=0;i<NbSubObjects;i++)
+	{
+		cur1=Owner->GetObj(SubObjects+i);
+//		if((cur1==del[0])||(cur1==del[1])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
+		s1=newsize-cur1->GetSize();
+		if((s1<=MaxSize)&&(s1>Size))
+		{
+			del[nbdel++]=cur1;
+			cout<<"Test: "<<s1<<">"<<Size<<"  -  ";
+			return(true);
+		}
+	}
+
+	// Try to del 2 object with Max 3 Objects deleted.
+	if((nbdel>=2)||(NbSubObjects<2)) return(false);
+	for(i=0;i<NbSubObjects;i++)
+	{
+		cur1=Owner->GetObj(SubObjects+i);
+//		if((cur1==del[0])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
+		s1=newsize-cur1->GetSize();
+		for(j=0;j<NbSubObjects;j++)
+		{
+			if(i==j) continue;
+			cur2=Owner->GetObj(SubObjects+j);
+//			if((cur2==del[0])||(cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
+			s2=s1-cur2->GetSize();
+			if((s2<=MaxSize)&&(s2>Size))
+			{
+				del[nbdel++]=cur1;
+				del[nbdel++]=cur2;
+				cout<<"Test: "<<s2<<">"<<Size<<"  -  ";
+				return(true);
+			}
+		}
+	}
+
+	// Try to del 3 object with Max 3 Objects deleted.
+	if((nbdel)||(NbSubObjects<3)) return(false);
+	for(i=0;i<NbSubObjects;i++)
+	{
+		cur1=Owner->GetObj(SubObjects+i);
+//		if((cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
+		s1=newsize-cur1->GetSize();
+		for(j=0;j<NbSubObjects;j++)
+		{
+			if(i==j) continue;
+			cur2=Owner->GetObj(SubObjects+j);
+//			if((cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
+			s2=s1-cur2->GetSize();
+			for(k=0;k<NbSubObjects;k++)
+			{
+				if((k==i)||(k==j)) continue;
+				cur3=Owner->GetObj(SubObjects+k);
+//				if((cur3->GetSize()>=addsize)||(cur3->GetSize()>=size)) continue;
+				s3=s2-cur3->GetSize();
+				if((s3<=MaxSize)&&(s3>Size))
+				{
+					del[nbdel++]=cur1;
+					del[nbdel++]=cur2;
+					del[nbdel++]=cur3;
+					cout<<"Test: "<<s3<<">"<<Size<<"  -  ";
+					return(true);
+				}
+			}
+		}
+	}
+
+	// Nothing can be done
+	return(false);
+}
+
+
+//---------------------------------------------------------------------------
+template<class cGroup,class cObj,class cGroupData>
 	bool RGroupBP<cGroup,cObj,cGroupData>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
 {
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.
 	cObj* add[2];                  // Pointers to the objects to add.
-	unsigned int trydel;           // Number of try for deleting objects.
 	unsigned int nbdel;            // Number of objects to delete.
 	unsigned int nbadd;            // Number of objects to add.
-	char tryfind;                  // Number of try to do.
-	double size;                   // Current size with the add and del.
-	double minsize;                // Minimum size of the object of the group.
-	double s;                      // Size of the object eventually to add.
-	double newsize;                // Size of the group whith the object eventually to add.
 	cObj** obj;                    // Current object eventually to add.
-	cObj* best;                    // Object from the group with the minimum size.
-	cObj* cur;                     // Current object of the group treated.
+	cObj** obj2;
 	unsigned int i,j;
+	double addsize;
 
 	// If the groups is maximum filled, no optimisation needed.
 	if(Size==MaxSize)
 		return(false);
 
 	// Init Part
-	size=Size;                              // The "actual" size of the group.
 	add[0]=add[1]=del[0]=del[1]=del[2]=0;   // No objs added or deleted
 	idx[0]=idx[1]=RGGA::NoObject;
 	nbdel=nbadd=0;
-	tryfind=2;                              // Maximum 2 try
-	
-	while((tryfind--)&&(nbadd<2)&&(nbdel<3))           // Maximum 2 objects to add and 3 objects to del.
+
+	// Try to add a first object
+	if(!nbadd)
 	{
-
-		// Go through the objects not yet assign to a group.
-		for(i=0,obj=objs;(i<nbobjs)&&(nbadd<2);obj++,i++)
+		for(i=0,obj=objs;i<nbobjs;obj++,i++)
 		{
-		
-			// Test if the current object eventually to add is not already
-			// selected.
-			if(((*obj)==add[0])||((*obj)==add[1]))
-				continue;
-
-			// Test if this object can be added.
-			s=(*obj)->GetSize();
-			newsize=size+s;
-
-			// while the size of the group plus the object eventually to add is greather than
-			// the maximum size, try to delete maximum 3 objs.
-			trydel=0;
-			while((newsize>MaxSize)&&(nbdel+trydel<3))
+			if(TestNewSize(del,nbdel,(*obj)->GetSize(),0.0))
 			{
-				minsize=s;
-				best=0;
-
-				// Test all the object of the group or until one has be found
-				// that fit the condition.
-				for(j=0;j<NbSubObjects;j++)
-				{
-					cur=Owner->GetObj(SubObjects+j);
-
-					// Verify that cur is not already used &nd that is smaller
-					// than the object eventually to add.
-					if((cur==del[0])||(cur==del[1])||(cur==del[2])||(cur->GetSize()>=s))
-						continue;
-
-					// Test if the maximum size is not exceed whithout the
-					// current object, delete it.
-					if(newsize-cur->GetSize()<=MaxSize)
-					{
-						best=cur;
-						break;
-					}
-
-					// Find the smallest object of the group.
-					if(cur->GetSize()<minsize)
-					{
-						minsize=cur->GetSize();
-						best=cur;
-					}
-				}
-
-				// If an object was found, it can be deleted.
-				if(best)
-				{
-					del[nbdel+(trydel++)]=best;
-					newsize-=best->GetSize();
-				}
-				else
-					break;
-			}
-
-			// If the maximum size of the group is not exceed with the object
-			// eventually to add and the new size is greather than the old one, add it.
-			if((newsize<=MaxSize)&&(newsize>Size))
-			{
-				nbdel+=trydel;
 				idx[nbadd]=i;
 				add[nbadd++]=(*obj);
-				size=newsize;
+				addsize=(*obj)->GetSize();
+				break;
 			}
 		}
-
-		// If after one tour, no object could be added, another tour resolves nothing.
-		if(!nbadd)
-			return(false);
 	}
 
-	// Some assertion to verify
-	RReturnValIfFail(nbadd,false);
-	RReturnValIfFail(size>Size,false);
-	RReturnValIfFail(size<=MaxSize,false);
+	// Try to add two objects
+//	if(!nbadd)
+//	{
+//		for(i=0,obj=objs;(i<nbobjs-1)&&(!nbadd);obj++,i++)
+//		{
+//			for(j=i+1,obj2=obj+1;j<nbobjs;obj2++,j++)
+//			{
+//				if(i==j) continue;
+//				if(TestNewSize(del,nbdel,(*obj)->GetSize(),(*obj2)->GetSize()))
+//				{
+//					idx[nbadd]=i;
+//					add[nbadd++]=(*obj);
+//					idx[nbadd]=j;
+//					add[nbadd++]=(*obj2);
+//					break;
+//				}
+//			}
+//		}
+//	}
 
-//	cout<<"MaxSize: "<<MaxSize<<"    Futur: "<<size<<"    Before: "<<Size;
+	if(!nbadd) return(false);
+//	// Try to add a second object
+//	for(i=0,obj=objs;i<nbobjs;obj++,i++)
+//	{
+//		if((*obj)==add[0]) continue;
+//		if(TestNewSize(del,nbdel,(*obj)->GetSize(),addsize))
+//		{
+//			idx[nbadd]=i;
+//			add[nbadd++]=(*obj);
+//			break;
+//		}
+//	}
+
+	cout<<"Before: "<<Size;
 	// Delete the objects from the group and insert them in objs.
 	for(i=0;i<nbdel;i++)
 	{
@@ -205,19 +266,15 @@ template<class cGroup,class cObj,class cGroupData>
 		objs[nbobjs++]=del[i];
 	}
 
-//	cout<<"   After Delete: "<<Size;
 	// Insert the objects in the group and delete them from objs.
 	// If idx[1] > idx[0] -> idx[1]-- because idx[0] will be deleted first.
 	if(idx[1]>idx[0]) idx[1]--;
 	for(i=0;i<nbadd;i++)
 	{
 		Insert(add[i]);
-//		if(!Verify())
-//			cout<<"Problem after Insert an obj in group "<<Id<<endl;
 		memcpy(&objs[idx[i]],&objs[idx[i]+1],((--nbobjs)-idx[i])*sizeof(cObj*));
 	}
-//	cout<<"   After Insert: "<<Size<<endl;
-
+	cout<<"  -  After: "<<Size<<endl;
 	return(true);
 }
 
