@@ -1,10 +1,11 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kbinpacking
-kbinpacking_SOURCES = kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
-kbinpacking_LDADD   =  -lkfile -lkdeui -lkdecore $(LIB_QT) $(LIBSOCKET)
+kbinpacking_SOURCES = binpacking.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
+kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a  $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
+SUBDIRS = r 
 
-EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png 
+EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png binpacking.cpp binpacking.h 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
