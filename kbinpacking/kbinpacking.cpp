@@ -63,7 +63,6 @@
 #include "kbinpackingview.h"
 #include "kbinpackingdoc.h"
 #include "kbpprjview.h"
-#include "kbpheuristicview.h"
 #include "kbpgaview.h"
 #include "kappoptions.h"
 
@@ -99,9 +98,6 @@ KBinPackingApp::KBinPackingApp(void)
 	editCopy->setEnabled(false);
 	editPaste->setEnabled(false);
 	windowNewWindow->setEnabled(false);
-	heuristicFF->setEnabled(false);
-	heuristicRun->setEnabled(false);
-	heuristicNext->setEnabled(false);
 	GAInit->setEnabled(false);
 	GAStart->setEnabled(false);
 	GAPause->setEnabled(false);
@@ -136,11 +132,6 @@ void KBinPackingApp::initActions(void)
 	editCut->setStatusText(i18n("Cuts the selected section and puts it to the clipboard"));
 	editCopy->setStatusText(i18n("Copies the selected section to the clipboard"));
 	editPaste->setStatusText(i18n("Pastes the clipboard contents to actual position"));
-	
-	// Menu "Heuristic"
-	heuristicFF=new KAction(i18n("&First Fit Heuristic"),KAccel::stringToKey("Alt+F"),this,SLOT(slotHeuristicFF(void)),actionCollection(),"heuristic_ff");
-	heuristicRun=new KAction(i18n("&Run Heuristic"),"run",KAccel::stringToKey("Alt+R"),this,SLOT(slotHeuristicRun(void)),actionCollection(),"heuristic_run");
-	heuristicNext=new KAction(i18n("&Next step for Heuristic"),"next",KAccel::stringToKey("Alt+N"),this,SLOT(slotHeuristicNext(void)),actionCollection(),"heuristic_next");
 
 	// Menu "GA"
 	GAInit=new KAction(i18n("&Initialize"),"reload",KAccel::stringToKey("Alt+I"),this,SLOT(slotGAInit(void)),actionCollection(),"ga_init");
@@ -380,71 +371,6 @@ bool KBinPackingApp::eventFilter(QObject* object,QEvent* event)
 	return QWidget::eventFilter(object,event);    // standard event processing
 }
 
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotHeuristicFF(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==Project))
-	{
-		KBinPackingDoc* doc = m->getDocument();
-		KBPHeuristicView* w = new KBPHeuristicView(doc,FirstFit,pWorkspace,0,WDestructiveClose);
-		w->installEventFilter(this);
-		doc->addView(w);
-		w->setIcon(kapp->miniIcon());
-		w->resize(pWorkspace->sizeHint());
-		w->show();
-		w->setFocus();
-		w->RunHeuristic();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotEndHeuristic(void)
-{
-	bool bRun=false;
-	KBinPackingView* v;
-	QWidgetList list;
-
-	KApplication::kApplication()->processEvents(1000);
-
-	// Scan all documents to see if all heuristics are end.
-	list=pWorkspace->windowList();
-	for(v=(KBinPackingView*)list.first();v!=0;v=(KBinPackingView*)list.next())
-	{
-		if(v->getType()==Heuristic)
-		{
-			if(((KBPHeuristicView*)v)->Running())
-				bRun=true;
-		}
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotHeuristicNext(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==Heuristic))
-	{
-		((KBPHeuristicView*)m)->NextStep();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotHeuristicRun(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==Heuristic))
-	{
-		((KBPHeuristicView*)m)->RunToEnd();
-	}
-}
 
 //-----------------------------------------------------------------------------
 void KBinPackingApp::slotGAInit(void)
@@ -836,23 +762,17 @@ void KBinPackingApp::slotWindowActivated(QWidget*)
 				break;
 		}
 		GAInit->setEnabled(bPrj);
-		heuristicFF->setEnabled(bPrj);
 		GAStart->setEnabled(bGA);
 		GAPause->setEnabled(bGA);
 		GAStop->setEnabled(bGA);
-		heuristicRun->setEnabled(bHeuristic);
-		heuristicNext->setEnabled(bHeuristic);
 	}
 	else
 	{
 		setCaption("");
 		GAInit->setEnabled(false);
-		heuristicFF->setEnabled(false);
 		GAStart->setEnabled(false);
 		GAPause->setEnabled(false);
 		GAStop->setEnabled(false);
-		heuristicRun->setEnabled(false);
-		heuristicNext->setEnabled(false);
 	}
 }
 

@@ -1,11 +1,14 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kbinpacking
-kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpheuristicview.cpp kbpprjview.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
-kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a ./r/rbp/librbp.a ./qtwidgets/rbp/librbp.a ./qtwidgets/rga/librga.a ./r/rxml/librxml.a ./r/rio/librio.a ./r/rstd/librstd.a ./r/rgga/librgga.a ./r/rga/librga.a ./r/rbp/librbp.a $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+
+## INCLUDES were found outside kdevelop specific part
+
+kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpprjview.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
+kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a ./r/rbp/librbp.a ./qtwidgets/rbp/librbp.a ./qtwidgets/rga/librga.a ./r/rxml/librxml.a ./r/rio/librio.a ./r/rstd/librstd.a ./r/rgga/librgga.a ./r/rga/librga.a ./r/rbp/librbp.a ./r/rmath/librmath.a $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS = r qtwidgets 
 
-EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png kbpprjview.cpp kbpprjview.h kbpheuristicview.cpp kbpheuristicview.h kbpgaview.cpp kbpgaview.h kappoptions.ui 
+EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png kbpprjview.cpp kbpprjview.h kbpgaview.cpp kbpgaview.h kappoptions.ui 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/

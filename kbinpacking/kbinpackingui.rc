@@ -5,13 +5,6 @@
 	<Menu name="settings">
 		<Action name="settings_options"/>
 	</Menu>
-	<Menu name="heuristic_menu"><text>He&amp;uristic</text>
-		<Action name="heuristic_ff"/>
-		<Separator/>
-		<Action name="heuristic_next"/>
-		<Separator/>
-		<Action name="heuristic_run"/>
-	</Menu>
 	<Menu name="GA_menu"><text>&amp;GA</text>
 		<Action name="ga_init"/>
 		<Separator/>

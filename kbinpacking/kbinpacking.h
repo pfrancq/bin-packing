@@ -215,27 +215,7 @@ protected:
 
 private slots:
 
-	/**
-	* Do the Center heuristic.
-	*/
-	void slotHeuristicFF(void);
-
-	/**
-	* One Step in the heuristic.
-	*/
-	void slotHeuristicNext(void);
-
-	/**
-	* End the heuristic.
-	*/
-	void slotEndHeuristic(void);
-
-	/**
-	* End the heuristic in once.
-	*/
-	void slotHeuristicRun(void);
-
-	/**
+/**
 	* Initialize the GA.
 	*/
 	void slotGAInit(void);
@@ -416,9 +396,6 @@ public:
 	KAction* fileSaveAs;
 	KAction* fileClose;
 	KAction* filePrint;
-	KAction* heuristicFF;
-	KAction* heuristicRun;
-	KAction* heuristicNext;
 	KAction* GAInit;
 	KAction* GAStart;
 	KAction* GAPause;
