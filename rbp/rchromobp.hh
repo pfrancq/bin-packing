@@ -33,7 +33,7 @@
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id) throw(bad_alloc)
 		: RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
-		  HeuristicFFB(0), thObjs(0)
+		  HeuristicFFD(0), thObjs(0)
 {
 }
 
@@ -44,8 +44,9 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 {
 	// Initialisation of the parent
 	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
-	HeuristicFFB=thData->HeuristicFFB;
+	HeuristicFFD=thData->HeuristicFFD;
 	thObjs=thData->tmpObjs;
+	(*Fitness)=0;
 }
 
 
@@ -58,7 +59,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change default heuristic to FFB
 	Hold=Heuristic;
-	Heuristic=HeuristicFFB;
+	Heuristic=HeuristicFFD;
 
 	// Call the default crossover
 	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
@@ -93,7 +94,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change default heuristic to FFB
 	Hold=Heuristic;
-	Heuristic=HeuristicFFB;
+	Heuristic=HeuristicFFD;
 
 	// Call the default mutation after it
 	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();

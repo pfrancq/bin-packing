@@ -61,7 +61,7 @@ protected:
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFB;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFD;
 
 	/**
 	* Temporary array of objects used for the local optimisation. Thread-depend

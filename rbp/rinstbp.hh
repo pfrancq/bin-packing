@@ -39,7 +39,7 @@
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner) throw(bad_alloc)
 		: RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
-		  HeuristicFFB(0), tmpObjs(0)
+		  HeuristicFFD(0), tmpObjs(0)
 {
 }
 
@@ -49,7 +49,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
 	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
-	HeuristicFFB = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->Objs);
+	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->Objs);
 	tmpObjs=new cObj*[Owner->Objs->NbPtr];
 }
 
@@ -58,8 +58,8 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RThreadDataBP(void)
 {
-	if(HeuristicFFB)
-		delete HeuristicFFB;
+	if(HeuristicFFD)
+		delete HeuristicFFD;
 	if(tmpObjs)
 		delete[] tmpObjs;
 }
