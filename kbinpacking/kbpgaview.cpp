@@ -130,7 +130,7 @@ void KBPGAView::receiveGenSig(GenSig* sig)
 //---------------------------------------------------------------------------
 void KBPGAView::receiveInteractSig(InteractSig* /*sig*/)
 {
-	KApplication::kApplication()->processEvents(1000);
+	KApplication::kApplication()->processEvents();
 }
 
 
