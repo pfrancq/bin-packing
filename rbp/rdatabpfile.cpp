@@ -89,7 +89,7 @@ void RDataBPFile::Load(char* name)
 			{
 				double d;
 				RString str=(*tab)->GetAttrValue("Size");
-				d=atof((*tab)->GetAttrValue("Size")());
+				d=atof((*tab)->GetAttrValue("Size"));
 				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atoi((*tab)->GetAttrValue("Size"))));
 			}
 	}
