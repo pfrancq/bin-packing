@@ -45,8 +45,7 @@
 //-----------------------------------------------------------------------------
 // include files for R Project
 #include <rbp/rbp.h>
-using namespace RGGA;
-using namespace RBP;
+using namespace R;
 
 
 //-----------------------------------------------------------------------------
@@ -59,6 +58,7 @@ using namespace RBP;
 #include <kapp.h>
 #include <kmainwindow.h>
 #include <kaction.h>
+#include <kurl.h>
 
 
 //-----------------------------------------------------------------------------

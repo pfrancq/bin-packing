@@ -64,7 +64,7 @@ void KBPPrjView::createPrj(void)
 	char tmp[100];
 	char tmp2[10];
 	QListViewItem *item=0,*item2=0;
-	RBP::RObjBP **obj;
+	RObjBP **obj;
 	unsigned int i;
 	unsigned int total=0;
 

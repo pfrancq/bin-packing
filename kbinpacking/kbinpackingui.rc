@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui>
-<kpartgui name="kbinpacking" version="0.1">
+<kpartgui name="kbinpacking" version="0.2">
 <MenuBar>
 	<Action name="window_menu"/>
 	<Menu name="settings">

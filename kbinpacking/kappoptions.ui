@@ -1,4 +1,4 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
 <class>KAppOptions</class>
 <widget class="QDialog">
     <property name="name">
@@ -92,6 +92,12 @@
                 <property name="sizeType">
                     <enum>Expanding</enum>
                 </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
             </spacer>
             <widget class="QPushButton">
                 <property name="name">
@@ -114,6 +120,12 @@
                 <property name="sizeType">
                     <enum>Expanding</enum>
                 </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
+                </property>
             </spacer>
             <widget class="QPushButton">
                 <property name="name">
@@ -135,6 +147,12 @@
                 </property>
                 <property name="sizeType">
                     <enum>Expanding</enum>
+                </property>
+                <property name="sizeHint">
+                    <size>
+                        <width>20</width>
+                        <height>20</height>
+                    </size>
                 </property>
             </spacer>
         </hbox>
@@ -200,19 +218,6 @@
                         <string>Population size</string>
                     </property>
                 </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>txtPopSize</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>105</x>
-                            <y>15</y>
-                            <width>40</width>
-                            <height>22</height>
-                        </rect>
-                    </property>
-                </widget>
                 <widget class="QLabel">
                     <property name="name">
                         <cstring>TextLaba</cstring>
@@ -229,6 +234,19 @@
                         <string>Heuristic</string>
                     </property>
                 </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtPopSize</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>105</x>
+                            <y>15</y>
+                            <width>40</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
                 <widget class="QComboBox">
                     <property name="name">
                         <cstring>cbGAHeuristicType</cstring>
@@ -243,14 +261,6 @@
                     </property>
                 </widget>
             </widget>
-        </widget>
-        <widget class="QWidget">
-            <property name="name">
-                <cstring>tab</cstring>
-            </property>
-            <attribute name="title">
-                <string>General</string>
-            </attribute>
             <widget class="QGroupBox">
                 <property name="name">
                     <cstring>GroupBox11</cstring>
@@ -258,7 +268,7 @@
                 <property name="geometry">
                     <rect>
                         <x>10</x>
-                        <y>60</y>
+                        <y>110</y>
                         <width>470</width>
                         <height>60</height>
                     </rect>
@@ -280,19 +290,6 @@
                     </property>
                     <property name="text">
                         <string>Maximum generation</string>
-                    </property>
-                </widget>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>txtMaxGen</cstring>
-                    </property>
-                    <property name="geometry">
-                        <rect>
-                            <x>140</x>
-                            <y>20</y>
-                            <width>40</width>
-                            <height>22</height>
-                        </rect>
                     </property>
                 </widget>
                 <widget class="QLineEdit">
@@ -324,7 +321,28 @@
                         <string>Step generation</string>
                     </property>
                 </widget>
+                <widget class="QLineEdit">
+                    <property name="name">
+                        <cstring>txtMaxGen</cstring>
+                    </property>
+                    <property name="geometry">
+                        <rect>
+                            <x>140</x>
+                            <y>20</y>
+                            <width>40</width>
+                            <height>22</height>
+                        </rect>
+                    </property>
+                </widget>
             </widget>
+        </widget>
+        <widget class="QWidget">
+            <property name="name">
+                <cstring>tab</cstring>
+            </property>
+            <attribute name="title">
+                <string>General</string>
+            </attribute>
             <widget class="QGroupBox">
                 <property name="name">
                     <cstring>GroupBox19</cstring>

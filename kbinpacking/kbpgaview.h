@@ -36,9 +36,8 @@
 //-----------------------------------------------------------------------------
 // include files for R Project
 #include <rga/rgasignals.h>
-using namespace RGA;
 #include <rbp/rdatabpfile.h>
-using namespace RBP;
+using namespace R;
 
 
 //-----------------------------------------------------------------------------
@@ -55,18 +54,13 @@ using namespace RBP;
 
 //-----------------------------------------------------------------------------
 // forward declaration
-namespace RGA
+namespace R
 {
 	class QGAMonitor;
 	class QXMLContainer;
-}
-using namespace RBP;
-namespace RBP
-{
 	class QDrawGroups;
 //	class RFGroupG;
 }
-using namespace RBP;
 
 
 //-----------------------------------------------------------------------------
@@ -117,7 +111,7 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	/**
 	* The GA that will be used.
 	*/
-	RBP::RFInstBP* Instance;
+	RFInstBP* Instance;
 
 	/**
 	* Number of generation already executed.
@@ -127,7 +121,7 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	/**
 	* Data needed for the construction of the groups.
 	*/
-	RBP::RGroupDataBP Data;
+	RGroupDataBP Data;
 
 public:
 

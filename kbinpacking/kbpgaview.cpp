@@ -32,7 +32,7 @@
 // include files for R Project
 #include <rbp/rfinstbp.h>
 #include <rbp/rfchromobp.h>
-using namespace RBP;
+using namespace R;
 
 
 //-----------------------------------------------------------------------------
@@ -45,9 +45,7 @@ using namespace RBP;
 // include files for Widgets
 #include <rga/qgamonitor.h>
 #include <rga/qxmlcontainer.h>
-using namespace RGA;
 #include <rbp/qdrawgroups.h>
-using namespace RBP;
 
 
 //-----------------------------------------------------------------------------

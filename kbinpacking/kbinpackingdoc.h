@@ -45,6 +45,7 @@
 //-----------------------------------------------------------------------------
 // include files for R Project
 #include <rbp/rdatabpfile.h>
+using namespace R;
 
 
 //-----------------------------------------------------------------------------
@@ -70,11 +71,11 @@ class KBinPackingView;
 * @author Pascal Francq
 * @short Bin Packing Document.
 */
-class KBinPackingDoc : public QObject , public RBP::RDataBPFile
+class KBinPackingDoc : public QObject, public RDataBPFile
 {
 	Q_OBJECT
 
-	friend KBinPackingView;
+	friend class KBinPackingView;
 
 public:
 

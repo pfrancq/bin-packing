@@ -68,7 +68,7 @@
 
 //-----------------------------------------------------------------------------
 KBinPackingDoc::KBinPackingDoc(void)
-	: QObject(), RBP::RDataBPFile()
+	: QObject(), RDataBPFile()
 {
 	pViewList = new QList<KBinPackingView>;
 	pViewList->setAutoDelete(false);

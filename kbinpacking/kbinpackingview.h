@@ -77,7 +77,7 @@ class KBinPackingView : public QWidget
 {
 	Q_OBJECT
 
-	friend KBinPackingDoc;
+	friend class KBinPackingDoc;
 
 public:
 
