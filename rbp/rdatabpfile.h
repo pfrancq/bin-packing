@@ -88,7 +88,7 @@ protected:
 	/**
 	* Cursor on the Objects.
 	*/
-	RCursor<RObjBP,unsigned int> ObjsCursor;
+	RCursor<RObjBP> ObjsCursor;
 
 	/**
 	* Maximal size for the groups.

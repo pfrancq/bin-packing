@@ -80,7 +80,7 @@ public:
 	* @param objs           Pointer to the objects.
 	* @param debug          Debugger.
 	*/
-	RFirstFitDesHeuristic(RRandom* r,RCursor<cObj,unsigned int>* objs,RDebug* debug=0);
+	RFirstFitDesHeuristic(RRandom* r,RCursor<cObj>* objs,RDebug* debug=0);
 
 	/**
 	* Initialize the heuristic.
