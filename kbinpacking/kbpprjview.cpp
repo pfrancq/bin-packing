@@ -67,10 +67,10 @@ void KBPPrjView::createPrj(void)
 	QListViewItem *item=0,*item2=0;
 	RBP::RObjBP **obj;
 	unsigned int i;
-	double total=0.0;
+	unsigned int total=0;
 
 	// Problem
-	sprintf(tmp,"%.1f",doc->MaxSize);
+	sprintf(tmp,"%u",doc->MaxSize);
 	item=new QListViewItem(prj,"Problem",tmp);
 	sprintf(tmp,"%u",doc->MinGroups);
 	item=new QListViewItem(prj,"Best Solution Known",tmp);
@@ -83,10 +83,10 @@ void KBPPrjView::createPrj(void)
 	{
 		total+=(*obj)->GetSize();
 		sprintf(tmp,"%s (%u)",((*obj)->GetName())(),(*obj)->GetId());
-		sprintf(tmp2,"%.1f",(*obj)->GetSize());
+		sprintf(tmp2,"%u",(*obj)->GetSize());
 		item2 = new QListViewItem(item,item2,tmp,tmp2);
 	}
-	sprintf(tmp,"%.1f",total);
+	sprintf(tmp,"%u",total);
 	item->setText(1,tmp);
 	prj->setColumnWidth(0,prj->columnWidth(0)+20);
 }
