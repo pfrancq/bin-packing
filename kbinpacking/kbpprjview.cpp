@@ -54,7 +54,6 @@ KBPPrjView::KBPPrjView(KBinPackingDoc* pDoc,QWidget *parent,const char *name,int
 	prj->addColumn("Elements");
 	prj->addColumn("Sizes");
 	prj->setRootIsDecorated(true);
-	prj->setSorting(-1);
 	createPrj();
 }
 

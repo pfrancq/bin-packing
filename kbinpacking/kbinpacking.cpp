@@ -52,9 +52,11 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kmenubar.h>
+#include <kstatusbar.h>
 #include <klocale.h>
 #include <kconfig.h>
 #include <kstdaction.h>
+#include <kpopupmenu.h>
 
 
 //-----------------------------------------------------------------------------
@@ -134,10 +136,10 @@ void KBinPackingApp::initActions(void)
 	editPaste->setStatusText(i18n("Pastes the clipboard contents to actual position"));
 
 	// Menu "GA"
-	GAInit=new KAction(i18n("&Initialize"),"reload",KAccel::stringToKey("Alt+I"),this,SLOT(slotGAInit(void)),actionCollection(),"ga_init");
-	GAStart=new KAction(i18n("&Start"),"exec",KAccel::stringToKey("Alt+S"),this,SLOT(slotGAStart(void)),actionCollection(),"ga_start");
-	GAPause=new KAction(i18n("&Pause"),"player_pause",KAccel::stringToKey("Alt+P"),this,SLOT(slotGAPause(void)),actionCollection(),"ga_pause");
-	GAStop=new KAction(i18n("&Stop"),"stop",KAccel::stringToKey("Alt+T"),this,SLOT(slotGAStop(void)),actionCollection(),"ga_stop");
+	GAInit=new KAction(i18n("&Initialize"),"reload",KKey("Alt+I").keyCodeQt(),this,SLOT(slotGAInit(void)),actionCollection(),"ga_init");
+	GAStart=new KAction(i18n("&Start"),"exec",KKey("Alt+S").keyCodeQt(),this,SLOT(slotGAStart(void)),actionCollection(),"ga_start");
+	GAPause=new KAction(i18n("&Pause"),"player_pause",KKey("Alt+P").keyCodeQt(),this,SLOT(slotGAPause(void)),actionCollection(),"ga_pause");
+	GAStop=new KAction(i18n("&Stop"),"stop",KKey("Alt+T").keyCodeQt(),this,SLOT(slotGAStop(void)),actionCollection(),"ga_stop");
 
 	// Menu "View"
 	viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
@@ -435,6 +437,7 @@ void KBinPackingApp::slotSettingsOptions(void)
 	dlg.cbStep->setChecked(step);
 	dlg.txtMaxGen->setText(QString::number(GAMaxGen));
 	dlg.txtStepGen->setText(QString::number(GAStepGen));
+	dlg.cbGAHeuristicType->insertItem("First-Fit",FirstFit);
 	dlg.cbGAHeuristicType->setCurrentItem(GAHeur);
 	dlg.txtPopSize->setText(QString::number(GAPopSize));
 	if(dlg.exec())
@@ -442,7 +445,7 @@ void KBinPackingApp::slotSettingsOptions(void)
 		step=dlg.cbStep->isChecked();
 		GAMaxGen=dlg.txtMaxGen->text().toULong();
 		GAStepGen=dlg.txtStepGen->text().toULong();
-		GAHeur=static_cast<HeuristicType>(dlg.cbGAHeuristicType->currentItem());
+		GAHeur=static_cast<HeuristicType>(dlg.cbGAHeuristicType->currentItem())/*FirstFit*/;
 		GAPopSize=dlg.txtPopSize->text().toULong();
 	}
 	slotStatusMsg(i18n("Ready."));
@@ -556,17 +559,18 @@ void KBinPackingApp::slotFileQuit(void)
 	saveOptions();
 	// close the first window, the list makes the next one the first again.
 	// This ensures that queryClose() is called on each window to ask for closing
-	KMainWindow* w;
-	if(memberList)
-	{
-		for(w=memberList->first(); w!=0; w=memberList->first())
-		{
-			// only close the window if the closeEvent is accepted. If the user presses Cancel on the saveModified() dialog,
-			// the window and the application stay open.
-			if(!w->close())
-				break;
-		}
-	}
+//	KMainWindow* w;
+//	if(memberList)
+//	{
+//		for(w=memberList->first(); w!=0; w=memberList->first())
+//		{
+//			// only close the window if the closeEvent is accepted. If the user presses Cancel on the saveModified() dialog,
+//			// the window and the application stay open.
+//			if(!w->close())
+//				break;
+//		}
+//	}
+	close();
 	slotStatusMsg(i18n("Ready."));
 }
 

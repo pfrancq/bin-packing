@@ -140,7 +140,7 @@ void KBPGAView::receiveBestSig(BestSig* sig)
 {
 	static char tmp[100];
 
-	sprintf(tmp,"Best Solution (Id=%u)",sig->Best->Id);
+	sprintf(tmp,"Best Solution (Id=%u) - Fitness=%f",sig->Best->Id,sig->Best->Fitness->Value);
 	TabWidget->changeTab(Best,tmp);
 	Best->setGroups(sig->Best);
 	Best->setChanged();
@@ -206,7 +206,7 @@ void KBPGAView::keyReleaseEvent(QKeyEvent* e)
 	{
 		case Key_PageUp:
 			if(CurId<Instance->PopSize-1) CurId++; else CurId=0;
-			sprintf(tmp,"Solution (%u/%u)",CurId,Instance->PopSize-1);
+			sprintf(tmp,"Solution (%u/%u) - Fitness=%f",CurId,Instance->PopSize-1,Instance->Chromosomes[CurId]->Fitness->Value);
 			TabWidget->changeTab(Sol,tmp);
 			Sol->setGroups(Instance->Chromosomes[CurId]);
 			Sol->setChanged();
@@ -214,7 +214,7 @@ void KBPGAView::keyReleaseEvent(QKeyEvent* e)
 
 		case Key_PageDown:
 			if(CurId>0) CurId--; else CurId=Instance->PopSize-1;
-			sprintf(tmp,"Solution (%u/%u)",CurId,Instance->PopSize-1);
+			sprintf(tmp,"Solution (%u/%u) - Fitness=%f",CurId,Instance->PopSize-1,Instance->Chromosomes[CurId]->Fitness->Value);
 			TabWidget->changeTab(Sol,tmp);
 			Sol->setGroups(Instance->Chromosomes[CurId]);
 			Sol->setChanged();
