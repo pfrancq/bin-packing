@@ -80,7 +80,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	// Find the less filled group and release it
 	for(Used.Start();!Used.End();Used.Next())
 	{
-		actratio=((double)Used()->GetMaxSize())/((double)Used()->GetSize());
+		actratio=((double)Used()->GetSize())/((double)Used()->GetMaxSize());
 		if(actratio<worstratio)
 		{
 			worstratio=actratio;
