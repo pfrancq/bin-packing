@@ -92,7 +92,7 @@ protected:
 	/**
 	* Maximal size for the groups.
 	*/
-	double MaxSize;
+	unsigned int MaxSize;
 
 	/**
 	* Minimal Number of groups.

@@ -65,13 +65,13 @@ public:
 	/**
 	* Maximum size of the groups.
 	*/
-	double MaxSize;
+	unsigned int MaxSize;
 
 	/**
 	* Constructor of the group data.
 	* @param m              Maximum size of the groups.
 	*/
-	RGroupDataBP(const double m) : MaxSize(m) {}
+	RGroupDataBP(const unsigned int m) : MaxSize(m) {}
 };
 
 
@@ -90,12 +90,12 @@ protected:
 	/**
 	* The size of the group.
 	*/
-	double Size;
+	unsigned int Size;
 
 	/**
 	* Maximum size of the group.
 	*/
-	double MaxSize;
+	unsigned int MaxSize;
 
 public:
 
@@ -133,12 +133,12 @@ public:
 	/**
 	* Return the actual size of the group.
 	*/
-	double GetSize(void) {return(Size);}
+	unsigned int GetSize(void) {return(Size);}
 
 	/**
 	* Return the maximal size of the group.
 	*/
-	double GetMaxSize(void) {return(MaxSize);}
+	unsigned int GetMaxSize(void) {return(MaxSize);}
 
 	/**
 	* Method call after an object was inserted in the group.
@@ -177,7 +177,7 @@ protected:
 	* Test if a new better size can be assigned to group by deleting maximum 3
 	* objects.
 	*/
-	bool TestNewSize(cObj** del,unsigned int& nbdel,double addsize,double size);
+	bool TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size);
 };
 
 

@@ -127,6 +127,7 @@ public:
 	virtual ~RChromoBP(void);
 
 	friend class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>;
+	friend class RGroupBP<cGroup,cObj,cGroupData>;
 };
 
 

@@ -82,7 +82,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	// Find the less filled group and release it
 	for(Used.Start();!Used.End();Used.Next())
 	{
-		actratio=Used()->GetMaxSize()/Used()->GetSize();
+		actratio=((double)Used()->GetMaxSize())/((double)Used()->GetSize());
 		if(actratio<worstratio)
 		{
 			worstratio=actratio;
@@ -123,14 +123,23 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	if(!nbobjs)
 		return;
+	i=0;
 	do
 	{
 		bOpti=false;
 		// Go trough existing groups
 		for(Used.Start();!Used.End();Used.Next())
+		{
 			if(Used()->DoOptimisation(thObjs,nbobjs))
 				bOpti=true;
-	} while(bOpti);
+			if(!nbobjs)
+			{
+				bOpti=false;
+				break;
+			}
+		}
+		i++;
+	} while((bOpti)/*&&(i<5)*/);
 }
 
 

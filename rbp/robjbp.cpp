@@ -43,7 +43,7 @@ using namespace RBP;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-RObjBP::RObjBP(const unsigned int id,const RString& name,const double size)
+RObjBP::RObjBP(const unsigned int id,const RString& name,const unsigned int size)
 	: RGGA::RObjG(id,name), Size(size)
 {
 }

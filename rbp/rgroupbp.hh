@@ -48,7 +48,7 @@ template<class cGroup,class cObj,class cGroupData>
 //-----------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
 	RGroupBP<cGroup,cObj,cGroupData>::RGroupBP(RGGA::RGroups<cGroup,cObj,cGroupData>* owner,const unsigned int id,const cGroupData* data)
-		: RGGA::RGroup<cGroup,cObj,cGroupData>(owner,id,data), Size(0.0), MaxSize(data->MaxSize)
+		: RGGA::RGroup<cGroup,cObj,cGroupData>(owner,id,data), Size(0), MaxSize(data->MaxSize)
 {
 }
 
@@ -59,7 +59,7 @@ template<class cGroup,class cObj,class cGroupData>
 {
 	if(!RGGA::RGroup<cGroup,cObj,cGroupData>::Verify())
 		return(false);
-	if(Size-MaxSize>0.00001)
+	if(Size>MaxSize)
 	{
 		cout<<"Size("<<Size<<") > MaxSize("<<MaxSize<<") for group "<<Id<<endl;
 		return(false);
@@ -73,8 +73,9 @@ template<class cGroup,class cObj,class cGroupData>
 	void RGroupBP<cGroup,cObj,cGroupData>::Clear(void)
 {
 	RGGA::RGroup<cGroup,cObj,cGroupData>::Clear();
-	Size=0.0;
+	Size=0;
 }
+
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
@@ -86,10 +87,10 @@ template<class cGroup,class cObj,class cGroupData>
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
-	bool RGroupBP<cGroup,cObj,cGroupData>::TestNewSize(cObj** del,unsigned int& nbdel,double addsize,double size)
+	bool RGroupBP<cGroup,cObj,cGroupData>::TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size)
 {
-	double newsize;
-	double s1,s2,s3;
+	unsigned int newsize,maxsize;
+	unsigned int s1,s2,s3;
 	cObj* cur1;
 	cObj* cur2;
 	cObj* cur3;
@@ -97,6 +98,7 @@ template<class cGroup,class cObj,class cGroupData>
 
 	// New Size if addsize is added.
 	newsize=Size+size+addsize;
+	if(addsize>size) maxsize=addsize; else maxsize=size;
 //	if(size==0.0)
 //		size=addsize;
 //	for(i=0;i<nbdel;i++)
@@ -107,7 +109,7 @@ template<class cGroup,class cObj,class cGroupData>
 	// the old ize.
 	if(newsize<=MaxSize)
 	{
-		if(newsize>Size)
+		if(newsize>=Size)
 			return(true);
 		else
 			return(false);
@@ -123,21 +125,19 @@ template<class cGroup,class cObj,class cGroupData>
 		if((s1<=MaxSize)&&(s1>Size))
 		{
 			del[nbdel++]=cur1;
-			cout<<"Test: "<<s1<<">"<<Size<<"  -  ";
 			return(true);
 		}
 	}
 
 	// Try to del 2 object with Max 3 Objects deleted.
 	if((nbdel>=2)||(NbSubObjects<2)) return(false);
-	for(i=0;i<NbSubObjects;i++)
+	for(i=0;i<NbSubObjects-1;i++)
 	{
 		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1==del[0])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
 		s1=newsize-cur1->GetSize();
-		for(j=0;j<NbSubObjects;j++)
+		for(j=i+1;j<NbSubObjects;j++)
 		{
-			if(i==j) continue;
 			cur2=Owner->GetObj(SubObjects+j);
 //			if((cur2==del[0])||(cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
 			s2=s1-cur2->GetSize();
@@ -145,7 +145,6 @@ template<class cGroup,class cObj,class cGroupData>
 			{
 				del[nbdel++]=cur1;
 				del[nbdel++]=cur2;
-				cout<<"Test: "<<s2<<">"<<Size<<"  -  ";
 				return(true);
 			}
 		}
@@ -153,20 +152,18 @@ template<class cGroup,class cObj,class cGroupData>
 
 	// Try to del 3 object with Max 3 Objects deleted.
 	if((nbdel)||(NbSubObjects<3)) return(false);
-	for(i=0;i<NbSubObjects;i++)
+	for(i=0;i<NbSubObjects-2;i++)
 	{
 		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
 		s1=newsize-cur1->GetSize();
-		for(j=0;j<NbSubObjects;j++)
+		for(j=i+1;j<NbSubObjects-1;j++)
 		{
-			if(i==j) continue;
 			cur2=Owner->GetObj(SubObjects+j);
 //			if((cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
 			s2=s1-cur2->GetSize();
-			for(k=0;k<NbSubObjects;k++)
+			for(k=j+1;k<NbSubObjects;k++)
 			{
-				if((k==i)||(k==j)) continue;
 				cur3=Owner->GetObj(SubObjects+k);
 //				if((cur3->GetSize()>=addsize)||(cur3->GetSize()>=size)) continue;
 				s3=s2-cur3->GetSize();
@@ -175,7 +172,6 @@ template<class cGroup,class cObj,class cGroupData>
 					del[nbdel++]=cur1;
 					del[nbdel++]=cur2;
 					del[nbdel++]=cur3;
-					cout<<"Test: "<<s3<<">"<<Size<<"  -  ";
 					return(true);
 				}
 			}
@@ -199,7 +195,7 @@ template<class cGroup,class cObj,class cGroupData>
 	cObj** obj;                    // Current object eventually to add.
 	cObj** obj2;
 	unsigned int i,j;
-	double addsize;
+	unsigned int addsize;
 
 	// If the groups is maximum filled, no optimisation needed.
 	if(Size==MaxSize)
@@ -210,12 +206,13 @@ template<class cGroup,class cObj,class cGroupData>
 	idx[0]=idx[1]=RGGA::NoObject;
 	nbdel=nbadd=0;
 
+
 	// Try to add a first object
 	if(!nbadd)
 	{
 		for(i=0,obj=objs;i<nbobjs;obj++,i++)
 		{
-			if(TestNewSize(del,nbdel,(*obj)->GetSize(),0.0))
+			if(TestNewSize(del,nbdel,(*obj)->GetSize(),0))
 			{
 				idx[nbadd]=i;
 				add[nbadd++]=(*obj);
@@ -226,26 +223,26 @@ template<class cGroup,class cObj,class cGroupData>
 	}
 
 	// Try to add two objects
-//	if(!nbadd)
-//	{
-//		for(i=0,obj=objs;(i<nbobjs-1)&&(!nbadd);obj++,i++)
-//		{
-//			for(j=i+1,obj2=obj+1;j<nbobjs;obj2++,j++)
-//			{
-//				if(i==j) continue;
-//				if(TestNewSize(del,nbdel,(*obj)->GetSize(),(*obj2)->GetSize()))
-//				{
-//					idx[nbadd]=i;
-//					add[nbadd++]=(*obj);
-//					idx[nbadd]=j;
-//					add[nbadd++]=(*obj2);
-//					break;
-//				}
-//			}
-//		}
-//	}
+	if(!nbadd)
+	{
+		for(i=0,obj=objs;i<nbobjs-1;obj++,i++)
+		{
+			for(j=i+1,obj2=obj+1;j<nbobjs;obj2++,j++)
+			{
+				if(TestNewSize(del,nbdel,(*obj)->GetSize(),(*obj2)->GetSize()))
+				{
+					idx[nbadd]=i;
+					add[nbadd++]=(*obj);
+					idx[nbadd]=j;
+					add[nbadd++]=(*obj2);
+					break;
+				}
+			}
+			if(nbadd) break;
+		}
+	}
 
-	if(!nbadd) return(false);
+
 //	// Try to add a second object
 //	for(i=0,obj=objs;i<nbobjs;obj++,i++)
 //	{
@@ -258,7 +255,7 @@ template<class cGroup,class cObj,class cGroupData>
 //		}
 //	}
 
-	cout<<"Before: "<<Size;
+	if(!nbadd) return(false);
 	// Delete the objects from the group and insert them in objs.
 	for(i=0;i<nbdel;i++)
 	{
@@ -274,7 +271,6 @@ template<class cGroup,class cObj,class cGroupData>
 		Insert(add[i]);
 		memcpy(&objs[idx[i]],&objs[idx[i]+1],((--nbobjs)-idx[i])*sizeof(cObj*));
 	}
-	cout<<"  -  After: "<<Size<<endl;
 	return(true);
 }
 

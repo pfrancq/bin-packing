@@ -58,7 +58,7 @@ class RObjBP : public RGGA::RObjG
 	/**
 	* The size of the object.
 	*/
-	double Size;
+	unsigned int Size;
 
 public:
 
@@ -68,7 +68,7 @@ public:
 	* @param name           Name of the object.
 	* @param size           Size of the object.
 	*/
-	RObjBP(const unsigned int id,const RString& name,const double size);
+	RObjBP(const unsigned int id,const RString& name,const unsigned int size);
 
 	/**
 	* Copy Construct.
@@ -79,7 +79,7 @@ public:
 	/**
 	* Return the size of the object.
 	*/
-	double GetSize(void) const {return(Size);}
+	unsigned int GetSize(void) const {return(Size);}
 
 	/**
 	* Compare two objects. This function is needed by RObjs.

@@ -53,7 +53,7 @@ using namespace RXML;
 
 //-----------------------------------------------------------------------------
 RBP::RDataBPFile::RDataBPFile(void)
-	: Objs(0), MaxSize(0.0)
+	: Objs(0), MaxSize(0)
 {
 }
 
@@ -70,7 +70,7 @@ void RBP::RDataBPFile::Load(char* name)
 	tag=s.GetTag("Groups");
 	if(tag)
 	{
-		MaxSize=atof(tag->GetAttrValue("Size"));
+		MaxSize=atoi(tag->GetAttrValue("Size"));
 		MinGroups=atoi(tag->GetAttrValue("Best"));
 	}
 
@@ -88,7 +88,7 @@ void RBP::RDataBPFile::Load(char* name)
 				double d;
 				RString str=(*tab)->GetAttrValue("Size");
 				d=atof((*tab)->GetAttrValue("Size")());
-				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atof((*tab)->GetAttrValue("Size"))));
+				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atoi((*tab)->GetAttrValue("Size"))));
 			}
 	}
 }
@@ -102,7 +102,7 @@ void RBP::RDataBPFile::Clear(void)
 		delete Objs;
 		Objs=0;
 	}
-	MaxSize=0.0;
+	MaxSize=0;
 }
 
 
