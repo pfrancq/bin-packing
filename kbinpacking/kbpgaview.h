@@ -117,7 +117,7 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	/**
 	* The GA that will be used.
 	*/
-	RFInstBP* Instance;
+	RBP::RFInstBP* Instance;
 
 	/**
 	* Number of generation already executed.
@@ -127,7 +127,7 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	/**
 	* Data needed for the construction of the groups.
 	*/
-	RGroupDataBP Data;
+	RBP::RGroupDataBP Data;
 
 public:
 

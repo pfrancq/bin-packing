@@ -76,10 +76,10 @@ void KBPPrjView::createPrj(void)
 	item=new QListViewItem(prj,"Best Solution Known",tmp);
 
 	// Construct Objects
-	sprintf(tmp,"Objects (%u)",doc->NbObjs);
+	sprintf(tmp,"Objects (%u)",doc->Objs->NbPtr);
 	item = new QListViewItem(prj,item,tmp,"");
 	item2=0;
-	for(obj=doc->Objs,i=doc->NbObjs+1;--i;obj++)
+	for(obj=doc->Objs->Tab,i=doc->Objs->NbPtr+1;--i;obj++)
 	{
 		total+=(*obj)->GetSize();
 		sprintf(tmp,"%s (%u)",((*obj)->GetName())(),(*obj)->GetId());

@@ -79,7 +79,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	StatSplitter->setGeometry(rect());
 	Monitor=new	QGAMonitor(StatSplitter);
 	Monitor->setMaxGen(theApp->GAMaxGen);
-	Monitor->setMaxFitness(pDoc->NbObjs/2);
+	Monitor->setMaxFitness(pDoc->GetNbObjs()/2);
 	connect(this,SIGNAL(signalSetGen(const unsigned int,const unsigned int,const double)),Monitor,SLOT(slotSetGen(const unsigned int,const unsigned int,const double)));
 	Debug=new QXMLContainer(StatSplitter);
 
@@ -96,7 +96,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	try
 	{
 		Gen=0;
-		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,pDoc->NbObjs,theApp->GAHeur,pDoc->MaxSize,Debug);
+		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,Debug);
 		Instance->AddReceiver(this);
 		Instance->Init(&Data);
 	}
