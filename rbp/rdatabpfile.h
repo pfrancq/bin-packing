@@ -31,6 +31,7 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
+#include <rstd/rcursor.h>
 #include <rga/robjs.h>
 #include <rbp/rbp.h>
 #include <rbp/robjbp.h>
