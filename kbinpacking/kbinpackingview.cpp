@@ -30,57 +30,69 @@
 */
 
 
+
+//-----------------------------------------------------------------------------
 // include files for Qt
 #include <qprinter.h>
 #include <qpainter.h>
 #include <qdir.h>
-// include files for KDE
 
+
+//-----------------------------------------------------------------------------
 // application specific includes
 #include "kbinpacking.h"
 #include "kbinpackingview.h"
 #include "kbinpackingdoc.h"
 
-KBinPackingView::KBinPackingView(KBinPackingDoc* pDoc, QWidget *parent, const char* name, int wflags)
- : QWidget(parent, name, wflags)
+
+//-----------------------------------------------------------------------------
+//
+// class KBinPackingView
+//
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+KBinPackingView::KBinPackingView(KBinPackingDoc* pDoc,QWidget* parent,const char* name,int wflags)
+ : QWidget(parent,name,wflags)
 {
-    doc=pDoc;
+	doc=pDoc;
 }
 
-KBinPackingView::~KBinPackingView()
-{
-}
 
-KBinPackingDoc *KBinPackingView::getDocument() const
+
+//-----------------------------------------------------------------------------
+KBinPackingDoc* KBinPackingView::getDocument(void) const
 {
 	return doc;
 }
 
-void KBinPackingView::update(KBinPackingView* pSender){
+
+//-----------------------------------------------------------------------------
+void KBinPackingView::update(KBinPackingView* pSender)
+{
 	if(pSender != this)
 		repaint();
 }
 
-void KBinPackingView::print(QPrinter *pPrinter)
+
+//-----------------------------------------------------------------------------
+void KBinPackingView::print(QPrinter* pPrinter)
 {
-  if (pPrinter->setup(this))
-  {
+	if (pPrinter->setup(this))
+	{
 		QPainter p;
 		p.begin(pPrinter);
-		
-		///////////////////////////////
-		// TODO: add your printing code here
-		///////////////////////////////
-		
 		p.end();
-  }
+	}
 }
 
-void KBinPackingView::closeEvent(QCloseEvent* e){
+//-----------------------------------------------------------------------------
+void KBinPackingView::closeEvent(QCloseEvent* /*e*/)
+{
+}
 
-// DO NOT CALL QWidget::closeEvent(e) here !!
-// This will accept the closing by QCloseEvent::accept() by default.
-// The installed eventFilter() in KBinPackingApp takes care for closing the widget
-// or ignoring the close event
-		
+
+//-----------------------------------------------------------------------------
+KBinPackingView::~KBinPackingView(void)
+{
 }
