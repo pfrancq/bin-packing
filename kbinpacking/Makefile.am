@@ -6,7 +6,7 @@ bin_PROGRAMS = kbinpacking
 kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpprjview.cpp kbinpackingview.cpp \
 	kbinpackingdoc.cpp kbinpacking.cpp main.cpp qdrawgroups.cpp
 kbinpacking_LDFLAGS=$(all_libraries) -export-dynamic $(KDE_RPATH)
-kbinpacking_LDADD   = $(KBINPACKING_ADD) \
+kbinpacking_LDADD   = $(KBINPACKING_ADD) $(LIB_R) \
 	$(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS =
