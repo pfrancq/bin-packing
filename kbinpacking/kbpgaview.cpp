@@ -101,7 +101,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	}
 	catch(eGA& e)
 	{
-		KMessageBox::error(this,QString(e.Msg));
+		KMessageBox::error(this,e.Msg.Latin1());
 		Instance=0;
 	}
 	catch(bad_alloc)
@@ -170,7 +170,7 @@ void KBPGAView::RunGA(void)
 		}
 		catch(eGA& e)
 		{
-			KMessageBox::error(this,QString(e.Msg));
+			KMessageBox::error(this,e.Msg.Latin1());
 		}
 	}
 }

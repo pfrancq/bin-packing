@@ -86,7 +86,7 @@ QInfoBox::QInfoBox(QWidget* parent,RFGroupBP* grp,RObjs<RObjBP>* objs)
 			insertItem("Objects:");
 			for(;(*ptr)!=NoObject;ptr++)
 			{
-				sprintf(Tmp,"   %s (%u)",objs->Tab[*ptr]->GetName()(),objs->Tab[*ptr]->GetSize());
+				sprintf(Tmp,"   %s (%u)",objs->Tab[*ptr]->GetName().Latin1(),objs->Tab[*ptr]->GetSize());
 				insertItem(Tmp);
 			}
 		}
