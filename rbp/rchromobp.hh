@@ -115,7 +115,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	cObj** obj;
 
 	// Determine all non assigned objects
-	for(i=NbObjs+1,ass=ObjectsAss,obj=Objs,nbobjs=0;--i;ass++,obj++)
+	for(i=Objs->NbPtr+1,ass=ObjectsAss,obj=Objs->Tab,nbobjs=0;--i;ass++,obj++)
 	{
 		if((*ass)==RGGA::NoGroup)
 			thObjs[nbobjs++]=(*obj);

@@ -32,6 +32,7 @@
 
 //-----------------------------------------------------------------------------
 #include <rbp/robjbp.h>
+using namespace RBP;
 
 
 
@@ -42,14 +43,21 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-RBP::RObjBP::RObjBP(const unsigned int id,const RString& name,const double size)
+RObjBP::RObjBP(const unsigned int id,const RString& name,const double size)
 	: RGGA::RObjG(id,name), Size(size)
 {
 }
 
 
 //-----------------------------------------------------------------------------
-RBP::RObjBP::~RObjBP(void)
+RObjBP::RObjBP(const RObjBP* obj)
+	: RGGA::RObjG(obj), Size(obj->Size)
+{
+}
+
+
+//-----------------------------------------------------------------------------
+RObjBP::~RObjBP(void)
 {
 }
 

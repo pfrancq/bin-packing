@@ -49,8 +49,8 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
 	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
-	HeuristicFFB = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->NbObjs);
-	tmpObjs=new cObj*[Owner->NbObjs];
+	HeuristicFFB = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->Objs);
+	tmpObjs=new cObj*[Owner->Objs->NbPtr];
 }
 
 
@@ -74,8 +74,8 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //---------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,cObj** objs,unsigned int nbobjs,RGGA::HeuristicType h,const double max,RDebug *debug) throw(bad_alloc)
-		: RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,nbobjs,h,debug), MaxSize(max)
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RDebug *debug) throw(bad_alloc)
+		: RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,debug), MaxSize(max)
 {
 }
 

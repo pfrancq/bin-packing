@@ -89,7 +89,7 @@ public:
 	* @param maxv           Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RFInstBP(unsigned int max,unsigned int popsize,RObjBP** objs,unsigned int nbobjs,RGGA::HeuristicType h,const double maxv,RDebug *debug=0) throw(bad_alloc);
+	RFInstBP(unsigned int max,unsigned int popsize,RGA::RObjs<RObjBP>* objs,RGGA::HeuristicType h,const double maxv,RDebug *debug=0) throw(bad_alloc);
 
 	/**
 	* This function determines if the GA must be stopped. Actually, it is the case

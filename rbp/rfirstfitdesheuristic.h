@@ -68,15 +68,15 @@ public:
 	/**
 	* Construct the grouping heuristic.
 	* @param r              The random genrator to use.
+	* @param objs           Pointer to the objects.
 	*/
-	RFirstFitDesHeuristic(RRandom* r,const unsigned int maxobjs);
+	RFirstFitDesHeuristic(RRandom* r,RGA::RObjs<cObj>* objs);
 
 	/**
 	* Initialize the heuristic.
-	* @param objs           Pointer to the objects.
 	* @param groups         Pointer to the groups.
 	*/
-	virtual void Init(cObj** objs,RGGA::RGroups<cGroup,cObj,cGroupData>* groups,const unsigned int nbobjs);
+	virtual void Init(RGGA::RGroups<cGroup,cObj,cGroupData>* groups);
 
 	/**
 	* Destruct the grouping heuristic.

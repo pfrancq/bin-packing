@@ -53,7 +53,7 @@ using namespace RXML;
 
 //-----------------------------------------------------------------------------
 RBP::RDataBPFile::RDataBPFile(void)
-	: NbObjs(0), Objs(0), MaxSize(0.0)
+	: Objs(0), MaxSize(0.0)
 {
 }
 
@@ -61,7 +61,6 @@ RBP::RDataBPFile::RDataBPFile(void)
 //-----------------------------------------------------------------------------
 void RBP::RDataBPFile::Load(char* name)
 {
-	RObjBP **obj;
 	RXMLStruct s;
 	RXMLFile f(name,&s);
 	RXMLTag *tag,**tab;
@@ -80,13 +79,12 @@ void RBP::RDataBPFile::Load(char* name)
 	if(tag)
 	{
 		// Read number objects info
-		NbObjs=tag->NbPtr;
-		Objs=new RObjBP*[NbObjs];
+		Objs=new RObjs<RObjBP>(tag->NbPtr);
 		
 		// Read each objects	
-		for(i=0,tab=tag->Tab,obj=Objs;i<tag->NbPtr;i++,tab++,obj++)
+		for(i=0,tab=tag->Tab;i<tag->NbPtr;i++,tab++)
 			if((*tab)->GetName()=="Object")
-				(*obj) = new RObjBP(i,(*tab)->GetAttrValue("Id"),atof((*tab)->GetAttrValue("Size")));
+				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atof((*tab)->GetAttrValue("Size"))));
 	}
 }
 
@@ -94,13 +92,9 @@ void RBP::RDataBPFile::Load(char* name)
 //-----------------------------------------------------------------------------
 void RBP::RDataBPFile::Clear(void)
 {
-	RObjBP** obj;
-	
 	if(Objs)
 	{
-		for(NbObjs++,obj=Objs;--NbObjs;obj++)
-			delete(*obj);
-		delete[] Objs;
+		delete Objs;
 		Objs=0;
 	}
 	MaxSize=0.0;

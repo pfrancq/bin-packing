@@ -71,9 +71,20 @@ public:
 	RObjBP(const unsigned int id,const RString& name,const double size);
 
 	/**
+	* Copy Construct.
+	* @param obj            Source used.
+	*/
+	RObjBP(const RObjBP* obj);
+
+	/**
 	* Return the size of the object.
 	*/
 	double GetSize(void) const {return(Size);}
+
+	/**
+	* Compare two objects. This function is needed by RObjs.
+	*/
+	int Compare(const RObjBP *o) {return(Id-o->Id);}
 
 	/**
 	* Destruct the object.

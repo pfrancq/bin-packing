@@ -35,6 +35,7 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
+#include <rga/robjs.h>
 #include <rbp/rbp.h>
 #include <rbp/robjbp.h>
 #include <rbp/rgroupbp.h>
@@ -84,14 +85,9 @@ class RDataBPFile
 protected:
 
 	/**
-	* Number of objects.
-	*/
-	unsigned int NbObjs;
-
-	/**
 	* Objects.
 	*/
-	RObjBP** Objs;
+	RGA::RObjs<RObjBP>* Objs;
 
 	/**
 	* Maximal size for the groups.
@@ -115,7 +111,7 @@ public:
 	/**
 	* Return the number of objects.
 	*/
-	unsigned int GetNbObjs(void) const {return(NbObjs);}
+	unsigned int GetNbObjs(void) const {return(Objs->NbPtr);}
 
 	~RDataBPFile(void);
 };

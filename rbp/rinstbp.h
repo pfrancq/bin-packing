@@ -105,13 +105,12 @@ public:
 	/**
 	* Construct the instance.
 	* @param popsize        Size of the population.
-	* @param objs           Objects to place in the tree.
-	* @param nbobjs         Number of objects to place.
+	* @param objs           Objects to group.
 	* @param h              The heuristic that has to be used.
 	* @param max            Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RInstBP(unsigned int popsize,cObj** objs,unsigned int nbobjs,RGGA::HeuristicType h,const double max,RDebug *debug=0) throw(bad_alloc);
+	RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RDebug *debug=0) throw(bad_alloc);
 
 	/**
 	* Initialisation of the instance.

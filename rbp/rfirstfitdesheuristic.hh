@@ -39,8 +39,8 @@
 
 //-----------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::RFirstFitDesHeuristic(RRandom* r,const unsigned int maxobjs)
-	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>(r,maxobjs)
+	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::RFirstFitDesHeuristic(RRandom* r,RGA::RObjs<cObj>* objs)
+	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>(r,objs)
 {
 }
 
@@ -63,9 +63,9 @@ template<class cGroup,class cObj,class cGroupData>
 
 //-----------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
-	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::Init(cObj** objs,RGGA::RGroups<cGroup,cObj,cGroupData>* groups,const unsigned int nbobjs)
+	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::Init(RGGA::RGroups<cGroup,cObj,cGroupData>* groups)
 {
-	RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>::Init(objs,groups,nbobjs);
+	RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>::Init(groups);
 
 	// Order by size descending
 	qsort(static_cast<void*>(Order),NbObjs,sizeof(cObj*),sort_function_cObjs);
