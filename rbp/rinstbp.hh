@@ -52,7 +52,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
 	RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
-	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(Owner->Random,Owner->Objs);
+	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(Owner->Random,Owner->Objs,Owner->Debug);
 	tmpObjs=new cObj*[Owner->Objs->GetNb()];
 	tmpObjs2=new cObj*[Owner->Objs->GetNb()];
 }
