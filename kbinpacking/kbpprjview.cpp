@@ -28,6 +28,11 @@
 // include files for ANSI C/C++
 #include <stdio.h>
 
+//-----------------------------------------------------------------------------
+// include files for R Project
+#include <frontend/kde/rqt.h>
+using namespace R;
+
 
 //-----------------------------------------------------------------------------
 // include files for current application
@@ -58,7 +63,6 @@ KBPPrjView::KBPPrjView(KBinPackingDoc* pDoc,QWidget *parent,const char *name,int
 void KBPPrjView::createPrj(void)
 {
 	char tmp[100];
-	char tmp2[10];
 	QListViewItem *item=0,*item2=0;
 	RObjBP **obj;
 	unsigned int i;
@@ -77,9 +81,7 @@ void KBPPrjView::createPrj(void)
 	for(obj=doc->Objs->Tab,i=doc->Objs->NbPtr+1;--i;obj++)
 	{
 		total+=(*obj)->GetSize();
-		sprintf(tmp,"%s (%u)",(*obj)->GetName().Latin1(),(*obj)->GetId());
-		sprintf(tmp2,"%u",(*obj)->GetSize());
-		item2 = new QListViewItem(item,item2,tmp,tmp2);
+		item2 = new QListViewItem(item,item2,ToQString((*obj)->GetName())+" ("+QString::number((*obj)->GetId())+")",QString::number((*obj)->GetSize()));
 	}
 	sprintf(tmp,"%u",total);
 	item->setText(1,tmp);

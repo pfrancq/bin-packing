@@ -39,6 +39,7 @@
 #include <rbp/robjbp.h>
 #include <rbp/rfchromobp.h>
 #include <rbp/rdatabpfile.h>
+#include <frontend/kde/rqt.h>
 using namespace R;
 
 
@@ -82,8 +83,7 @@ QInfoBox::QInfoBox(QWidget* parent,RFGroupBP* grp,RObjs<RObjBP>* objs)
 			insertItem("Objects:");
 			for(;(*ptr)!=NoObject;ptr++)
 			{
-				sprintf(Tmp,"   %s (%u)",objs->Tab[*ptr]->GetName().Latin1(),objs->Tab[*ptr]->GetSize());
-				insertItem(Tmp);
+				insertItem("   "+ToQString(objs->Tab[*ptr]->GetName())+" ("+QString::number(objs->Tab[*ptr]->GetSize())+")");
 			}
 		}
 		delete[] o;
