@@ -1,7 +1,7 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kbinpacking
 kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpheuristicview.cpp kbpprjview.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
-kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a ./r/rbp/librbp.a ./qtwidgets/rbp/librbp.a ./qtwidgets/rga/librga.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rxml/librxml.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rio/librio.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rstd/librstd.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rgga/librgga.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rga/librga.a /home/pfrancq/prj/kbinpacking/kbinpacking/r/rbp/librbp.a $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a ./r/rbp/librbp.a ./qtwidgets/rbp/librbp.a ./qtwidgets/rga/librga.a ./r/rxml/librxml.a ./r/rio/librio.a ./r/rstd/librstd.a ./r/rgga/librgga.a ./r/rga/librga.a ./r/rbp/librbp.a $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS = r qtwidgets 
 
