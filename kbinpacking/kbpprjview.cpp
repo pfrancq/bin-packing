@@ -72,6 +72,8 @@ void KBPPrjView::createPrj(void)
 	// Problem
 	sprintf(tmp,"%.1f",doc->MaxSize);
 	item=new QListViewItem(prj,"Problem",tmp);
+	sprintf(tmp,"%u",doc->MinGroups);
+	item=new QListViewItem(prj,"Best Solution Known",tmp);
 
 	// Construct Objects
 	sprintf(tmp,"Objects (%u)",doc->NbObjs);

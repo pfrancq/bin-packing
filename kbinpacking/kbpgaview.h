@@ -64,6 +64,7 @@ using namespace RBP;
 namespace RBP
 {
 	class QDrawGroups;
+//	class RFGroupG;
 }
 using namespace RBP;
 
