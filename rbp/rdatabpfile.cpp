@@ -62,7 +62,7 @@ void RDataBPFile::Load(char* name)
 {
 	RXMLStruct s;
 	RXMLFile f(name,&s);
-	RXMLTag *tag,**tab;
+	RXMLTag *tag;
 	unsigned int i;
 
 	f.Open(RIO::Read);
@@ -80,19 +80,20 @@ void RDataBPFile::Load(char* name)
 	if(tag)
 	{
 		// Read number objects info
-		Objs=new RObjs<RObjBP>(tag->NbPtr);
+		Objs=new RObjs<RObjBP>(tag->GetNb());
 
 		// Read each objects
-		for(i=0,tab=tag->Tab;i<tag->NbPtr;i++,tab++)
-			if((*tab)->GetName()=="Object")
+		RCursor<RXMLTag> tab(*tag);
+		for(i=0,tab.Start();i<tag->GetNb();i++,tab.Next())
+			if(tab()->GetName()=="Object")
 			{
 				double d;
-				RString str=(*tab)->GetAttrValue("Size");
-				d=atof((*tab)->GetAttrValue("Size"));
-				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atoi((*tab)->GetAttrValue("Size"))));
+				RString str=tab()->GetAttrValue("Size");
+				d=atof(tab()->GetAttrValue("Size"));
+				Objs->InsertPtr(new RObjBP(i,tab()->GetAttrValue("Id"),atoi(tab()->GetAttrValue("Size"))));
 			}
 	}
-	ObjsCursor.Set(Objs);
+	ObjsCursor.Set(*Objs);
 }
 
 

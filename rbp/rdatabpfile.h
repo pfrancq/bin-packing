@@ -113,7 +113,7 @@ public:
 	/**
 	* Return the number of objects.
 	*/
-	unsigned int GetNbObjs(void) const {return(Objs->NbPtr);}
+	unsigned int GetNbObjs(void) const {return(Objs->GetNb());}
 
 	~RDataBPFile(void);
 };

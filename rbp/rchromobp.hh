@@ -4,7 +4,7 @@
 
 	Class representing a chromosome for a GGA - Inline implementation
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles.
+	Copyright 2001-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -54,6 +54,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2) throw(eGA)
 {
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("Crossover","RChromoBP");
+	#endif
+
 	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Change default heuristic to FFB
@@ -65,6 +69,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change to default heuristic
 	this->Heuristic=Hold;
+	
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->EndFunc("Crossover","RChromoBP");
+	#endif
 }
 
 
@@ -72,18 +80,23 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void) throw(eGA)
 {
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("Mutation","RChromoBP");
+	#endif
+	
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
 	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Find the less filled group and release it
-	for(this->Used.Start();!this->Used.End();this->Used.Next())
+	RCursor<cGroup> Cur(this->Used);
+	for(Cur.Start();!Cur.End();Cur.Next())
 	{
-		actratio=((double)this->Used()->GetSize())/((double)this->Used()->GetMaxSize());
+		actratio=static_cast<double>(Cur()->GetSize())/static_cast<double>(Cur()->GetMaxSize());
 		if(actratio<worstratio)
 		{
 			worstratio=actratio;
-			worst=this->Used();
+			worst=Cur();
 		}
 	}
 	ReleaseGroup(worst->GetId());
@@ -97,6 +110,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change to default heuristic
 	this->Heuristic=Hold;
+	
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->EndFunc("Mutation","RChromoBP");
+	#endif
 }
 
 
@@ -104,6 +121,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void) throw(eGA)
 {
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("LocalOptimisation","RChromoBP");
+	#endif
+
 	bool bOpti;
 	unsigned int nbobjs;
 	unsigned int* ass;
@@ -122,9 +143,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 		bOpti=false;
 
 		// Go trough existing groups
-		for(this->Used.Start();!this->Used.End();this->Used.Next())
+		RCursor<cGroup> Cur(this->Used);
+		for(Cur.Start();!Cur.End();Cur.Next())
 		{
-			if(this->Used()->DoOptimisation(thObjs,nbobjs))
+			if(Cur()->DoOptimisation(thObjs,nbobjs))
 			{
 				bOpti=true;
 //				// Order by size descending
@@ -138,6 +160,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 			}
 		}
 	}
+	
+	#ifdef RGADEBUG
+		if(this->Instance->Debug) this->Instance->Debug->EndFunc("LocalOptimisation","RChromoBP");
+	#endif
 }
 
 
@@ -156,9 +182,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 {
 	double sum;
 
-	for(this->Used.Start(),sum=0.0;!this->Used.End();this->Used.Next())
-		sum+=pow(((double)this->Used()->GetSize())/((double)this->Used()->GetMaxSize()),2);
-	(*this->Fitness)=sum/((double)this->Used.NbPtr);
+	RCursor<cGroup> Cur(this->Used);
+	for(Cur.Start(),sum=0.0;!Cur.End();Cur.Next())
+		sum+=pow(static_cast<double>(Cur()->GetSize())/static_cast<double>(Cur()->GetMaxSize()),2);
+	(*this->Fitness)=sum/static_cast<double>(this->Used.GetNb());
 }
 
 
