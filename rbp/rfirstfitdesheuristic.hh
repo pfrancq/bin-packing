@@ -42,6 +42,7 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs)
 	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs)
 {
+	Name="First-Fit Descending Heuristic";
 }
 
 
