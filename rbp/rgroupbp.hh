@@ -55,16 +55,16 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void)
+	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void) throw(RGA::eGA)
 {
-	if(!RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Verify())
-		return(false);
+	char tmp[200];
+
+	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Verify();
 	if(Size>MaxSize)
 	{
-		cout<<"Size("<<Size<<") > MaxSize("<<MaxSize<<") for group "<<Id<<endl;
-		return(false);
+		sprintf(tmp,"Size(%u) > MaxSize(%u) for group %u",Size,MaxSize,Id);
+		throw RGA::eGAVerify(tmp);
 	}
-	return(true);
 }
 
 
@@ -191,7 +191,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(RGA::eGA)
 {
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.

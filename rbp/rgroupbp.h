@@ -116,9 +116,8 @@ public:
 
 	/**
 	* Verify if the group is not violating the integrity of the system.
-	* @return true if the group is correct, false else.
 	*/
-	virtual bool Verify(void);
+	virtual void Verify(void) throw(RGA::eGA);
 
 	/**
 	* Clear the information container in a group.
@@ -158,8 +157,9 @@ public:
 	* to three objects in the group by one or two objects of objs, in such a
 	* way that the total size of the group increases. If so, perform the
 	* changes in the group and in objs.
+	* @return true if at least one exchange has been done.
 	*/
-	bool DoOptimisation(cObj** objs,unsigned int& nbobjs);
+	bool DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(RGA::eGA);
 
 	/**
 	* Assignment operator.

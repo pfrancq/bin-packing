@@ -97,15 +97,14 @@ public:
 	* crossover of the GGA.
 	* @param parent1        First parent used.
 	* @param parent2        Second parent used.
-	* @return The function must return true if the crossover has been done.
 	*/
-	virtual bool Crossover(cChromo* parent1,cChromo* parent2);
+	virtual void Crossover(cChromo* parent1,cChromo* parent2) throw(RGA::eGA);
 
 	/**
 	* Do a mutation of the chromosome, by destroy the less filled group and
 	* then call the default mutation of the GGA.
 	*/
-	virtual bool Mutation(void);
+	virtual void Mutation(void) throw(RGA::eGA);
 
 	/**
 	* Perform a local optimisation. This function is called by the crossover
@@ -114,7 +113,7 @@ public:
 	* This local optimisation is the one described in the Bin Packing Crossover
 	* with remplacement (RPRX) operator.
 	*/
-	virtual void LocalOptimisation(void);
+	virtual void LocalOptimisation(void) throw(RGA::eGA);
 
 	/**
 	* The assigment operator.
@@ -125,7 +124,7 @@ public:
 	/**
 	* Evaluate the fitness of the chromosome.
 	*/
-	virtual void Evaluate(void);
+	virtual void Evaluate(void) throw(RGA::eGA);
 
 	/**
 	* Destruct the chromosome.

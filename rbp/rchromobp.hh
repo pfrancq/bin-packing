@@ -53,9 +53,8 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //---------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	bool RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2) throw(RGA::eGA)
 {
-	bool ret;
 	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Change default heuristic to FFB
@@ -63,22 +62,19 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	Heuristic=HeuristicFFD;
 
 	// Call the default crossover
-	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
+	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
 
 	// Change to default heuristic
 	Heuristic=Hold;
-
-	return(ret);
 }
 
 
 //---------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	bool RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void) throw(RGA::eGA)
 {
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
-	bool ret;
 	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Find the less filled group and release it
@@ -98,12 +94,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	Heuristic=HeuristicFFD;
 
 	// Call the default mutation after it
-	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
-	
+	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
+
 	// Change to default heuristic
 	Heuristic=Hold;
-
-	return(ret);
 }
 
 //-----------------------------------------------------------------------------
@@ -118,7 +112,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //-----------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void) throw(RGA::eGA)
 {
 	bool bOpti;
 	unsigned int nbobjs;
@@ -168,11 +162,11 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //-----------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void) throw(RGA::eGA)
 {
-	double sum=0.0;
+	double sum;
 
-	for(Used.Start();!Used.End();Used.Next())
+	for(Used.Start(),sum=0.0;!Used.End();Used.Next())
 		sum+=pow(((double)Used()->GetSize())/((double)Used()->GetMaxSize()),2);
 	(*Fitness)=sum/((double)Used.NbPtr);
 }
