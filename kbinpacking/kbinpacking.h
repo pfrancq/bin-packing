@@ -185,6 +185,26 @@ protected:
 private slots:
 
 	/**
+	* Do the Center heuristic.
+	*/
+	void slotHeuristicFF(void);
+
+	/**
+	* One Step in the heuristic.
+	*/
+	void slotHeuristicNext(void);
+
+	/**
+	* End the heuristic.
+	*/
+	void slotEndHeuristic(void);
+
+	/**
+	* End the heuristic in once.
+	*/
+	void slotHeuristicRun(void);
+
+	/**
 	* Clears the document in the actual view to reuse it as the new document.
 	*/
 	void slotFileNew(void);
@@ -288,7 +308,12 @@ private slots:
 	/**
 	* Cascade all the windows.
 	*/
-  void slotWindowCascade(void);
+	void slotWindowCascade(void);
+
+	/**
+	* Called when a window is activated.
+	*/
+	void slotWindowActivated(QWidget* w);
 
 private:
 
@@ -335,6 +360,9 @@ public:
 	KAction* fileSaveAs;
 	KAction* fileClose;
 	KAction* filePrint;
+	KAction* heuristicFF;
+	KAction* heuristicRun;
+	KAction* heuristicNext;
 	KAction* fileQuit;
 	KAction* editCut;
 	KAction* editCopy;

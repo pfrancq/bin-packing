@@ -32,6 +32,11 @@
 
 
 //-----------------------------------------------------------------------------
+// include files for ANSI C/C++
+#include <string.h>
+
+
+//-----------------------------------------------------------------------------
 // include files for Qt
 #include <qdir.h>
 #include <qfileinfo.h>
@@ -63,6 +68,7 @@
 
 //-----------------------------------------------------------------------------
 KBinPackingDoc::KBinPackingDoc(void)
+	: QObject(), RBP::RDataBPFile()
 {
 	pViewList = new QList<KBinPackingView>;
 	pViewList->setAutoDelete(false);
@@ -170,11 +176,18 @@ bool KBinPackingDoc::newDocument(void)
 bool KBinPackingDoc::openDocument(const KURL& url, const char* /*format*/)
 {
 	QString tmpfile;
+	char tmp[100];
+
+	// Load File
 	KIO::NetAccess::download(url,tmpfile);
 	QFile f(tmpfile);
 	if(!f.open(IO_ReadOnly))
 		return false;
 	f.close();
+	strcpy(tmp,tmpfile);
+	Load(tmp);
+
+	// Remove
 	KIO::NetAccess::removeTempFile( tmpfile );
 	doc_url=url;
 	modified=false;

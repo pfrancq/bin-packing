@@ -85,10 +85,6 @@ int main(int argc, char *argv[])
 				testmdi->openDocumentFile(args->arg(i));
 			}
 		}
-		else
-		{
-			testmdi->openDocumentFile();
-		}
 		args->clear();
 	}
 

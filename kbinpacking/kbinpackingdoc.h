@@ -39,7 +39,12 @@
 //-----------------------------------------------------------------------------
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif 
+#endif
+
+
+//-----------------------------------------------------------------------------
+// include files for R Project
+#include <rbp/rdatabpfile.h>
 
 
 //-----------------------------------------------------------------------------
@@ -65,7 +70,7 @@ class KBinPackingView;
 * @author Pascal Francq
 * @short Bin Packing Document.
 */
-class KBinPackingDoc : public QObject
+class KBinPackingDoc : public QObject , public RBP::RDataBPFile
 {
 	Q_OBJECT
 
@@ -192,6 +197,10 @@ public:
 	* Destructor for the fileclass of the application.
 	*/
 	~KBinPackingDoc(void);
+
+	// friend classes
+	friend class KBPPrjView;
+	friend class KBPHeuristicView;
 };
 
 

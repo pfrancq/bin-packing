@@ -58,6 +58,9 @@
 #include "kbinpacking.h"
 #include "kbinpackingview.h"
 #include "kbinpackingdoc.h"
+#include "kbpprjview.h"
+#include "kbpheuristicview.h"
+
 
 
 //-----------------------------------------------------------------------------
@@ -80,18 +83,24 @@ KBinPackingApp::KBinPackingApp(void)
 	initView();
 	initActions();
 	readOptions();
-
+	// disable actions at startup
+	fileNew->setEnabled(false);
 	fileSave->setEnabled(false);
 	fileSaveAs->setEnabled(false);
 	filePrint->setEnabled(false);
 	editCut->setEnabled(false);
 	editCopy->setEnabled(false);
 	editPaste->setEnabled(false);
+	windowNewWindow->setEnabled(false);
+	heuristicFF->setEnabled(false);
+	heuristicRun->setEnabled(false);
+	heuristicNext->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
 void KBinPackingApp::initActions(void)
 {
+	// Menu "File"
 	fileNew = KStdAction::openNew(this, SLOT(slotFileNew()), actionCollection());
 	fileOpen = KStdAction::open(this, SLOT(slotFileOpen()), actionCollection());
 	fileOpenRecent = KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
@@ -100,16 +109,6 @@ void KBinPackingApp::initActions(void)
 	fileClose = KStdAction::close(this, SLOT(slotFileClose()), actionCollection());
 	filePrint = KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
 	fileQuit = KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
-	editCut = KStdAction::cut(this, SLOT(slotEditCut()), actionCollection());
-	editCopy = KStdAction::copy(this, SLOT(slotEditCopy()), actionCollection());
-	editPaste = KStdAction::paste(this, SLOT(slotEditPaste()), actionCollection());
-	viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
-	viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()), actionCollection());
-
-	windowNewWindow = new KAction(i18n("New &Window"), 0, this, SLOT(slotWindowNewWindow()), actionCollection(),"window_new_window");
-	windowTile = new KAction(i18n("&Tile"), 0, this, SLOT(slotWindowTile()), actionCollection(),"window_tile");
-	windowCascade = new KAction(i18n("&Cascade"), 0, this, SLOT(slotWindowCascade()), actionCollection(),"window_cascade");
-
 	fileNew->setStatusText(i18n("Creates a new document"));
 	fileOpen->setStatusText(i18n("Opens an existing document"));
 	fileOpenRecent->setStatusText(i18n("Opens a recently used file"));
@@ -119,13 +118,29 @@ void KBinPackingApp::initActions(void)
 	filePrint ->setStatusText(i18n("Prints out the actual document"));
 	fileQuit->setStatusText(i18n("Quits the application"));
 
+	// Menu "Edit"
+	editCut = KStdAction::cut(this, SLOT(slotEditCut()), actionCollection());
+	editCopy = KStdAction::copy(this, SLOT(slotEditCopy()), actionCollection());
+	editPaste = KStdAction::paste(this, SLOT(slotEditPaste()), actionCollection());
 	editCut->setStatusText(i18n("Cuts the selected section and puts it to the clipboard"));
 	editCopy->setStatusText(i18n("Copies the selected section to the clipboard"));
 	editPaste->setStatusText(i18n("Pastes the clipboard contents to actual position"));
+	
+	// Menu "Heuristic"
+	heuristicFF=new KAction(i18n("&First Fit Heuristic"),KAccel::stringToKey("Alt+F"),this,SLOT(slotHeuristicFF(void)),actionCollection(),"heuristic_ff");
+	heuristicRun=new KAction(i18n("&Run Heuristic"),"run",KAccel::stringToKey("Alt+R"),this,SLOT(slotHeuristicRun(void)),actionCollection(),"heuristic_run");
+	heuristicNext=new KAction(i18n("&Next step for Heuristic"),"next",KAccel::stringToKey("Alt+N"),this,SLOT(slotHeuristicNext(void)),actionCollection(),"heuristic_next");
 
+	// Menu "View"
+	viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
+	viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()), actionCollection());
 	viewToolBar->setStatusText(i18n("Enables/disables the toolbar"));
 	viewStatusBar->setStatusText(i18n("Enables/disables the statusbar"));
 
+	// Menu "Window"
+	windowNewWindow = new KAction(i18n("New &Window"), 0, this, SLOT(slotWindowNewWindow()), actionCollection(),"window_new_window");
+	windowTile = new KAction(i18n("&Tile"), 0, this, SLOT(slotWindowTile()), actionCollection(),"window_tile");
+	windowCascade = new KAction(i18n("&Cascade"), 0, this, SLOT(slotWindowCascade()), actionCollection(),"window_cascade");
 	windowMenu = new KActionMenu(i18n("&Window"), actionCollection(), "window_menu");
 	connect(windowMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(windowMenuAboutToShow()));
 
@@ -146,6 +161,7 @@ void KBinPackingApp::initView(void)
 	QVBox* view_back = new QVBox(this);
 	view_back->setFrameStyle(QFrame::StyledPanel|QFrame::Sunken);
 	pWorkspace = new QWorkspace(view_back);
+	connect(pWorkspace, SIGNAL(windowActivated(QWidget*)), this, SLOT(slotWindowActivated(QWidget*)));
 	setCentralWidget(view_back);
 }
 
@@ -153,14 +169,12 @@ void KBinPackingApp::initView(void)
 //-----------------------------------------------------------------------------
 void KBinPackingApp::createClient(KBinPackingDoc* doc)
 {
-	KBinPackingView* w = new KBinPackingView(doc,pWorkspace,0,WDestructiveClose);
+	KBPPrjView* w = new KBPPrjView(doc,pWorkspace,"Project: "+doc->URL().fileName(),WDestructiveClose);
 	w->installEventFilter(this);
 	doc->addView(w);
 	w->setIcon(kapp->miniIcon());
-	if(pWorkspace->windowList().isEmpty()) // show the very first window in maximized mode
-		w->showMaximized();
-	else
-		w->show();
+	w->show();
+	w->resize(pWorkspace->sizeHint());
 }
 
 
@@ -333,6 +347,72 @@ bool KBinPackingApp::eventFilter(QObject* object,QEvent* event)
 
 
 //-----------------------------------------------------------------------------
+void KBinPackingApp::slotHeuristicFF(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==Project))
+	{
+		KBinPackingDoc* doc = m->getDocument();
+		KBPHeuristicView* w = new KBPHeuristicView(doc,FirstFit,pWorkspace,0,WDestructiveClose);
+		w->installEventFilter(this);
+		doc->addView(w);
+		w->setIcon(kapp->miniIcon());
+		w->resize(pWorkspace->sizeHint());
+		w->show();
+		w->setFocus();
+		w->RunHeuristic();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotEndHeuristic(void)
+{
+	bool bRun=false;
+	KBinPackingView* v;
+	QWidgetList list;
+
+	KApplication::kApplication()->processEvents(1000);
+
+	// Scan all documents to see if all heuristics are end.
+	list=pWorkspace->windowList();
+	for(v=(KBinPackingView*)list.first();v!=0;v=(KBinPackingView*)list.next())
+	{
+		if(v->getType()==Heuristic)
+		{
+			if(((KBPHeuristicView*)v)->Running())
+				bRun=true;
+		}
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotHeuristicNext(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==Heuristic))
+	{
+		((KBPHeuristicView*)m)->NextStep();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotHeuristicRun(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==Heuristic))
+	{
+		((KBPHeuristicView*)m)->RunToEnd();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
 void KBinPackingApp::slotFileNew(void)
 {
 	slotStatusMsg(i18n("Creating new document..."));
@@ -345,8 +425,7 @@ void KBinPackingApp::slotFileNew(void)
 void KBinPackingApp::slotFileOpen(void)
 {
 	slotStatusMsg(i18n("Opening file..."));
-
-	KURL url=KFileDialog::getOpenURL(QString::null,i18n("*|All files"), this, i18n("Open File..."));
+	KURL url=KFileDialog::getOpenURL("/home/pfrancq/data/projects/hp/data",i18n("*.bp|Bin Packing files"), this, i18n("Open File..."));
 	if(!url.isEmpty())
 	{
 		openDocumentFile(url);
@@ -604,6 +683,66 @@ void KBinPackingApp::windowMenuActivated(int id)
 	QWidget* w=pWorkspace->windowList().at(id);
 	if (w)
 		w->setFocus();
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotWindowActivated(QWidget*)
+{
+	bool bPrj,bGA,bHeuristic;
+
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m)
+	{
+		// Update caption
+		setCaption(m->caption());
+
+		// Update menu
+		switch(m->getType())
+		{
+			case Project:
+				bPrj=true;
+				bGA=false;
+				bHeuristic=false;
+				break;
+
+			case Heuristic:
+				bPrj=false;
+				bGA=false;
+				bHeuristic=true;
+				break;
+
+			case GA:
+				bPrj=false;
+				bGA=true;
+				bHeuristic=false;
+				break;
+
+			default:
+				bPrj=false;
+				bGA=false;
+				bHeuristic=false;
+				break;
+		}
+//		GAInit->setEnabled(bPrj);
+		heuristicFF->setEnabled(bPrj);
+//		GAStart->setEnabled(bGA);
+//		GAPause->setEnabled(bGA);
+//		GAStop->setEnabled(bGA);
+		heuristicRun->setEnabled(bHeuristic);
+		heuristicNext->setEnabled(bHeuristic);
+	}
+	else
+	{
+		setCaption("");
+//		GAInit->setEnabled(false);
+		heuristicFF->setEnabled(false);
+//		GAStart->setEnabled(false);
+//		GAPause->setEnabled(false);
+//		GAStop->setEnabled(false);
+		heuristicRun->setEnabled(false);
+		heuristicNext->setEnabled(false);
+	}
 }
 
 

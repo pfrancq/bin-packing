@@ -1,11 +1,11 @@
 ####### kdevelop will overwrite this part!!! (begin)##########
 bin_PROGRAMS = kbinpacking
-kbinpacking_SOURCES = binpacking.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
-kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a  $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+kbinpacking_SOURCES = kbpheuristicview.cpp kbpprjview.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
+kbinpacking_LDADD   = ./r/rstd/librstd.a ./r/rga/librga.a ./r/rgga/librgga.a ./r/rmath/librmath.a ./r/rio/librio.a ./r/rxml/librxml.a ./r/rbp/librbp.a ./qtwidgets/rbp/librbp.a ~/prj/kbinpacking/kbinpacking/r/rxml/librxml.a ~/prj/kbinpacking/kbinpacking/r/rio/librio.a ~/prj/kbinpacking/kbinpacking/r/rstd/librstd.a ~/prj/kbinpacking/kbinpacking/r/rgga/librgga.a ~/prj/kbinpacking/kbinpacking/r/rbp/librbp.a $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
-SUBDIRS = r 
+SUBDIRS = r qtwidgets 
 
-EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png binpacking.cpp binpacking.h 
+EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop lo32-app-kbinpacking.png lo16-app-kbinpacking.png kbpprjview.cpp kbpprjview.h kbpheuristicview.cpp kbpheuristicview.h 
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/

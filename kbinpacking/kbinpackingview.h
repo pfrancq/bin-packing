@@ -1,4 +1,4 @@
-/*
+  /*
 
 	R Project Library
 
@@ -48,6 +48,14 @@
 
 
 //-----------------------------------------------------------------------------
+// Enum declaration
+/**
+* Defines all the possible type of view for a document.
+*/
+enum BPViewType{Nothing,Project,Heuristic,GA};
+
+
+//-----------------------------------------------------------------------------
 // forward class declaration
 class KBinPackingDoc;
 
@@ -89,6 +97,11 @@ public:
 	* KBinPackingApp::slotFilePrint().
 	*/
 	void print(QPrinter* pPrinter);
+
+	/**
+	* Return the type of the window.
+	*/
+	virtual BPViewType getType(void)=0;
 
 protected:
 
