@@ -62,6 +62,11 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	*/
 	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFB;
 
+	/**
+	* Temporary array of objects used for the local optimisation.
+	*/
+	cObj** tmpObjs;
+
 public:
 	
 	/**

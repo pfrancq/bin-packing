@@ -33,7 +33,7 @@
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id) throw(bad_alloc)
 		: RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
-		  HeuristicFFB(0)
+		  HeuristicFFB(0), thObjs(0)
 {
 }
 
@@ -45,6 +45,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	// Initialisation of the parent
 	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
 	HeuristicFFB=thData->HeuristicFFB;
+	thObjs=thData->tmpObjs;
 }
 
 
@@ -75,6 +76,8 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 {
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
+	bool ret;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* Hold;
 
 	// Find the less filled group and release it
 	for(Used.Start();!Used.End();Used.Next())
@@ -88,8 +91,51 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	}
 	ReleaseGroup(worst->GetId());
 
+	// Change default heuristic to FFB
+	Hold=Heuristic;
+	Heuristic=HeuristicFFB;
+
 	// Call the default mutation after it
-	return(RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation());
+	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
+	
+	// Change to default heuristic
+	Heuristic=Hold;
+
+	return(ret);
+}
+
+
+//-----------------------------------------------------------------------------
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void)
+{
+	bool bOpti;
+	unsigned int i,nbobjs;
+	unsigned int* ass;
+	cObj** obj;
+
+	// Determine all non assigned objects
+	for(i=NbObjs+1,ass=ObjectsAss,obj=Objs,nbobjs=0;--i;ass++,obj++)
+	{
+		if((*ass)==RGGA::NoGroup)
+			thObjs[nbobjs++]=(*obj);
+	}
+
+	if(!nbobjs)
+		return;
+	i=0;
+	do
+	{
+		bOpti=false;
+		// Go trough existing groups
+		for(Used.Start();!Used.End();Used.Next())
+		{
+			if(Used()->DoOptimisation(thObjs,nbobjs))
+				bOpti=true;
+		}
+	} while((bOpti)&&(++i<50));
+	if(i==50)
+		cout<<"Chromo n°"<<Id<<" at Gen n°"<<Instance->Gen<<", Optimisation overflow."<<endl;
 }
 
 

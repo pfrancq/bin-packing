@@ -148,6 +148,14 @@ public:
 	virtual void PostDelete(const cObj* obj) {Size-=obj->GetSize();}
 
 	/**
+	* Do a local optimisation by checking whether it is possible to replace up
+	* to three objects in the group by one or two objects of objs, in such a
+	* way that the total size of the group increases. If so, perform the
+	* changes in the group and in objs.
+	*/
+	bool DoOptimisation(cObj** objs,unsigned int& nbobjs);
+
+	/**
 	* Assignment operator.
 	* @param grp            The group used as source.
 	*/

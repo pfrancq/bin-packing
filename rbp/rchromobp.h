@@ -37,6 +37,7 @@
 //-----------------------------------------------------------------------------
 // includes files for ANSI C/C++
 #include <math.h>
+#include <iostream.h>
 
 
 //-----------------------------------------------------------------------------
@@ -55,10 +56,18 @@ namespace RBP{
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	class RChromoBP : public RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
 {
+protected:
+
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
 	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFB;
+
+	/**
+	* Temporary array of objects used for the local optimisation. Thread-depend
+	* data.
+	*/
+	cObj** thObjs;
 
 public:
 
@@ -91,6 +100,15 @@ public:
 	* then call the default mutation of the GGA.
 	*/
 	virtual bool Mutation(void);
+
+	/**
+	* Perform a local optimisation. This function is called by the crossover
+	* and the mutation operators just before the use of the heuristic to find
+	* a group for the objects not yet assigned.<BR>
+	* This local optimisation is the one described in the Bin Packing Crossover
+	* with remplacement (RPRX) operator.
+	*/
+	virtual void LocalOptimisation(void);
 
 	/**
 	* The assigment operator.
