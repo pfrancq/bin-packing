@@ -56,6 +56,7 @@ using namespace RBP;
 #include "kbinpackingdoc.h"
 
 
+
 //-----------------------------------------------------------------------------
 //
 // class KBPGAView
@@ -81,7 +82,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	Monitor->setMaxGen(theApp->GAMaxGen);
 	Monitor->setMaxFitness(pDoc->GetNbObjs()/2);
 	connect(this,SIGNAL(signalSetGen(const unsigned int,const unsigned int,const double)),Monitor,SLOT(slotSetGen(const unsigned int,const unsigned int,const double)));
-	Debug=new QXMLContainer(StatSplitter);
+	Debug=new QXMLContainer(StatSplitter,"KBinPacking","Pascal Francq");
 
 	// Solution part
 	Best = new QDrawGroups(TabWidget,pDoc->Objs);
