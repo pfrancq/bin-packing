@@ -201,6 +201,7 @@ public:
 	// friend classes
 	friend class KBPPrjView;
 	friend class KBPHeuristicView;
+	friend class KBPGAView;
 };
 
 

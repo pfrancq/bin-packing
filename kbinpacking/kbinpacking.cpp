@@ -40,6 +40,10 @@
 #include <qtooltip.h>
 #include <qtoolbutton.h>
 #include <qstring.h>
+#include <qworkspace.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
 
 
 //-----------------------------------------------------------------------------
@@ -60,6 +64,8 @@
 #include "kbinpackingdoc.h"
 #include "kbpprjview.h"
 #include "kbpheuristicview.h"
+#include "kbpgaview.h"
+#include "kappoptions.h"
 
 
 
@@ -83,6 +89,7 @@ KBinPackingApp::KBinPackingApp(void)
 	initView();
 	initActions();
 	readOptions();
+
 	// disable actions at startup
 	fileNew->setEnabled(false);
 	fileSave->setEnabled(false);
@@ -95,6 +102,10 @@ KBinPackingApp::KBinPackingApp(void)
 	heuristicFF->setEnabled(false);
 	heuristicRun->setEnabled(false);
 	heuristicNext->setEnabled(false);
+	GAInit->setEnabled(false);
+	GAStart->setEnabled(false);
+	GAPause->setEnabled(false);
+	GAStop->setEnabled(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -131,12 +142,20 @@ void KBinPackingApp::initActions(void)
 	heuristicRun=new KAction(i18n("&Run Heuristic"),"run",KAccel::stringToKey("Alt+R"),this,SLOT(slotHeuristicRun(void)),actionCollection(),"heuristic_run");
 	heuristicNext=new KAction(i18n("&Next step for Heuristic"),"next",KAccel::stringToKey("Alt+N"),this,SLOT(slotHeuristicNext(void)),actionCollection(),"heuristic_next");
 
+	// Menu "GA"
+	GAInit=new KAction(i18n("&Initialize"),"reload",KAccel::stringToKey("Alt+I"),this,SLOT(slotGAInit(void)),actionCollection(),"ga_init");
+	GAStart=new KAction(i18n("&Start"),"exec",KAccel::stringToKey("Alt+S"),this,SLOT(slotGAStart(void)),actionCollection(),"ga_start");
+	GAPause=new KAction(i18n("&Pause"),"player_pause",KAccel::stringToKey("Alt+P"),this,SLOT(slotGAPause(void)),actionCollection(),"ga_pause");
+	GAStop=new KAction(i18n("&Stop"),"stop",KAccel::stringToKey("Alt+T"),this,SLOT(slotGAStop(void)),actionCollection(),"ga_stop");
+
 	// Menu "View"
 	viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
 	viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()), actionCollection());
+	settingsOptions = new KAction(i18n("&Options"),"configure",0,this,SLOT(slotSettingsOptions(void)),actionCollection(),"settings_options");
 	viewToolBar->setStatusText(i18n("Enables/disables the toolbar"));
 	viewStatusBar->setStatusText(i18n("Enables/disables the statusbar"));
-
+	settingsOptions->setStatusText(i18n("Set the options"));
+	
 	// Menu "Window"
 	windowNewWindow = new KAction(i18n("New &Window"), 0, this, SLOT(slotWindowNewWindow()), actionCollection(),"window_new_window");
 	windowTile = new KAction(i18n("&Tile"), 0, this, SLOT(slotWindowTile()), actionCollection(),"window_tile");
@@ -229,6 +248,13 @@ void KBinPackingApp::saveOptions(void)
 	config->writeEntry("Show Statusbar",statusBar()->isVisible());
 	config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
 	fileOpenRecent->saveEntries(config,"Recent Files");
+	config->setGroup("Heuristic Options");
+	config->writeEntry("Step Mode",step);
+	config->setGroup("GA Options");
+	config->writeEntry("Heuristic Type",GAHeur);
+	config->writeEntry("Maximum Generation",GAMaxGen);
+	config->writeEntry("Step Generation",GAStepGen);
+	config->writeEntry("Population Size",GAPopSize);
 }
 
 
@@ -259,6 +285,15 @@ void KBinPackingApp::readOptions(void)
 	{
 		resize(size);
 	}
+
+	// Specific settings
+	config->setGroup("Heuristic Options");
+	step=config->readBoolEntry("Step Mode",false);
+	config->setGroup("GA Options");
+	GAHeur=static_cast<HeuristicType>(config->readNumEntry("Heuristic Type",FirstFit));
+	GAMaxGen=config->readUnsignedLongNumEntry("Maximum Generation",100);
+	GAStepGen=config->readUnsignedLongNumEntry("Step Generation",0);
+	GAPopSize=config->readUnsignedLongNumEntry("Population Size",16);
 }
 
 
@@ -409,6 +444,82 @@ void KBinPackingApp::slotHeuristicRun(void)
 	{
 		((KBPHeuristicView*)m)->RunToEnd();
 	}
+}
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotGAInit(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==Project))
+	{
+		KBinPackingDoc* doc = m->getDocument();
+		KBPGAView* w = new KBPGAView(doc,pWorkspace,0,WDestructiveClose);
+		w->installEventFilter(this);
+		doc->addView(w);
+		w->setIcon(kapp->miniIcon());
+		w->resize(pWorkspace->sizeHint());
+		w->show();
+		w->setFocus();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotGAStart(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==GA))
+	{
+		((KBPGAView*)m)->RunGA();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotGAPause(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==GA))
+	{
+		((KBPGAView*)m)->PauseGA();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotGAStop(void)
+{
+	KApplication::kApplication()->processEvents(1000);
+	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
+	if(m&&(m->getType()==GA))
+	{
+		((KBPGAView*)m)->StopGA();
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPackingApp::slotSettingsOptions(void)
+{
+	slotStatusMsg(i18n("Set the options..."));
+	KAppOptions dlg(this,"Options",true);
+	dlg.cbStep->setChecked(step);
+	dlg.txtMaxGen->setText(QString::number(GAMaxGen));
+	dlg.txtStepGen->setText(QString::number(GAStepGen));
+	dlg.cbGAHeuristicType->setCurrentItem(GAHeur);
+	dlg.txtPopSize->setText(QString::number(GAPopSize));
+	if(dlg.exec())
+	{
+		step=dlg.cbStep->isChecked();
+		GAMaxGen=dlg.txtMaxGen->text().toULong();
+		GAStepGen=dlg.txtStepGen->text().toULong();
+		GAHeur=static_cast<HeuristicType>(dlg.cbGAHeuristicType->currentItem());
+		GAPopSize=dlg.txtPopSize->text().toULong();
+	}
+	slotStatusMsg(i18n("Ready."));
 }
 
 
@@ -724,22 +835,22 @@ void KBinPackingApp::slotWindowActivated(QWidget*)
 				bHeuristic=false;
 				break;
 		}
-//		GAInit->setEnabled(bPrj);
+		GAInit->setEnabled(bPrj);
 		heuristicFF->setEnabled(bPrj);
-//		GAStart->setEnabled(bGA);
-//		GAPause->setEnabled(bGA);
-//		GAStop->setEnabled(bGA);
+		GAStart->setEnabled(bGA);
+		GAPause->setEnabled(bGA);
+		GAStop->setEnabled(bGA);
 		heuristicRun->setEnabled(bHeuristic);
 		heuristicNext->setEnabled(bHeuristic);
 	}
 	else
 	{
 		setCaption("");
-//		GAInit->setEnabled(false);
+		GAInit->setEnabled(false);
 		heuristicFF->setEnabled(false);
-//		GAStart->setEnabled(false);
-//		GAPause->setEnabled(false);
-//		GAStop->setEnabled(false);
+		GAStart->setEnabled(false);
+		GAPause->setEnabled(false);
+		GAStop->setEnabled(false);
 		heuristicRun->setEnabled(false);
 		heuristicNext->setEnabled(false);
 	}

@@ -57,6 +57,10 @@ static KCmdLineOptions options[] =
 
 
 //-----------------------------------------------------------------------------
+KBinPackingApp* theApp;
+
+
+//-----------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
 
@@ -68,21 +72,21 @@ int main(int argc, char *argv[])
 	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
 
 	KApplication app;
- 
+
 	if (app.isRestored())
 	{
 		RESTORE(KBinPackingApp);
 	}
 	else
 	{
-		KBinPackingApp *testmdi = new KBinPackingApp();
-		testmdi->show();
+		theApp = new KBinPackingApp();
+		theApp->show();
 		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 		if (args->count())
 		{
 			for(int i=0;i<args->count();i++)
 			{
-				testmdi->openDocumentFile(args->arg(i));
+				theApp->openDocumentFile(args->arg(i));
 			}
 		}
 		args->clear();

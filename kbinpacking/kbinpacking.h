@@ -43,9 +43,15 @@
 
 
 //-----------------------------------------------------------------------------
+// include files for R Project
+#include <rbp/rbp.h>
+using namespace RGGA;
+using namespace RBP;
+
+
+//-----------------------------------------------------------------------------
 // include files for Qt
 #include <qstrlist.h>
-#include <qworkspace.h>
 
 
 //-----------------------------------------------------------------------------
@@ -59,7 +65,7 @@
 // forward declaration of the KBinPacking classes
 class KBinPackingDoc;
 class KBinPackingView;
-
+class QWorkspace;
 
 
 //-----------------------------------------------------------------------------
@@ -106,6 +112,31 @@ class KBinPackingApp : public KMainWindow
 	* about to close the application.
 	*/
 	QList<KBinPackingDoc> *pDocList;
+
+	/**
+	* Run the heuristics in step mode.
+	*/
+	bool step;
+
+	/**
+	* Heuristic to used for the GA.
+	*/
+	HeuristicType GAHeur;
+
+	/**
+	* Maximum number of generation.
+	*/
+	unsigned int GAMaxGen;
+
+	/**
+	* Step of generation.
+	*/
+	unsigned int GAStepGen;
+
+	/**
+	* Size of the Population.
+	*/
+	unsigned int GAPopSize;
 
 public:
 
@@ -203,6 +234,31 @@ private slots:
 	* End the heuristic in once.
 	*/
 	void slotHeuristicRun(void);
+
+	/**
+	* Initialize the GA.
+	*/
+	void slotGAInit(void);
+
+	/**
+	* Start the GA.
+	*/
+	void slotGAStart(void);
+
+	/**
+	* Pause the GA.
+	*/
+	void slotGAPause(void);
+
+	/**
+	* Stop the GA.
+	*/
+	void slotGAStop(void);
+
+	/**
+	* Show the dialog box for the options.
+	*/
+	void slotSettingsOptions(void);
 
 	/**
 	* Clears the document in the actual view to reuse it as the new document.
@@ -363,6 +419,10 @@ public:
 	KAction* heuristicFF;
 	KAction* heuristicRun;
 	KAction* heuristicNext;
+	KAction* GAInit;
+	KAction* GAStart;
+	KAction* GAPause;
+	KAction* GAStop;
 	KAction* fileQuit;
 	KAction* editCut;
 	KAction* editCopy;
@@ -370,10 +430,22 @@ public:
 	KAction* windowNewWindow;
 	KAction* windowTile;
 	KAction* windowCascade;
+	KAction* settingsOptions;
 	KToggleAction* viewToolBar;
 	KToggleAction* viewStatusBar;
 	KActionMenu* windowMenu;
+
+	// friend classes
+	friend class KBPGAView;
+	friend class KBPHeuristicView;
 };
+
+
+//-----------------------------------------------------------------------------
+/**
+* Global pointer to the KMainWindow of the Application.
+*/
+extern KBinPackingApp* theApp;
 
 
 //-----------------------------------------------------------------------------

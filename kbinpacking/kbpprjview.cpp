@@ -77,7 +77,7 @@ void KBPPrjView::createPrj(void)
 	sprintf(tmp,"Objects (%u)",doc->NbObjs);
 	item = new QListViewItem(prj,item,tmp,"");
 	item2=0;
-	for(obj=doc->Objs,i=doc->NbObjs;--i;obj++)
+	for(obj=doc->Objs,i=doc->NbObjs+1;--i;obj++)
 	{
 		total+=(*obj)->GetSize();
 		sprintf(tmp,"%s (%u)",((*obj)->GetName())(),(*obj)->GetId());
