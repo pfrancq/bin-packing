@@ -31,50 +31,62 @@
 
 //-----------------------------------------------------------------------------
 //
-// RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>
+// RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>::RThreadDataG(cInst *owner) throw(bad_alloc)
-		: RGGA::RThreadDataG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>(owner)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner) throw(bad_alloc)
+		: RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
+		  HeuristicFFB(0)
 {
 }
 
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>::~RThreadDataBP(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
+	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
+	HeuristicFFB = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->NbObjs);
+}
+
+
+//-----------------------------------------------------------------------------
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RThreadDataBP(void)
+{
+	if(HeuristicFFB)
+		delete HeuristicFFB;
 }
 
 
 
 //-----------------------------------------------------------------------------
 //
-// RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>
+// RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
 //-----------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>::RInstG(unsigned int popsize,cObj** objs,unsigned int nbobjs,RDebug *debug) throw(bad_alloc)
-		: RGGA:RInstG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>(popsize,objs,nbobjs,debug)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,cObj** objs,unsigned int nbobjs,RGGA::HeuristicType h,const double max,RDebug *debug) throw(bad_alloc)
+		: RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,nbobjs,h,debug), MaxSize(max)
 {
 }
 
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	void RP::RInstP<cInst,cChromo,cThreadData,cGroup,cObj>::Init(void) throw(bad_alloc)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cGroupData* gdata) throw(bad_alloc)
 {
-	RGGA::RInstG<cInst,cChromo,FitnessBP,cThreadData>::Init();
+	RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(gdata);
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>::~RInstBP(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RInstBP(void)
 {
 }

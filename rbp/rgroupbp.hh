@@ -33,48 +33,68 @@
 
 //-----------------------------------------------------------------------------
 //
-// class RGroupBP<cInst,cChromo,cThreadData,cGroup,cObj>
+// class RGroupBP<cGroup,cOb,cGroupData>
 //
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RGroupBP<cInst,cChromo,cThreadData,cGroup,cObj>::RGroupBP(cChromo* owner,const unsigned int id,const double max)
-		: RGGA:RGroup<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>(owner,id),
-		  MaxSize(max), Size(0)
+template<class cGroup,class cObj,class cGroupData>
+	RGroupBP<cGroup,cObj,cGroupData>::RGroupBP(RGroupBP* grp)
+		: RGGA::RGroup<cGroup,cObj,cGroupData>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
+{
+}
+
+
+//-----------------------------------------------------------------------------
+template<class cGroup,class cObj,class cGroupData>
+	RGroupBP<cGroup,cObj,cGroupData>::RGroupBP(RGGA::RGroups<cGroup,cObj,cGroupData>* owner,const unsigned int id,const cGroupData* data)
+		: RGGA::RGroup<cGroup,cObj,cGroupData>(owner,id,data), Size(0.0), MaxSize(data->MaxSize)
 {
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	bool RBP::RGroupBP<cInst,cChromo,cThreadData,cGroup,cObj>::Verify(void)
+template<class cGroup,class cObj,class cGroupData>
+	bool RGroupBP<cGroup,cObj,cGroupData>::Verify(void)
 {
-	if(!RGGA::RGroup<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>::Verify())
+	if(!RGGA::RGroup<cGroup,cObj,cGroupData>::Verify())
 		return(false);
-	return(Size<=MaxSize);
-}
-
-
-//---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cFit,class cThreadData,class cGroup,class cObj>
-	bool RGGA::RGroup<cInst,cChromo,cFit,cThreadData,cGroup,cObj>::IsSameObjs(const RGroup* /*grp*/) const
-{
+	if(Size>MaxSize)
+		return(false);
 	return(true);
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cFit,class cThreadData,class cGroup,class cObj>
-	RGGA::RGroup<cInst,cChromo,cFit,cThreadData,cGroup,cObj>& RGGA::RGroup<cInst,cChromo,cFit,cThreadData,cGroup,cObj>::operator=(const RGroup<cInst,cChromo,cFit,cThreadData,cGroup,cObj>& grp)
+template<class cGroup,class cObj,class cGroupData>
+	void RGroupBP<cGroup,cObj,cGroupData>::Clear(void)
+{
+	RGGA::RGroup<cGroup,cObj,cGroupData>::Clear();
+	Size=0.0;
+}
+
+//---------------------------------------------------------------------------
+template<class cGroup,class cObj,class cGroupData>
+	bool RGroupBP<cGroup,cObj,cGroupData>::CanInsert(const cObj* obj)
+{
+	return(Size+obj->GetSize()<=MaxSize);
+}
+
+
+//---------------------------------------------------------------------------
+template<class cGroup,class cObj,class cGroupData>
+	RGroupBP<cGroup,cObj,cGroupData>& RGroupBP<cGroup,cObj,cGroupData>::operator=(const RGroupBP<cGroup,cObj,cGroupData>& grp)
 
 {
+	RGGA::RGroup<cGroup,cObj,cGroupData>::operator=(grp);
+	MaxSize=grp.MaxSize;
+	Size=grp.Size;
 	return(*this);
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cFit,class cThreadData,class cGroup,class cObj>
-	RGGA::RGroup<cInst,cChromo,cFit,cThreadData,cGroup,cObj>::~RGroup(void)
+template<class cGroup,class cObj,class cGroupData>
+	RGroupBP<cGroup,cObj,cGroupData>::~RGroupBP(void)
 {
 }

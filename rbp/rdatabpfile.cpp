@@ -78,7 +78,7 @@ void RBP::RDataBPFile::Load(char* name)
 	{
 		// Read number objects info
 		NbObjs=tag->NbPtr;
-		Objs=new RObjBP*[NbObjs];	
+		Objs=new RObjBP*[NbObjs];
 		
 		// Read each objects	
 		for(i=0,tab=tag->Tab,obj=Objs;i<tag->NbPtr;i++,tab++,obj++)

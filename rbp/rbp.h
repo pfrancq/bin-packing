@@ -42,8 +42,26 @@
 
 
 //-----------------------------------------------------------------------------
+/**
+* \namespace RBP
+* \brief Generic Algorithm Classes for the Bin Packing Problem.
+*
+* This namespace declares classes to resolve the Bin Packing Problem.
+*/
+
+
+//-----------------------------------------------------------------------------
 namespace RBP{
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+// Forward class declaration
+class RObjBP;
+template<class cGroup,class cObj,class cGroupData> class RGroupBP;
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RThreadDataBP;
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RChromoBP;
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RInstBP;
 
 
 //-----------------------------------------------------------------------------
@@ -53,16 +71,33 @@ namespace RBP{
 * @author Pascal Francq
 * @short Bin Packing Fitness.
 */
-class RFitnessBP : public RGA::RFitness<unsigned int,false>
+class RFitnessBP : public RGA::RFitness<double,true>
 {
 public:
-	RFitnessBP(void) : RGA::RFitness<unsigned int,false>() {}
+
+	/**
+	* Constructor of the fitness function used for the Bin Packing.
+	*/
+	RFitnessBP(void) : RGA::RFitness<double,true>() {}
+
+	/**
+	* Assignment operator with a fitness f.
+	*/
+	RFitnessBP& operator=(const RFitnessBP &f)
+	{
+		RFitness<double,true>::operator=(f);
+		return(*this);
+	}
+
+	/**
+	* Assignment operator with a double value.
+	*/
+	RFitnessBP& operator=(const double val)
+	{
+		RFitness<double,true>::operator=(val);
+		return(*this);
+	}
 };
-
-
-//-----------------------------------------------------------------------------
-// Heuristic Types
-enum HeuristicType{FirstFit=0};
 
 
 }  //------- End of namespace RBP ---------------------------------------------

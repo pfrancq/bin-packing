@@ -35,12 +35,43 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
+#include <rbp/rbp.h>
 #include <rbp/robjbp.h>
+#include <rbp/rgroupbp.h>
 
 
 //-----------------------------------------------------------------------------
 namespace RBP{
 //-----------------------------------------------------------------------------
+
+
+//-----------------------------------------------------------------------------
+// forward class declaration
+class RFChromoBP;
+class RFInstBP;
+class RFThreadDataBP;
+
+
+//-----------------------------------------------------------------------------
+class RFGroupBP : public RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>
+{
+public:
+	/**
+	* Construct the group.
+	* @param owner          Owner of the group.
+	* @param id             Identificator of the group.
+	* @param data           Data for the group.
+	*/
+	RFGroupBP(RGGA::RGroups<RFGroupBP,RObjBP,RGroupDataBP>* owner,const unsigned int id,RGroupDataBP* data)
+		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>(owner,id,data) {}
+
+	/**
+	* Construct the group.
+	* @param grp            Group used as source.
+	*/
+	RFGroupBP(RFGroupBP* grp)
+		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP>(grp) {}
+};
 
 
 //-----------------------------------------------------------------------------

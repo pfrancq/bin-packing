@@ -35,9 +35,15 @@
 
 
 //-----------------------------------------------------------------------------
+// includes files for ANSI C/C++
+#include <math.h>
+
+
+//-----------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rchromog.h>
 #include <rbp/rbp.h>
+#include <rgga/rgroupingheuristic.h>
 
 
 //-----------------------------------------------------------------------------
@@ -46,9 +52,14 @@ namespace RBP{
 
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	class RChromoBP : public RGGA::RChromoG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	class RChromoBP : public RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
 {
+	/**
+	* FFB Heuristic used for the crossover.
+	*/
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* HeuristicFFB;
+
 public:
 
 	/**
@@ -66,19 +77,44 @@ public:
 	virtual void Init(cThreadData *thData) throw(bad_alloc);
 
 	/**
+	* Do a crossover by using the chromosome as child. The crossover select
+	* first a first fit descending heuristic, and call then the default
+	* crossover of the GGA.
+	* @param parent1        First parent used.
+	* @param parent2        Second parent used.
+	* @return The function must return true if the crossover has been done.
+	*/
+	virtual bool Crossover(cChromo* parent1,cChromo* parent2);
+
+	/**
+	* Do a mutation of the chromosome, by destroy the less filled group and
+	* then call the default mutation of the GGA.
+	*/
+	virtual bool Mutation(void);
+
+	/**
 	* The assigment operator.
 	* @param chromo         The chromosome used as source.
 	*/
 	RChromoBP& operator=(const RChromoBP& chromo);
 
 	/**
+	* Evaluate the fitness of the chromosome.
+	*/
+	virtual void Evaluate(void);
+
+	/**
 	* Destruct the chromosome.
 	*/
 	virtual ~RChromoBP(void);
 
-	friend class RInstBP<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>;
-	friend class RGroupBP<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>;
+	friend class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>;
 };
+
+
+//-----------------------------------------------------------------------------
+// inline implementation
+#include <rbp/rchromobp.hh>
 
 
 }//------- End of namespace RBP -----------------------------------------------

@@ -73,7 +73,7 @@ public:
 	/**
 	* Return the size of the object.
 	*/
-	double GetSize(void) {return(Size);}
+	double GetSize(void) const {return(Size);}
 
 	/**
 	* Destruct the object.

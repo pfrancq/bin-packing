@@ -30,33 +30,92 @@
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj>::RChromoBP(cInst *inst,unsigned id) throw(bad_alloc)
-		: RGGA::RChromoG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>(inst,id)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id) throw(bad_alloc)
+		: RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
+		  HeuristicFFB(0)
 {
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	void RBP::RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj>::Init(cThreadData *thData) throw(bad_alloc)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cThreadData *thData) throw(bad_alloc)
 {
 	// Initialisation of the parent
-	RGGA::RChromoG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>::Init(thData);
+	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
+	HeuristicFFB=thData->HeuristicFFB;
 }
 
 
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj>& RGGA::RChromoG<cInst,cChromo,cFit,cThreadData,cGroup,cObj>::operator=(const RChromoG& chromo)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	bool RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2)
 {
-  RGGA::RChromoG<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>::operator=(chromo);
+	bool ret;
+	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData>* Hold;
+
+	// Change default heuristic to FFB
+	Hold=Heuristic;
+	Heuristic=HeuristicFFB;
+
+	// Call the default crossover
+	ret=RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
+
+	// Change to default heuristic
+	Heuristic=Hold;
+
+	return(ret);
+}
+
+
+//---------------------------------------------------------------------------
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	bool RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void)
+{
+	double worstratio=1.1,actratio;
+	cGroup* worst=0;
+
+	// Find the less filled group and release it
+	for(Used.Start();!Used.End();Used.Next())
+	{
+		actratio=Used()->GetMaxSize()/Used()->GetSize();
+		if(actratio<worstratio)
+		{
+			worstratio=actratio;
+			worst=Used();
+		}
+	}
+	ReleaseGroup(worst->GetId());
+
+	// Call the default mutation after it
+	return(RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation());
+}
+
+
+//---------------------------------------------------------------------------
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>& RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::operator=(const RChromoBP& chromo)
+{
+  RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::operator=(chromo);
   return(*this);
 }
 
 
+//-----------------------------------------------------------------------------
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void)
+{
+	double sum=0.0;
+
+	for(Used.Start();!Used.End();Used.Next())
+		sum+=pow(((double)Used()->GetSize())/((double)Used()->GetMaxSize()),2);
+	(*Fitness)=sum/((double)Used.NbPtr);
+}
+
+
 //---------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	RBP::RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj>::~RChromoBP(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
+	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RChromoBP(void)
 {
 }

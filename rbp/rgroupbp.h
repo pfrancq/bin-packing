@@ -32,14 +32,13 @@
 
 
 //-----------------------------------------------------------------------------
-#ifndef RGroupH
-#define RGroupH
+#ifndef RGroupBPH
+#define RGroupBPH
 
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rgga/rgroup.h>
-#include <rbp/rbp.h>
+#include <rgga/rgroups.h>
 
 
 //-----------------------------------------------------------------------------
@@ -48,9 +47,41 @@ namespace RBP{
 
 
 //-----------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
-	class RGroupBP : public RGGA:RGroup<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>
+/**
+* The RGroupDataBP provides a representation of the information needed to
+* construct a group in the Bin Packing Problem.
+* @author Pascal Francq
+* @short Data for Bin Packing Group.
+*/
+class RGroupDataBP
 {
+public:
+
+	/**
+	* Maximum size of the groups.
+	*/
+	double MaxSize;
+
+	/**
+	* Constructor of the group data.
+	* @param m              Maximum size of the groups.
+	*/
+	RGroupDataBP(const double m) : MaxSize(m) {}
+};
+
+
+//-----------------------------------------------------------------------------
+/**
+* The RGroupBP provides a representation for a group for the Bin Packing
+* Problem.
+* @author Pascal Francq
+* @short Bin Packing Group.
+*/
+template<class cGroup,class cObj,class cGroupData>
+	class RGroupBP : public RGGA::RGroup<cGroup,cObj,cGroupData>
+{
+protected:
+
 	/**
 	* The size of the group.
 	*/
@@ -65,35 +96,56 @@ public:
 
 	/**
 	* Construct the group.
+	* @param grp            Group used as source.
+	*/
+	RGroupBP(RGroupBP* grp);
+
+	/**
+	* Construct the group.
 	* @param owner          Owner of the group.
 	* @param id             Identificator of the group.
-	* @param max            Maximum size of the group.
+	* @param data           Data needed for the group.
 	*/
-	RGroupBP(cChromo* owner,const unsigned int id,const double max);
+	RGroupBP(RGGA::RGroups<cGroup,cObj,cGroupData>* owner,const unsigned int id,const cGroupData* data);
 
 	/**
 	* Verify if the group is not violating the integrity of the system.
 	* @return true if the group is correct, false else.
 	*/
-	bool Verify(void);
+	virtual bool Verify(void);
 
 	/**
-	* Compare two groups.
-	* @returns always true.
+	* Clear the information container in a group.
 	*/
-	bool IsSameObjs(const RGroup* grp) const;
+	virtual void Clear(void);
 
 	/**
 	* Look if an object can be insert in the group.
 	* @param obj            Pointer to the object to insert.
 	*/
-	bool CanInsert(const cObj* obj);
+	virtual bool CanInsert(const cObj* obj);
 
 	/**
-	* Look if an object can be delete from the group.
+	* Return the actual size of the group.
+	*/
+	double GetSize(void) {return(Size);}
+
+	/**
+	* Return the maximal size of the group.
+	*/
+	double GetMaxSize(void) {return(MaxSize);}
+
+	/**
+	* Method call after an object was inserted in the group.
+	* @param obj            Pointer to the object to insert.
+	*/
+	virtual void PostInsert(const cObj* obj) {Size+=obj->GetSize();}
+
+	/**
+	* Method call after an object was deleted from the group.
 	* @param obj            Pointer to the object to delete.
 	*/
-	bool CanDelete(const cObj* obj);
+	virtual void PostDelete(const cObj* obj) {Size-=obj->GetSize();}
 
 	/**
 	* Assignment operator.
@@ -105,9 +157,12 @@ public:
     * Destruct the group.
     */
 	virtual ~RGroupBP(void);
-	
-	friend class RChromoBP<cInst,cChromo,FitnessBP,cThreadData,cGroup,cObj>;
 };
+
+
+//-----------------------------------------------------------------------------
+// inline implementation
+#include <rbp/rgroupbp.hh>
 
 
 }  //------- End of namespace RBP ---------------------------------------------
