@@ -83,7 +83,7 @@ public:
 	/**
 	* Compare two objects. This function is needed by RObjs.
 	*/
-	int Compare(const RObjBP *o) {return(Id-o->Id);}
+	int Compare(const RObjBP& o) const {return(Id-o.Id);}
 
 	/**
 	* Destruct the object.
