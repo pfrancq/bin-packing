@@ -11,8 +11,8 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <version></version>
-    <description></description>
+    <version/>
+    <description/>
     <ignoreparts/>
   </general>
   <kdevautoproject>
@@ -27,7 +27,7 @@
       <abortonerror>false</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <envvars>
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
@@ -39,7 +39,7 @@
     </compiler>
     <configurations>
       <default>
-        <configargs>--prefix=/usr --enable-debug</configargs>
+        <configargs>--prefix=/usr --enable-debug=full</configargs>
         <builddir/>
         <topsourcedir/>
         <cppflags/>
@@ -57,9 +57,10 @@
     </configurations>
     <run>
       <mainprogram>./kbinpacking/kbinpacking</mainprogram>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <envvars/>
+      <autocompile>true</autocompile>
     </run>
   </kdevautoproject>
   <kdevfileview>
@@ -106,11 +107,12 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
+      <programargs/>
+      <gdbpath/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
+      <runappinappdirectory>true</runappinappdirectory>
     </general>
     <display>
       <staticmembers>false</staticmembers>
@@ -125,8 +127,8 @@
     <codecompletion/>
     <filetemplates>
       <choosefiles>false</choosefiles>
-      <interfaceURL></interfaceURL>
-      <implementationURL></implementationURL>
+      <interfaceURL/>
+      <implementationURL/>
       <interfacesuffix>.h</interfacesuffix>
       <implementationsuffix>.cpp</implementationsuffix>
       <lowercasefilenames>true</lowercasefilenames>
@@ -145,5 +147,18 @@
     <diffoptions>-u3 -p</diffoptions>
     <logoptions></logoptions>
     <rshoptions></rshoptions>
+    <revertoptions>-C -d -P</revertoptions>
   </kdevcvs>
+  <kdevcppsupport>
+    <codecompletion>
+      <includeGlobalFunctions>true</includeGlobalFunctions>
+      <includeTypes>true</includeTypes>
+      <includeEnums>true</includeEnums>
+      <includeTypedefs>false</includeTypedefs>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <codeCompletionDelay>250</codeCompletionDelay>
+      <argumentsHintDelay>400</argumentsHintDelay>
+    </codecompletion>
+  </kdevcppsupport>
 </kdevelop>
