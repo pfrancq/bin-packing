@@ -2,11 +2,14 @@
 
 	R Project Library
 
-	rbp.cpp
+	RBP.cpp
 
 	GA for the Bin Packing Problem - Implementation.
 
-	(C) 2001 by Pascal Francq
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,6 +34,6 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // includes files for R Project
 #include <rbp/rbp.h>

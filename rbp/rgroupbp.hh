@@ -6,7 +6,10 @@
 
 	GA Node - Header.
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,53 +34,53 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // class RGroupBP<cGroup,cObj,cGroupData,cChromo>
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(RGroupBP* grp)
-		: RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
+		: RGroup<cGroup,cObj,cGroupData,cChromo>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
 {
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(cChromo* owner,const unsigned int id,const cGroupData* data)
-		: RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>(owner,id,data), Size(0), MaxSize(data->MaxSize)
+		: RGroup<cGroup,cObj,cGroupData,cChromo>(owner,id,data), Size(0), MaxSize(data->MaxSize)
 {
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void) throw(RGA::eGA)
+	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void) throw(eGA)
 {
 	char tmp[200];
 
-	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Verify();
+	RGroup<cGroup,cObj,cGroupData,cChromo>::Verify();
 	if(Size>MaxSize)
 	{
 		sprintf(tmp,"Size(%u) > MaxSize(%u) for group %u",Size,MaxSize,Id);
-		throw RGA::eGAVerify(tmp);
+		throw eGAVerify(tmp);
 	}
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Clear(void)
 {
-	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::Clear();
+	RGroup<cGroup,cObj,cGroupData,cChromo>::Clear();
 	Size=0;
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::CanInsert(const cObj* obj) const
 {
@@ -85,7 +88,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size)
 {
@@ -189,9 +192,9 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(RGA::eGA)
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(eGA)
 {
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.
@@ -209,7 +212,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 	// Init Part
 	add[0]=add[1]=del[0]=del[1]=del[2]=0;   // No objs added or deleted
-	idx[0]=idx[1]=RGGA::NoObject;
+	idx[0]=idx[1]=NoObject;
 	nbdel=nbadd=0;
 
 	// Try to add two objects
@@ -281,12 +284,11 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
 	RGroupBP<cGroup,cObj,cGroupData,cChromo>& RGroupBP<cGroup,cObj,cGroupData,cChromo>::operator=(const RGroupBP<cGroup,cObj,cGroupData,cChromo>& grp)
-
 {
-	RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>::operator=(grp);
+	RGroup<cGroup,cObj,cGroupData,cChromo>::operator=(grp);
 	MaxSize=grp.MaxSize;
 	Size=grp.Size;
 	return(*this);

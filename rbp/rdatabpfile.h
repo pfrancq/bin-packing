@@ -42,7 +42,7 @@
 
 
 //-----------------------------------------------------------------------------
-namespace RBP{
+namespace R{
 //-----------------------------------------------------------------------------
 
 
@@ -87,12 +87,12 @@ protected:
 	/**
 	* Objects.
 	*/
-	RGA::RObjs<RObjBP>* Objs;
+	RObjs<RObjBP>* Objs;
 
 	/**
 	* Cursor on the Objects.
 	*/
-	RStd::RCursor<RObjBP,unsigned int> ObjsCursor;
+	RCursor<RObjBP,unsigned int> ObjsCursor;
 
 	/**
 	* Maximal size for the groups.

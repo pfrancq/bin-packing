@@ -4,9 +4,12 @@
 
 	RFChromoBP.cpp
 
-		Final Chromosome for Bin Packing Problem - Implementation
+	Final Chromosome for Bin Packing Problem - Implementation
 
-	(C) 1999-2001 by P. Francq.
+	Copyright 1999-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,21 +34,21 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rbp/rfchromobp.h>
 #include <rbp/rfinstbp.h>
-using namespace RBP;
+using namespace R;
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // RFChromoBP
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 RFChromoBP::RFChromoBP(RFInstBP* inst,unsigned int id) throw(bad_alloc)
   : RChromoBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(inst,id)
 {

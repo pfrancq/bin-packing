@@ -6,7 +6,10 @@
 
 	GA for the Bin Packing Problem - Header.
 
-	(C) 2001 by Pascal Francq
+	Copyright 2001-2003 by the Université Libre de Bruxelles
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be)
 
 	Version $Revision$
 
@@ -30,18 +33,18 @@
 */
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef RBPH
 #define RBPH
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // includes files for R Project
 #include <rga/rfitness.h>
 #include <rgga/rgga.h>
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * \namespace RBP
 * \brief Generic Algorithm Classes for the Bin Packing Problem.
@@ -50,12 +53,12 @@
 */
 
 
-//-----------------------------------------------------------------------------
-namespace RBP{
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace R{
+//------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Forward class declaration
 class RObjBP;
 template<class cGroup,class cObj,class cGroupData,class cChromo> class RGroupBP;
@@ -64,28 +67,28 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData> class RInstBP;
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * The RFitnessBP provides a representation for a fitness function for the bin
 * packing problem.
 * @author Pascal Francq
 * @short Bin Packing Fitness.
 */
-class RFitnessBP : public RGA::RFitness<double,true>
+class RFitnessBP : public RFitness<double,true>
 {
 public:
 
 	/**
 	* Constructor of the fitness function used for the Bin Packing.
 	*/
-	RFitnessBP(void) : RGA::RFitness<double,true>() {}
+	RFitnessBP(void) : RFitness<double,true>() {}
 
 	/**
 	* Assignment operator with a fitness f.
 	*/
 	RFitnessBP& operator=(const RFitnessBP &f)
 	{
-		RGA::RFitness<double,true>::operator=(f);
+		RFitness<double,true>::operator=(f);
 		return(*this);
 	}
 
@@ -94,14 +97,14 @@ public:
 	*/
 	RFitnessBP& operator=(const double val)
 	{
-		RGA::RFitness<double,true>::operator=(val);
+		RFitness<double,true>::operator=(val);
 		return(*this);
 	}
 };
 
 
-}  //------- End of namespace RBP ---------------------------------------------
+}  //------- End of namespace R ------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

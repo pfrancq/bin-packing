@@ -6,7 +6,10 @@
 
 	Generic Heuristic for Grouping - Header
 
-	(C) 1998-2001 by P. Francq.
+	Copyright 1998-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,29 +34,29 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef RFirstFitDesHeuristicH
 #define RFirstFitDesHeuristicH
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rfirstfitheuristic.h>
 
 
-//-----------------------------------------------------------------------------
-namespace RBP{
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace R{
+//------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * The RFitstFitDesHeuristic class provides a first fit descending heuristic.
 * @author Pascal Francq
 * @short First Fit Descending Heuristic.
 */
 template<class cGroup,class cObj,class cGroupData,class cGroups>
-	class RFirstFitDesHeuristic : public RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>
+	class RFirstFitDesHeuristic : public RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>
 {
 public:
 
@@ -79,7 +82,7 @@ public:
 	* @param r              The random genrator to use.
 	* @param objs           Pointer to the objects.
 	*/
-	RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs);
+	RFirstFitDesHeuristic(RRandom* r,RCursor<cObj,unsigned int>* objs);
 
 	/**
 	* Initialize the heuristic.
@@ -94,13 +97,13 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Definitions of templates
 #include <rbp/rfirstfitdesheuristic.hh>
 
 
-}  //------- End of namespace RBP ---------------------------------------------
+}  //------- End of namespace R ------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

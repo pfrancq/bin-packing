@@ -4,7 +4,10 @@
 
 	Class representing an instance of a HGA - Implementation
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -29,33 +32,33 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // class RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner) throw(bad_alloc)
-		: RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
+		: RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
 		  HeuristicFFD(0), tmpObjs(0)
 {
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(bad_alloc)
 {
-	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
+	RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
 	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(Owner->Random,Owner->Objs);
 	tmpObjs=new cObj*[Owner->Objs->GetNb()];
 	tmpObjs2=new cObj*[Owner->Objs->GetNb()];
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RThreadDataBP(void)
 {
@@ -69,29 +72,29 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RGA::RDebug *debug) throw(bad_alloc)
-		: RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,debug), MaxSize(max)
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug) throw(bad_alloc)
+		: RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,debug), MaxSize(max)
 {
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cGroupData* gdata) throw(bad_alloc)
 {
-	RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(gdata);
+	RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(gdata);
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RInstBP(void)
 {

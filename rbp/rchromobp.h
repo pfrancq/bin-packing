@@ -4,7 +4,10 @@
 
 	Class representing a chromosome of a GGA - Header
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -29,39 +32,39 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef RChromoBPH
 #define RChromoBPH
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // includes files for ANSI C/C++
 #include <math.h>
-#include <iostream.h>
+#include <iostream>
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rchromog.h>
 #include <rbp/rbp.h>
 #include <rbp/rfirstfitdesheuristic.h>
 
 
-//-----------------------------------------------------------------------------
-namespace RBP{
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace R{
+//------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	class RChromoBP : public RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
+	class RChromoBP : public RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
 {
 protected:
 
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
+	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
 
 	/**
 	* Temporary array of objects used for the local optimisation. Thread-depend
@@ -98,13 +101,13 @@ public:
 	* @param parent1        First parent used.
 	* @param parent2        Second parent used.
 	*/
-	virtual void Crossover(cChromo* parent1,cChromo* parent2) throw(RGA::eGA);
+	virtual void Crossover(cChromo* parent1,cChromo* parent2) throw(eGA);
 
 	/**
 	* Do a mutation of the chromosome, by destroy the less filled group and
 	* then call the default mutation of the GGA.
 	*/
-	virtual void Mutation(void) throw(RGA::eGA);
+	virtual void Mutation(void) throw(eGA);
 
 	/**
 	* Perform a local optimisation. This function is called by the crossover
@@ -113,7 +116,7 @@ public:
 	* This local optimisation is the one described in the Bin Packing Crossover
 	* with remplacement (RPRX) operator.
 	*/
-	virtual void LocalOptimisation(void) throw(RGA::eGA);
+	virtual void LocalOptimisation(void) throw(eGA);
 
 	/**
 	* The assigment operator.
@@ -124,7 +127,7 @@ public:
 	/**
 	* Evaluate the fitness of the chromosome.
 	*/
-	virtual void Evaluate(void) throw(RGA::eGA);
+	virtual void Evaluate(void) throw(eGA);
 
 	/**
 	* Destruct the chromosome.
@@ -136,13 +139,13 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // inline implementation
 #include <rbp/rchromobp.hh>
 
 
-}//------- End of namespace RBP -----------------------------------------------
+}//------- End of namespace R --------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

@@ -6,7 +6,10 @@
 
 	Instance of the Bin Packing Problem - Header
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,36 +34,36 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef RInstBPH
 #define RInstBPH
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rinstg.h>
 #include <rbp/rbp.h>
 #include <rbp/rfirstfitdesheuristic.h>
 
 
-//-----------------------------------------------------------------------------
-namespace RBP{
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace R{
+//------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * This class represent "thread-dependent" data for the Bin Packing Problem.
 * @author Pascal Francq
 * @short BP "thread-dependent" Data.
 */
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	class RThreadDataBP : public RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
+	class RThreadDataBP : public RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
 {
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
+	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
 
 	/**
 	* Temporary array of objects used for the local optimisation.
@@ -73,7 +76,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	cObj** tmpObjs2;
 
 public:
-	
+
 	/**
 	* Construct the data.
 	* @param data           Owner of the data.
@@ -89,14 +92,14 @@ public:
 	* Destruct the data.
 	*/
 	virtual ~RThreadDataBP(void);
-	
+
 	friend class RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>;
 };
 
 
 //-----------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	class RInstBP : public RGGA::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
+	class RInstBP : public RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
 {
 protected:
 
@@ -115,7 +118,7 @@ public:
 	* @param max            Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RGA::RDebug *debug=0) throw(bad_alloc);
+	RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug=0) throw(bad_alloc);
 
 	/**
 	* Initialisation of the instance.
@@ -134,13 +137,13 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // inline implementation
 #include <rbp/rinstbp.hh>
 
 
-}//------- End of namespace RBP -----------------------------------------------
+}//------- End of namespace R --------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

@@ -1,68 +1,67 @@
 /*
 
-  rdata2dfile.cpp
+	R Project Library
 
-  Description - Implementation.
+	RDataBPFile.cpp
 
-  (c) 2000 by P. Francq.
+	XML representing a bin packing problem - Implementation.
 
-  Version $Revision$
+	Copyright 2000-2003 by the Université Libre de Bruxelles.
 
-  Last Modify: $Date$
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  any later version.
+	Version $Revision$
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	Last Modify: $Date$
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for ANSI C/C++
 #include <stdlib.h>
 
 
-//-----------------------------------------------------------------------------
-// include files for Rainbow
-#include <rxml/rxmlstruct.h>
-#include <rxml/rxmlfile.h>
-using namespace RXML;
-
-
-//-----------------------------------------------------------------------------
-// include files for current project
+//------------------------------------------------------------------------------
+// include files for R Project
+#include <rstd/rxmlstruct.h>
+#include <rstd/rxmlfile.h>
 #include <rbp/rdatabpfile.h>
-using namespace RBP;
-using namespace RGA;
+using namespace R;
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // class RDataBPFile
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-RBP::RDataBPFile::RDataBPFile(void)
+//------------------------------------------------------------------------------
+RDataBPFile::RDataBPFile(void)
 	: Objs(0), MaxSize(0)
 {
 }
 
 
-//-----------------------------------------------------------------------------
-void RBP::RDataBPFile::Load(char* name)
+//------------------------------------------------------------------------------
+void RDataBPFile::Load(char* name)
 {
 	RXMLStruct s;
 	RXMLFile f(name,&s);
@@ -98,8 +97,8 @@ void RBP::RDataBPFile::Load(char* name)
 }
 
 
-//-----------------------------------------------------------------------------
-void RBP::RDataBPFile::Clear(void)
+//------------------------------------------------------------------------------
+void RDataBPFile::Clear(void)
 {
 	if(Objs)
 	{
@@ -110,8 +109,8 @@ void RBP::RDataBPFile::Clear(void)
 }
 
 
-//-----------------------------------------------------------------------------
-RBP::RDataBPFile::~RDataBPFile(void)
+//------------------------------------------------------------------------------
+RDataBPFile::~RDataBPFile(void)
 {
 	Clear();
 }

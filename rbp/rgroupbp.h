@@ -6,7 +6,10 @@
 
 	Group of a GGA - Header.
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,28 +34,28 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef RGroupBPH
 #define RGroupBPH
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for ANSI C/C++
 #include <math.h>
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rgga/rgroups.h>
 #include <rbp/rfirstfitdesheuristic.h>
 
 
-//-----------------------------------------------------------------------------
-namespace RBP{
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace R{
+//------------------------------------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * The RGroupDataBP provides a representation of the information needed to
 * construct a group in the Bin Packing Problem.
@@ -76,7 +79,7 @@ public:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /**
 * The RGroupBP provides a representation for a group for the Bin Packing
 * Problem.
@@ -84,7 +87,7 @@ public:
 * @short Bin Packing Group.
 */
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	class RGroupBP : public RGGA::RGroup<cGroup,cObj,cGroupData,cChromo>
+	class RGroupBP : public RGroup<cGroup,cObj,cGroupData,cChromo>
 {
 protected:
 
@@ -117,7 +120,7 @@ public:
 	/**
 	* Verify if the group is not violating the integrity of the system.
 	*/
-	virtual void Verify(void) throw(RGA::eGA);
+	virtual void Verify(void) throw(eGA);
 
 	/**
 	* Clear the information container in a group.
@@ -159,7 +162,7 @@ public:
 	* changes in the group and in objs.
 	* @return true if at least one exchange has been done.
 	*/
-	bool DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(RGA::eGA);
+	bool DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(eGA);
 
 	/**
 	* Assignment operator.
@@ -182,13 +185,13 @@ protected:
 };
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // inline implementation
 #include <rbp/rgroupbp.hh>
 
 
-}  //------- End of namespace RBP ---------------------------------------------
+}  //------- End of namespace R ------------------------------------------------
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif

@@ -6,7 +6,10 @@
 
 	Generic Heuristic for Grouping - Inline Implemenation
 
-	(C) 1998-2001 by By P. Francq.
+	Copyright 1998-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.Be).
 
 	Version $Revision$
 
@@ -31,22 +34,22 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // class RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cGroups>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs)
-	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs)
+	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RCursor<cObj,unsigned int>* objs)
+	: RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs)
 {
 	Name="First-Fit Descending Heuristic";
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cGroups>
 	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::sort_function_cObjs( const void *a, const void *b)
 {
@@ -57,7 +60,7 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cGroups>
 	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::sortdes_function_cObjs( const void *a, const void *b)
 {
@@ -68,18 +71,18 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cGroups>
 	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(cGroups* groups)
 {
-	RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(groups);
+	RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(groups);
 
 	// Order by size descending
 	qsort(static_cast<void*>(Order),NbObjs,sizeof(cObj*),sortdes_function_cObjs);
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cGroups>
 	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::~RFirstFitDesHeuristic(void)
 {

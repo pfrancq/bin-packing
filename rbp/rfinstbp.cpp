@@ -6,7 +6,10 @@
 
 	Final Instance for Bin Packing Problem - Implementation
 
-	(C) 1999-2001 by P. Francq.
+	Copyright 1999-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -31,24 +34,22 @@
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // include files for R Project
 #include <rbp/rdatabpfile.h>
 #include <rbp/rfinstbp.h>
 #include <rbp/rfchromobp.h>
-using namespace RBP;
-using namespace RGA;
-using namespace RGGA;
+using namespace R;
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // RFThreadDataBP
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 RFThreadDataBP::RFThreadDataBP(RFInstBP* owner)
 	: RThreadDataBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(owner)
 {
@@ -56,21 +57,21 @@ RFThreadDataBP::RFThreadDataBP(RFInstBP* owner)
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //
 // RFInstBP
 //
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RGA::RObjs<RObjBP>* objs,RGGA::HeuristicType h,const double maxv,RDebug *debug) throw(bad_alloc)
+//------------------------------------------------------------------------------
+RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug) throw(bad_alloc)
 	: RInstBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(popsize,objs,h,maxv,debug),
 		MaxGen(max)
 {
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool RFInstBP::StopCondition(void)
 {
 	return(Gen==MaxGen);

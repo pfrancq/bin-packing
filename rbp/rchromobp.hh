@@ -4,7 +4,10 @@
 
 	Class representing a chromosome for a GGA - Inline implementation
 
-	(C) 2001 by P. Francq.
+	Copyright 2001-2003 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	Version $Revision$
 
@@ -29,21 +32,21 @@
 
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id) throw(bad_alloc)
-		: RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
+		: RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
 		  HeuristicFFD(0), thObjs(0)
 {
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cThreadData *thData) throw(bad_alloc)
 {
 	// Initialisation of the parent
-	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
+	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
 	HeuristicFFD=thData->HeuristicFFD;
 	thObjs=thData->tmpObjs;
 	thObjs2=thData->tmpObjs2;
@@ -51,31 +54,31 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2) throw(RGA::eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2) throw(eGA)
 {
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
+	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Change default heuristic to FFB
 	Hold=Heuristic;
 	Heuristic=HeuristicFFD;
 
 	// Call the default crossover
-	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
+	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
 
 	// Change to default heuristic
 	Heuristic=Hold;
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void) throw(RGA::eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void) throw(eGA)
 {
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
-	RGGA::RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
+	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Find the less filled group and release it
 	for(Used.Start();!Used.End();Used.Next())
@@ -94,25 +97,16 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	Heuristic=HeuristicFFD;
 
 	// Call the default mutation after it
-	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
+	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
 
 	// Change to default heuristic
 	Heuristic=Hold;
 }
 
-//-----------------------------------------------------------------------------
-//template<class cInst,class cChromo,class cFit,class cThreadData>
-//	int RInst<cInst,cChromo,cFit,cThreadData>::sort_function_Objs(const void* a,const void* b)
-//{
-//	RObjBP* ao=(*(static_cast<RObjBP**>(a)));
-//	RObjBP* bo=(*(static_cast<RObjBP**>(b)));
-//
-//	return(ao->GetSize()-bo->GetSize());
-//}
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void) throw(RGA::eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void) throw(eGA)
 {
 	bool bOpti;
 	unsigned int nbobjs;
@@ -121,7 +115,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	// Determine all non assigned objects
 	for(ass=ObjectsAss,Objs->Start(),nbobjs=0;!Objs->End();ass++,Objs->Next())
 	{
-		if((*ass)==RGGA::NoGroup)
+		if((*ass)==NoGroup)
 			thObjs[nbobjs++]=(*Objs)();
 	}
 
@@ -151,18 +145,18 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>& RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::operator=(const RChromoBP& chromo)
 {
-  RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::operator=(chromo);
+  RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::operator=(chromo);
   return(*this);
 }
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void) throw(RGA::eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void) throw(eGA)
 {
 	double sum;
 
@@ -172,7 +166,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 }
 
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RChromoBP(void)
 {
