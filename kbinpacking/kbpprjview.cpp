@@ -81,7 +81,7 @@ void KBPPrjView::createPrj(void)
 	for(obj=doc->Objs->Tab,i=doc->Objs->NbPtr+1;--i;obj++)
 	{
 		total+=(*obj)->GetSize();
-		sprintf(tmp,"%s (%u)",((*obj)->GetName())(),(*obj)->GetId());
+		sprintf(tmp,"%s (%u)",(*obj)->GetName().Latin1(),(*obj)->GetId());
 		sprintf(tmp2,"%u",(*obj)->GetSize());
 		item2 = new QListViewItem(item,item2,tmp,tmp2);
 	}
