@@ -90,6 +90,11 @@ protected:
 	RGA::RObjs<RObjBP>* Objs;
 
 	/**
+	* Cursor on the Objects.
+	*/
+	RStd::RCursor<RObjBP,unsigned int> ObjsCursor;
+
+	/**
 	* Maximal size for the groups.
 	*/
 	unsigned int MaxSize;

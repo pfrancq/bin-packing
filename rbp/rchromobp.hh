@@ -111,20 +111,18 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void)
 {
 	bool bOpti;
-	unsigned int i,nbobjs;
+	unsigned int nbobjs;
 	unsigned int* ass;
-	cObj** obj;
 
 	// Determine all non assigned objects
-	for(i=Objs->NbPtr+1,ass=ObjectsAss,obj=Objs->Tab,nbobjs=0;--i;ass++,obj++)
+	for(ass=ObjectsAss,Objs->Start(),nbobjs=0;!Objs->End();ass++,Objs->Next())
 	{
 		if((*ass)==RGGA::NoGroup)
-			thObjs[nbobjs++]=(*obj);
+			thObjs[nbobjs++]=(*Objs)();
 	}
 
 	if(!nbobjs)
 		return;
-	i=0;
 	do
 	{
 		bOpti=false;
@@ -139,8 +137,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 				break;
 			}
 		}
-		i++;
-	} while((bOpti)/*&&(i<5)*/);
+	} while(bOpti);
 }
 
 

@@ -50,7 +50,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 {
 	RGGA::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
 	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData>(Owner->Random,Owner->Objs);
-	tmpObjs=new cObj*[Owner->Objs->NbPtr];
+	tmpObjs=new cObj*[Owner->Objs->GetNb()];
 }
 
 

@@ -91,6 +91,7 @@ void RBP::RDataBPFile::Load(char* name)
 				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atoi((*tab)->GetAttrValue("Size"))));
 			}
 	}
+	ObjsCursor.Set(Objs);
 }
 
 

@@ -39,7 +39,7 @@
 
 //-----------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::RFirstFitDesHeuristic(RRandom* r,RGA::RObjs<cObj>* objs)
+	RFirstFitDesHeuristic<cGroup,cObj,cGroupData>::RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs)
 	: RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData>(r,objs)
 {
 }

@@ -70,7 +70,7 @@ public:
 	* @param r              The random genrator to use.
 	* @param objs           Pointer to the objects.
 	*/
-	RFirstFitDesHeuristic(RRandom* r,RGA::RObjs<cObj>* objs);
+	RFirstFitDesHeuristic(RRandom* r,RStd::RCursor<cObj,unsigned int>* objs);
 
 	/**
 	* Initialize the heuristic.
