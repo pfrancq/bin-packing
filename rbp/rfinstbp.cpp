@@ -64,7 +64,7 @@ RFThreadDataBP::RFThreadDataBP(RFInstBP* owner)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug) throw(bad_alloc)
+RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug) throw(std::bad_alloc)
 	: RInstBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(popsize,objs,h,maxv,debug),
 		MaxGen(max)
 {

@@ -49,7 +49,7 @@ using namespace R;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-RFChromoBP::RFChromoBP(RFInstBP* inst,unsigned int id) throw(bad_alloc)
+RFChromoBP::RFChromoBP(RFInstBP* inst,unsigned int id) throw(std::bad_alloc)
   : RChromoBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(inst,id)
 {
 }

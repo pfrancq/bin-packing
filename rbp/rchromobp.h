@@ -85,14 +85,14 @@ public:
 	* @param inst           The instance.
 	* @param id             Identificator of the chromosome.
 	*/
-	RChromoBP(cInst* inst,unsigned int id) throw(bad_alloc);
+	RChromoBP(cInst* inst,unsigned int id) throw(std::bad_alloc);
 
 	/**
 	* Initialisation of the chromosome.
 	* @param thData         Pointer to the "thread-dependent" data of the
 	*                       chromosome.
 	*/
-	virtual void Init(cThreadData *thData) throw(bad_alloc);
+	virtual void Init(cThreadData *thData) throw(std::bad_alloc);
 
 	/**
 	* Do a crossover by using the chromosome as child. The crossover select

@@ -62,7 +62,7 @@ public:
 	* @param inst           The instance of the problem.
 	* @param id             The identificator of the chromosome.
 	*/
-	RFChromoBP(RFInstBP* inst,unsigned int id) throw(bad_alloc);
+	RFChromoBP(RFInstBP* inst,unsigned int id) throw(std::bad_alloc);
 };
 
 
