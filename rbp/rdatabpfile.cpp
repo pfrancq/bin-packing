@@ -6,7 +6,7 @@
 
 	XML representing a bin packing problem - Implementation.
 
-	Copyright 2000-2003 by the Université Libre de Bruxelles.
+	Copyright 2000-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -39,6 +39,7 @@
 #include <rstd/rxmlstruct.h>
 #include <rstd/rxmlfile.h>
 #include <rbp/rdatabpfile.h>
+#include <rbp/rfchromobp.h>
 using namespace R;
 
 
@@ -63,7 +64,7 @@ void RDataBPFile::Load(char* name)
 	RXMLFile f(name,&s);
 	RXMLTag *tag,**tab;
 	unsigned int i;
-	
+
 	f.Open(RIO::Read);
 
 	// Take the Maximal Size
@@ -80,8 +81,8 @@ void RDataBPFile::Load(char* name)
 	{
 		// Read number objects info
 		Objs=new RObjs<RObjBP>(tag->NbPtr);
-		
-		// Read each objects	
+
+		// Read each objects
 		for(i=0,tab=tag->Tab;i<tag->NbPtr;i++,tab++)
 			if((*tab)->GetName()=="Object")
 			{

@@ -6,7 +6,7 @@
 
 	Generic Heuristic for Grouping - Header
 
-	Copyright 1998-2003 by the Université Libre de Bruxelles.
+	Copyright 1998-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -37,7 +37,7 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rgga/rfirstfitheuristic.h>
+#include <rga/rfirstfitheuristic.h>
 #include <rga/rdebug.h>
 
 

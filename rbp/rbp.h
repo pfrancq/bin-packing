@@ -6,7 +6,7 @@
 
 	GA for the Bin Packing Problem - Header.
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles
+	Copyright 2001-2003 by the Universitï¿½Libre de Bruxelles
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be)
@@ -37,7 +37,7 @@
 //------------------------------------------------------------------------------
 // includes files for R Project
 #include <rga/rfitness.h>
-#include <rgga/rgga.h>
+#include <rga/rgga.h>
 
 
 //------------------------------------------------------------------------------
