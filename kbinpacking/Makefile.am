@@ -45,7 +45,7 @@ uninstall-local:
 
 # set the include path for X, qt and KDE
 INCLUDES= $(all_includes)
-# -I$(R_LIB) -I$(QTWIDGETS_LIB) -I$(RBP_LIB)
+
 
 METASOURCES = AUTO
 
