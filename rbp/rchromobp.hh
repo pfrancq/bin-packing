@@ -123,19 +123,14 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	if(!nbobjs)
 		return;
-	i=0;
 	do
 	{
 		bOpti=false;
 		// Go trough existing groups
 		for(Used.Start();!Used.End();Used.Next())
-		{
 			if(Used()->DoOptimisation(thObjs,nbobjs))
 				bOpti=true;
-		}
-	} while((bOpti)&&(++i<50));
-	if(i==50)
-		cout<<"Chromo n°"<<Id<<" at Gen n°"<<Instance->Gen<<", Optimisation overflow."<<endl;
+	} while(bOpti);
 }
 
 

@@ -98,6 +98,11 @@ protected:
 	*/
 	double MaxSize;
 
+	/**
+	* Minimal Number of groups.
+	*/
+	unsigned int MinGroups;
+
 public:
 
 	/**

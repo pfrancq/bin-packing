@@ -70,7 +70,10 @@ void RBP::RDataBPFile::Load(char* name)
 	// Take the Maximal Size
 	tag=s.GetTag("Groups");
 	if(tag)
-		MaxSize = atof(tag->GetAttrValue("Size"));
+	{
+		MaxSize=atof(tag->GetAttrValue("Size"));
+		MinGroups=atoi(tag->GetAttrValue("Best"));
+	}
 
 	// Objects
 	tag=s.GetTag("Objects");

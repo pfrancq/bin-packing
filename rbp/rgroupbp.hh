@@ -91,10 +91,22 @@ template<class cGroup,class cObj,class cGroupData>
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.
 	cObj* add[2];                  // Pointers to the objects to add.
-	unsigned int i,j,nbdel,nbadd,tryfind;
-	double size,minsize,s;
-	cObj** o;
-	cObj *best,*cur;
+	unsigned int trydel;           // Number of try for deleting objects.
+	unsigned int nbdel;            // Number of objects to delete.
+	unsigned int nbadd;            // Number of objects to add.
+	char tryfind;                  // Number of try to do.
+	double size;                   // Current size with the add and del.
+	double minsize;                // Minimum size of the object of the group.
+	double s;                      // Size of the object eventually to add.
+	double newsize;                // Size of the group whith the object eventually to add.
+	cObj** obj;                    // Current object eventually to add.
+	cObj* best;                    // Object from the group with the minimum size.
+	cObj* cur;                     // Current object of the group treated.
+	unsigned int i,j;
+
+	// If the groups is maximum filled, no optimisation needed.
+	if(Size==MaxSize)
+		return(false);
 
 	// Init Part
 	size=Size;                              // The "actual" size of the group.
@@ -105,63 +117,87 @@ template<class cGroup,class cObj,class cGroupData>
 	
 	while((tryfind--)&&(nbadd<2)&&(nbdel<3))           // Maximum 2 objects to add and 3 objects to del.
 	{
-		for(i=0,o=objs;(i<nbobjs)&&(nbadd<2);o++,i++)  // Go through the objects
+
+		// Go through the objects not yet assign to a group.
+		for(i=0,obj=objs;(i<nbobjs)&&(nbadd<2);obj++,i++)
 		{
-			if(((*o)==add[0])||((*o)==add[1])) continue;
-			s=(*o)->GetSize();
-			// while the size of the group plus the object *o is greather than
+		
+			// Test if the current object eventually to add is not already
+			// selected.
+			if(((*obj)==add[0])||((*obj)==add[1]))
+				continue;
+
+			// Test if this object can be added.
+			s=(*obj)->GetSize();
+			newsize=size+s;
+
+			// while the size of the group plus the object eventually to add is greather than
 			// the maximum size, try to delete maximum 3 objs.
-			while((size+s>MaxSize)&&(nbdel<3))
+			trydel=0;
+			while((newsize>MaxSize)&&(nbdel+trydel<3))
 			{
 				minsize=s;
 				best=0;
+
+				// Test all the object of the group or until one has be found
+				// that fit the condition.
 				for(j=0;j<NbSubObjects;j++)
 				{
 					cur=Owner->GetObj(SubObjects+j);
-					// Verify that cur is not already used &nd that is smaller than *o.
-					if((cur==del[0])||(cur==del[1])||(cur==del[2])||(cur->GetSize()>=s)) continue;
-					if(size+s-cur->GetSize()<=MaxSize)
+
+					// Verify that cur is not already used &nd that is smaller
+					// than the object eventually to add.
+					if((cur==del[0])||(cur==del[1])||(cur==del[2])||(cur->GetSize()>=s))
+						continue;
+
+					// Test if the maximum size is not exceed whithout the
+					// current object, delete it.
+					if(newsize-cur->GetSize()<=MaxSize)
 					{
-						// Delete this obj and OK.
-						size-=cur->GetSize();
-						del[nbdel]=cur;
+						best=cur;
 						break;
 					}
+
+					// Find the smallest object of the group.
 					if(cur->GetSize()<minsize)
 					{
-						// This obj is smallest far from the one we try to add.
 						minsize=cur->GetSize();
 						best=cur;
 					}
 				}
-				if((!del[nbdel])&&best) // If no objects find delete the smallest
+
+				// If an object was found, it can be deleted.
+				if(best)
 				{
-					del[nbdel]=best;
-					size-=minsize;
+					del[nbdel+(trydel++)]=best;
+					newsize-=best->GetSize();
 				}
-				if(del[nbdel])
-					nbdel++;             // Increase the number of objects to del
 				else
 					break;
 			}
-			if((size+s<=MaxSize)&&(size+s>Size))
+
+			// If the maximum size of the group is not exceed with the object
+			// eventually to add and the new size is greather than the old one, add it.
+			if((newsize<=MaxSize)&&(newsize>Size))
 			{
-				// Ok, this object can be added
+				nbdel+=trydel;
 				idx[nbadd]=i;
-				add[nbadd++]=*o;
-				size+=s;
+				add[nbadd++]=(*obj);
+				size=newsize;
 			}
 		}
+
 		// If after one tour, no object could be added, another tour resolves nothing.
 		if(!nbadd)
 			return(false);
 	}
 
+	// Some assertion to verify
 	RReturnValIfFail(nbadd,false);
 	RReturnValIfFail(size>Size,false);
 	RReturnValIfFail(size<=MaxSize,false);
 
-//	cout<<"MaxSize: "<<MaxSize<<"    Before: "<<Size;
+//	cout<<"MaxSize: "<<MaxSize<<"    Futur: "<<size<<"    Before: "<<Size;
 	// Delete the objects from the group and insert them in objs.
 	for(i=0;i<nbdel;i++)
 	{
