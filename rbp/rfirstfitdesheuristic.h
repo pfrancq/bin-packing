@@ -35,8 +35,8 @@
 
 
 //------------------------------------------------------------------------------
-#ifndef RFirstFitDesHeuristicH
-#define RFirstFitDesHeuristicH
+#ifndef RFirstFitDesHeuristic_H
+#define RFirstFitDesHeuristic_H
 
 
 //------------------------------------------------------------------------------

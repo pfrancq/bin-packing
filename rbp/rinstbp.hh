@@ -1,8 +1,8 @@
 /*
 
-	RInsth.hh
+	RInstBP.hh
 
-	Class representing an instance of a HGA - Implementation
+	Class representing an instance of a Bin Packing - Implementation
 
 	Copyright 2001-2003 by the Université Libre de Bruxelles.
 
