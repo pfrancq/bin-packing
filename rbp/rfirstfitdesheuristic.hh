@@ -41,7 +41,7 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RCursor<cObj>* objs,RDebug* debug)
 	: RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs,debug)
 {
-	Name="First-Fit Descending Heuristic";
+	this->Name="First-Fit Descending Heuristic";
 }
 
 
@@ -74,7 +74,7 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 	RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(groups);
 
 	// Order by size descending
-	qsort(static_cast<void*>(Order),NbObjs,sizeof(cObj*),sortdes_function_cObjs);
+	qsort(static_cast<void*>(this->Order),this->NbObjs,sizeof(cObj*),sortdes_function_cObjs);
 }
 
 

@@ -46,7 +46,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	HeuristicFFD=thData->HeuristicFFD;
 	thObjs=thData->tmpObjs;
 	thObjs2=thData->tmpObjs2;
-	(*Fitness)=0;
+	(*this->Fitness)=0;
 }
 
 
@@ -57,14 +57,14 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Change default heuristic to FFB
-	Hold=Heuristic;
-	Heuristic=HeuristicFFD;
+	Hold=this->Heuristic;
+	this->Heuristic=HeuristicFFD;
 
 	// Call the default crossover
 	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Crossover(parent1,parent2);
 
 	// Change to default heuristic
-	Heuristic=Hold;
+	this->Heuristic=Hold;
 }
 
 
@@ -77,26 +77,26 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
 
 	// Find the less filled group and release it
-	for(Used.Start();!Used.End();Used.Next())
+	for(this->Used.Start();!this->Used.End();this->Used.Next())
 	{
-		actratio=((double)Used()->GetSize())/((double)Used()->GetMaxSize());
+		actratio=((double)this->Used()->GetSize())/((double)this->Used()->GetMaxSize());
 		if(actratio<worstratio)
 		{
 			worstratio=actratio;
-			worst=Used();
+			worst=this->Used();
 		}
 	}
 	ReleaseGroup(worst->GetId());
 
 	// Change default heuristic to FFB
-	Hold=Heuristic;
-	Heuristic=HeuristicFFD;
+	Hold=this->Heuristic;
+	this->Heuristic=HeuristicFFD;
 
 	// Call the default mutation after it
 	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Mutation();
 
 	// Change to default heuristic
-	Heuristic=Hold;
+	this->Heuristic=Hold;
 }
 
 
@@ -109,10 +109,10 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	unsigned int* ass;
 
 	// Determine all non assigned objects
-	for(ass=ObjectsAss,Objs->Start(),nbobjs=0;!Objs->End();ass++,Objs->Next())
+	for(ass=this->ObjectsAss,this->Objs->Start(),nbobjs=0;!this->Objs->End();ass++,this->Objs->Next())
 	{
 		if((*ass)==NoGroup)
-			thObjs[nbobjs++]=(*Objs)();
+			thObjs[nbobjs++]=(*this->Objs)();
 	}
 
 	for(bOpti=true;bOpti&&nbobjs;)
@@ -122,9 +122,9 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 		bOpti=false;
 
 		// Go trough existing groups
-		for(Used.Start();!Used.End();Used.Next())
+		for(this->Used.Start();!this->Used.End();this->Used.Next())
 		{
-			if(Used()->DoOptimisation(thObjs,nbobjs))
+			if(this->Used()->DoOptimisation(thObjs,nbobjs))
 			{
 				bOpti=true;
 //				// Order by size descending
@@ -156,9 +156,9 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 {
 	double sum;
 
-	for(Used.Start(),sum=0.0;!Used.End();Used.Next())
-		sum+=pow(((double)Used()->GetSize())/((double)Used()->GetMaxSize()),2);
-	(*Fitness)=sum/((double)Used.NbPtr);
+	for(this->Used.Start(),sum=0.0;!this->Used.End();this->Used.Next())
+		sum+=pow(((double)this->Used()->GetSize())/((double)this->Used()->GetMaxSize()),2);
+	(*this->Fitness)=sum/((double)this->Used.NbPtr);
 }
 
 

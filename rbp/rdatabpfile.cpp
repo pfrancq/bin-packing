@@ -64,7 +64,7 @@ void RDataBPFile::Load(char* name)
 	RXMLTag *tag,**tab;
 	unsigned int i;
 	
-	f.Process();
+	f.Open(Read);
 
 	// Take the Maximal Size
 	tag=s.GetTag("Groups");

@@ -61,7 +61,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	RGroup<cGroup,cObj,cGroupData,cChromo>::Verify();
 	if(Size>MaxSize)
 	{
-		sprintf(tmp,"Size(%u) > MaxSize(%u) for group %u",Size,MaxSize,Id);
+		sprintf(tmp,"Size(%u) > MaxSize(%u) for group %u",Size,MaxSize,this->Id);
 		throw eGAVerify(tmp);
 	}
 }
@@ -94,12 +94,12 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	cObj** cur2;
 	cObj** cur3;
 	unsigned int i,j,k;
-	cObj** thObjs2=Owner->thObjs2;
+	cObj** thObjs2=this->Owner->thObjs2;
 
 	// fill thObjs2 with the objects of the group and order it by ascending order
-	for(i=0,cur1=thObjs2;i<NbSubObjects;i++,cur1++)
-		(*cur1)=Owner->GetObj(SubObjects+i);
-	qsort(static_cast<void*>(thObjs2),NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
+	for(i=0,cur1=thObjs2;i<this->NbSubObjects;i++,cur1++)
+		(*cur1)=this->Owner->GetObj(this->SubObjects+i);
+	qsort(static_cast<void*>(thObjs2),this->NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
 
 	// New Size if addsize is added.
 	newsize=Size+size+addsize;
@@ -121,8 +121,8 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	}
 
 	// Try to del 1 object with Max 3 Objects deleted.
-	if((nbdel>=3)||(!NbSubObjects)) return(false);
-	for(i=NbSubObjects+1,cur1=thObjs2;--i;cur1++)
+	if((nbdel>=3)||(!this->NbSubObjects)) return(false);
+	for(i=this->NbSubObjects+1,cur1=thObjs2;--i;cur1++)
 	{
 //		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1==del[0])||(cur1==del[1])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
@@ -135,8 +135,8 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	}
 
 	// Try to del 2 object with Max 3 Objects deleted.
-	if((nbdel>=2)||(NbSubObjects<2)) return(false);
-	for(i=NbSubObjects,cur1=thObjs2;--i;cur1++)
+	if((nbdel>=2)||(this->NbSubObjects<2)) return(false);
+	for(i=this->NbSubObjects,cur1=thObjs2;--i;cur1++)
 	{
 //		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1==del[0])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
@@ -156,8 +156,8 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	}
 
 	// Try to del 3 object with Max 3 Objects deleted.
-	if((nbdel)||(NbSubObjects<3)) return(false);
-	for(i=NbSubObjects-1,cur1=thObjs2;--i;cur1++)
+	if((nbdel)||(this->NbSubObjects<3)) return(false);
+	for(i=this->NbSubObjects-1,cur1=thObjs2;--i;cur1++)
 	{
 //		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
