@@ -45,15 +45,6 @@
 
 
 //------------------------------------------------------------------------------
-/**
-* \namespace RBP
-* \brief Generic Algorithm Classes for the Bin Packing Problem.
-*
-* This namespace declares classes to resolve the Bin Packing Problem.
-*/
-
-
-//------------------------------------------------------------------------------
 namespace R{
 //------------------------------------------------------------------------------
 
