@@ -83,7 +83,7 @@ QInfoBox::QInfoBox(QWidget* parent,RFGroupBP* grp,RObjs<RObjBP>* objs)
 			insertItem("Objects:");
 			for(;(*ptr)!=NoObject;ptr++)
 			{
-				insertItem("   "+ToQString(objs->Tab[*ptr]->GetName())+" ("+QString::number(objs->Tab[*ptr]->GetSize())+")");
+				insertItem("   "+ToQString((*objs)[*ptr]->GetName())+" ("+QString::number((*objs)[*ptr]->GetSize())+")");
 			}
 		}
 		delete[] o;
@@ -100,13 +100,14 @@ QInfoBox::QInfoBox(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChrom
 	char Tmp[50];
 	double sum=0.0;
 
-	sprintf(Tmp,"Nb Groups: '%u'",grps->Used.NbPtr);
+	sprintf(Tmp,"Nb Groups: '%u'",grps->Used.GetNb());
 	insertItem(Tmp);
-	if(grps->Used.NbPtr)
+	if(grps->Used.GetNb())
 	{
-		for(grps->Used.Start();!grps->Used.End();grps->Used.Next())
-			sum+=grps->Used()->GetSize()/grps->Used()->GetMaxSize();
-		sprintf(Tmp,"Avg use: %.1f%%",(sum*100.0)/((double)grps->Used.NbPtr));
+		RCursor<RFGroupBP> Used(grps->Used);
+		for(Used.Start();!Used.End();Used.Next())
+			sum+=Used()->GetSize()/Used()->GetMaxSize();
+		sprintf(Tmp,"Avg use: %.1f%%",(sum*100.0)/((double)grps->Used.GetNb()));
 		insertItem(Tmp);
 	}
 	afterFocus=parent;
@@ -144,10 +145,11 @@ QDrawGroups::QDrawGroups(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,R
 	  Changed(false),brRed(red,BDiagPattern), Groups(grps), Objs(objs)
 {
 	IncX=5;
-	MaxGroups=Groups->NbPtr;
-	for(Groups->Start();!Groups->End();Groups->Next())
-		if((*Groups)()->GetMaxSize()>MaxSize)
-			MaxSize=(*Groups)()->GetMaxSize();
+	MaxGroups=Groups->GetNb();
+	RCursor<RFGroupBP> Cur(*Groups);
+	for(Cur.Start();!Cur.End();Cur.Next())
+		if(Cur()->GetMaxSize()>MaxSize)
+			MaxSize=Cur()->GetMaxSize();
 }
 
 
@@ -155,10 +157,11 @@ QDrawGroups::QDrawGroups(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,R
 void QDrawGroups::setGroups(RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps)
 {
 	Groups=grps;
-	MaxGroups=Groups->NbPtr;
-	for(Groups->Start();!Groups->End();Groups->Next())
-		if((*Groups)()->GetMaxSize()>MaxSize)
-			MaxSize=(*Groups)()->GetMaxSize();
+	MaxGroups=Groups->GetNb();
+	RCursor<RFGroupBP> Cur(*Groups);
+	for(Cur.Start();!Cur.End();Cur.Next())
+		if(Cur()->GetMaxSize()>MaxSize)
+			MaxSize=Cur()->GetMaxSize();
 	Groups=grps;
 }
 
@@ -269,14 +272,15 @@ void QDrawGroups::paintEvent(QPaintEvent*)
 			// Paint all use groups
 			Painter->setPen(red);
 			Painter->setBrush(brRed);
-			for(i=0,Groups->Used.Start();!Groups->Used.End();i++,Groups->Used.Next())
+			RCursor<RFGroupBP> Used(Groups->Used);
+			for(i=0,Used.Start();!Used.End();i++,Used.Next())
 			{
 				ComputeXY(x,y,i);
-				if(Groups->Used()->GetSize()==Groups->Used()->GetMaxSize())
+				if(Used()->GetSize()==Used()->GetMaxSize())
 					Painter->drawRect(x+1,y+1,((int)Width)-2,MaxY-2);
 				else
 				{
-					l=(int)(Groups->Used()->GetSize()*FactorY);
+					l=(int)(Used()->GetSize()*FactorY);
 					Painter->drawRect(x+1,MaxY-l+y+1,(int)(Width-2),l);
 				}
 			}
@@ -314,7 +318,7 @@ void QDrawGroups::mousePressEvent(QMouseEvent* e)
 		if(idx==NoGroup)
 			InfoBox=new QInfoBox(this,Groups);
 		else
-			InfoBox = new QInfoBox(this,Groups->Tab[idx],Objs);
+			InfoBox = new QInfoBox(this,(*Groups)[idx],Objs);
 		InfoBox->popup(e->globalPos());
 	}
 	else

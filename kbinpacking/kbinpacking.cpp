@@ -394,9 +394,26 @@ void KBinPackingApp::slotGAStart(void)
 {
 	KApplication::kApplication()->processEvents(1000);
 	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==GA))
+	try
 	{
-		((KBPGAView*)m)->RunGA();
+		if(m&&(m->getType()==GA))
+			((KBPGAView*)m)->RunGA();
+	}
+	catch(eGA& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(RException& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(std::exception& e)
+	{
+		KMessageBox::error(this,e.what());
+	}
+	catch(...)
+	{
+		KMessageBox::error(this,"Unknown problem");
 	}
 }
 
@@ -406,9 +423,26 @@ void KBinPackingApp::slotGAPause(void)
 {
 	KApplication::kApplication()->processEvents(1000);
 	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==GA))
+	try
 	{
-		((KBPGAView*)m)->PauseGA();
+		if(m&&(m->getType()==GA))
+			((KBPGAView*)m)->PauseGA();
+	}
+	catch(eGA& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(RException& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(std::exception& e)
+	{
+		KMessageBox::error(this,e.what());
+	}
+	catch(...)
+	{
+		KMessageBox::error(this,"Unknown problem");
 	}
 }
 
@@ -418,9 +452,26 @@ void KBinPackingApp::slotGAStop(void)
 {
 	KApplication::kApplication()->processEvents(1000);
 	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==GA))
+	try
 	{
-		((KBPGAView*)m)->StopGA();
+		if(m&&(m->getType()==GA))
+			((KBPGAView*)m)->StopGA();
+	}
+	catch(eGA& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(RException& e)
+	{
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(std::exception& e)
+	{
+		KMessageBox::error(this,e.what());
+	}
+	catch(...)
+	{
+		KMessageBox::error(this,"Unknown problem");
 	}
 }
 

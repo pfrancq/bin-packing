@@ -59,7 +59,7 @@ using namespace R;
 
 //-----------------------------------------------------------------------------
 KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int wflags)
-	: KBinPackingView(pDoc,parent,name,wflags), CurId(0), Instance(0), Data(pDoc->MaxSize)
+	: KBinPackingView(pDoc,parent,name,wflags), CurId(0), Instance(0), Data(pDoc->MaxSize), DebugFile("/home/pfrancq/debug.xml","BP","Pascal Francq")
 {
 	static char tmp[100];
 	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, sizePolicy().hasHeightForWidth() ) );
@@ -91,24 +91,25 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	try
 	{
 		Gen=0;
-		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,Debug);
+		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,&DebugFile);
 		Instance->AddReceiver(this);
 		Instance->Init(&Data);
 	}
 	catch(eGA& e)
 	{
 		KMessageBox::error(this,e.GetMsg());
-		Instance=0;
 	}
-	catch(std::bad_alloc)
+	catch(RException& e)
 	{
-		KMessageBox::error(this,"Memory Problems");
-		Instance=0;
+		KMessageBox::error(this,e.GetMsg());
+	}
+	catch(std::exception& e)
+	{
+		KMessageBox::error(this,e.what());
 	}
 	catch(...)
 	{
-		KMessageBox::error(this,"Unknow Problem");
-		Instance=0;
+		KMessageBox::error(this,"Unknown problem");
 	}
 }
 
@@ -116,7 +117,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 //---------------------------------------------------------------------------
 void KBPGAView::receiveGenSig(GenSig* sig)
 {
-	emit signalSetGen(sig->Gen,sig->BestGen,sig->Best->Used.NbPtr/*Fitness->Value*/);
+	emit signalSetGen(sig->Gen,sig->BestGen,sig->Best->Used.GetNb()/*Fitness->Value*/);
 	Sol->setGroups(Instance->Chromosomes[CurId]);
 	Sol->setChanged();
 }
@@ -167,6 +168,18 @@ void KBPGAView::RunGA(void)
 		catch(eGA& e)
 		{
 			KMessageBox::error(this,e.GetMsg());
+		}
+		catch(RException& e)
+		{
+			KMessageBox::error(this,e.GetMsg());
+		}
+		catch(std::exception& e)
+		{
+			KMessageBox::error(this,e.what());
+		}
+		catch(...)
+		{
+			KMessageBox::error(this,"Unknown problem");
 		}
 	}
 }

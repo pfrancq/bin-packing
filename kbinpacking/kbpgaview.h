@@ -33,6 +33,7 @@
 // include files for R Project
 #include <rga/rgasignals.h>
 #include <rbp/rdatabpfile.h>
+#include <rga/rdebug.h>
 using namespace R;
 
 
@@ -118,6 +119,8 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	* Data needed for the construction of the groups.
 	*/
 	RGroupDataBP Data;
+
+	RDebugXML DebugFile;
 
 public:
 

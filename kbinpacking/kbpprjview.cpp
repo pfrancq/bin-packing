@@ -64,8 +64,6 @@ void KBPPrjView::createPrj(void)
 {
 	char tmp[100];
 	QListViewItem *item=0,*item2=0;
-	RObjBP **obj;
-	unsigned int i;
 	unsigned int total=0;
 
 	// Problem
@@ -75,13 +73,14 @@ void KBPPrjView::createPrj(void)
 	item=new QListViewItem(prj,"Best Solution Known",tmp);
 
 	// Construct Objects
-	sprintf(tmp,"Objects (%u)",doc->Objs->NbPtr);
+	sprintf(tmp,"Objects (%u)",doc->Objs->GetNb());
 	item = new QListViewItem(prj,item,tmp,"");
 	item2=0;
-	for(obj=doc->Objs->Tab,i=doc->Objs->NbPtr+1;--i;obj++)
+	RCursor<RObjBP> obj(*doc->Objs);
+	for(obj.Start();!obj.End();obj.Next())
 	{
-		total+=(*obj)->GetSize();
-		item2 = new QListViewItem(item,item2,ToQString((*obj)->GetName())+" ("+QString::number((*obj)->GetId())+")",QString::number((*obj)->GetSize()));
+		total+=obj()->GetSize();
+		item2 = new QListViewItem(item,item2,ToQString(obj()->GetName())+" ("+QString::number(obj()->GetId())+")",QString::number(obj()->GetSize()));
 	}
 	sprintf(tmp,"%u",total);
 	item->setText(1,tmp);
