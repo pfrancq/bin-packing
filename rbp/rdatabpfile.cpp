@@ -84,7 +84,12 @@ void RBP::RDataBPFile::Load(char* name)
 		// Read each objects	
 		for(i=0,tab=tag->Tab;i<tag->NbPtr;i++,tab++)
 			if((*tab)->GetName()=="Object")
+			{
+				double d;
+				RString str=(*tab)->GetAttrValue("Size");
+				d=atof((*tab)->GetAttrValue("Size")());
 				Objs->InsertPtr(new RObjBP(i,(*tab)->GetAttrValue("Id"),atof((*tab)->GetAttrValue("Size"))));
+			}
 	}
 }
 
