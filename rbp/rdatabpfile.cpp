@@ -43,6 +43,9 @@ using namespace RXML;
 //-----------------------------------------------------------------------------
 // include files for current project
 #include <rbp/rdatabpfile.h>
+using namespace RBP;
+using namespace RGA;
+
 
 
 //-----------------------------------------------------------------------------

@@ -46,6 +46,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	RGGA::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
 	HeuristicFFD=thData->HeuristicFFD;
 	thObjs=thData->tmpObjs;
+	thObjs2=thData->tmpObjs2;
 	(*Fitness)=0;
 }
 
@@ -105,6 +106,15 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	return(ret);
 }
 
+//-----------------------------------------------------------------------------
+//template<class cInst,class cChromo,class cFit,class cThreadData>
+//	int RInst<cInst,cChromo,cFit,cThreadData>::sort_function_Objs(const void* a,const void* b)
+//{
+//	RObjBP* ao=(*(static_cast<RObjBP**>(a)));
+//	RObjBP* bo=(*(static_cast<RObjBP**>(b)));
+//
+//	return(ao->GetSize()-bo->GetSize());
+//}
 
 //-----------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
@@ -121,23 +131,29 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 			thObjs[nbobjs++]=(*Objs)();
 	}
 
-	if(!nbobjs)
-		return;
-	do
+	for(bOpti=true;bOpti&&nbobjs;)
 	{
+		// Order by size descending
+		qsort(static_cast<void*>(thObjs),nbobjs,sizeof(RObjBP*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sortdes_function_cObjs);
 		bOpti=false;
+
 		// Go trough existing groups
 		for(Used.Start();!Used.End();Used.Next())
 		{
 			if(Used()->DoOptimisation(thObjs,nbobjs))
-				bOpti=true;
-			if(!nbobjs)
 			{
-				bOpti=false;
+				bOpti=true;
+//				// Order by size descending
+//				qsort(static_cast<void*>(thObjs),nbobjs,sizeof(RObjBP*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
 				break;
+//			}
+//			if(!nbobjs)
+//			{
+//				bOpti=false;
+//				break;
 			}
 		}
-	} while(bOpti);
+	}
 }
 
 

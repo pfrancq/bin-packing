@@ -44,7 +44,7 @@
 // include files for R Project
 #include <rgga/rchromog.h>
 #include <rbp/rbp.h>
-#include <rgga/rgroupingheuristic.h>
+#include <rbp/rfirstfitdesheuristic.h>
 
 
 //-----------------------------------------------------------------------------
@@ -68,6 +68,12 @@ protected:
 	* data.
 	*/
 	cObj** thObjs;
+
+	/**
+	* Temporary array of objects used for the local optimisation. Thread-depend
+	* data.
+	*/
+	cObj** thObjs2;
 
 public:
 

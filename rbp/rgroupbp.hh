@@ -91,10 +91,16 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 {
 	unsigned int newsize,maxsize;
 	unsigned int s1,s2,s3;
-	cObj* cur1;
-	cObj* cur2;
-	cObj* cur3;
+	cObj** cur1;
+	cObj** cur2;
+	cObj** cur3;
 	unsigned int i,j,k;
+	cObj** thObjs2=Owner->thObjs2;
+
+	// fill thObjs2 with the objects of the group and order it by ascending order
+	for(i=0,cur1=thObjs2;i<NbSubObjects;i++,cur1++)
+		(*cur1)=Owner->GetObj(SubObjects+i);
+	qsort(static_cast<void*>(thObjs2),NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
 
 	// New Size if addsize is added.
 	newsize=Size+size+addsize;
@@ -117,34 +123,34 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 	// Try to del 1 object with Max 3 Objects deleted.
 	if((nbdel>=3)||(!NbSubObjects)) return(false);
-	for(i=0;i<NbSubObjects;i++)
+	for(i=NbSubObjects+1,cur1=thObjs2;--i;cur1++)
 	{
-		cur1=Owner->GetObj(SubObjects+i);
+//		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1==del[0])||(cur1==del[1])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
-		s1=newsize-cur1->GetSize();
+		s1=newsize-(*cur1)->GetSize();
 		if((s1<=MaxSize)&&(s1>Size))
 		{
-			del[nbdel++]=cur1;
+			del[nbdel++]=(*cur1);
 			return(true);
 		}
 	}
 
 	// Try to del 2 object with Max 3 Objects deleted.
 	if((nbdel>=2)||(NbSubObjects<2)) return(false);
-	for(i=0;i<NbSubObjects-1;i++)
+	for(i=NbSubObjects,cur1=thObjs2;--i;cur1++)
 	{
-		cur1=Owner->GetObj(SubObjects+i);
+//		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1==del[0])||(cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
-		s1=newsize-cur1->GetSize();
-		for(j=i+1;j<NbSubObjects;j++)
+		s1=newsize-(*cur1)->GetSize();
+		for(j=i+1,cur2=cur1+1;--j;cur2++)
 		{
-			cur2=Owner->GetObj(SubObjects+j);
+//			cur2=Owner->GetObj(SubObjects+j);
 //			if((cur2==del[0])||(cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
-			s2=s1-cur2->GetSize();
+			s2=s1-(*cur2)->GetSize();
 			if((s2<=MaxSize)&&(s2>Size))
 			{
-				del[nbdel++]=cur1;
-				del[nbdel++]=cur2;
+				del[nbdel++]=(*cur1);
+				del[nbdel++]=(*cur2);
 				return(true);
 			}
 		}
@@ -152,26 +158,26 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 	// Try to del 3 object with Max 3 Objects deleted.
 	if((nbdel)||(NbSubObjects<3)) return(false);
-	for(i=0;i<NbSubObjects-2;i++)
+	for(i=NbSubObjects-1,cur1=thObjs2;--i;cur1++)
 	{
-		cur1=Owner->GetObj(SubObjects+i);
+//		cur1=Owner->GetObj(SubObjects+i);
 //		if((cur1->GetSize()>=addsize)||(cur1->GetSize()>=size)) continue;
-		s1=newsize-cur1->GetSize();
-		for(j=i+1;j<NbSubObjects-1;j++)
+		s1=newsize-(*cur1)->GetSize();
+		for(j=i+1,cur2=cur1+1;--j;cur2++)
 		{
-			cur2=Owner->GetObj(SubObjects+j);
+//			cur2=Owner->GetObj(SubObjects+j);
 //			if((cur2->GetSize()>=addsize)||(cur2->GetSize()>=size)) continue;
-			s2=s1-cur2->GetSize();
-			for(k=j+1;k<NbSubObjects;k++)
+			s2=s1-(*cur2)->GetSize();
+			for(k=j+1,cur3=cur2+1;--k;cur3++)
 			{
-				cur3=Owner->GetObj(SubObjects+k);
+//				cur3=Owner->GetObj(SubObjects+k);
 //				if((cur3->GetSize()>=addsize)||(cur3->GetSize()>=size)) continue;
-				s3=s2-cur3->GetSize();
+				s3=s2-(*cur3)->GetSize();
 				if((s3<=MaxSize)&&(s3>Size))
 				{
-					del[nbdel++]=cur1;
-					del[nbdel++]=cur2;
-					del[nbdel++]=cur3;
+					del[nbdel++]=(*cur1);
+					del[nbdel++]=(*cur2);
+					del[nbdel++]=(*cur3);
 					return(true);
 				}
 			}
@@ -206,22 +212,6 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	idx[0]=idx[1]=RGGA::NoObject;
 	nbdel=nbadd=0;
 
-
-	// Try to add a first object
-	if(!nbadd)
-	{
-		for(i=0,obj=objs;i<nbobjs;obj++,i++)
-		{
-			if(TestNewSize(del,nbdel,(*obj)->GetSize(),0))
-			{
-				idx[nbadd]=i;
-				add[nbadd++]=(*obj);
-				addsize=(*obj)->GetSize();
-				break;
-			}
-		}
-	}
-
 	// Try to add two objects
 	if(!nbadd)
 	{
@@ -241,6 +231,22 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 			if(nbadd) break;
 		}
 	}
+
+	// Try to add a first object
+	if(!nbadd)
+	{
+		for(i=0,obj=objs;i<nbobjs;obj++,i++)
+		{
+			if(TestNewSize(del,nbdel,(*obj)->GetSize(),0))
+			{
+				idx[nbadd]=i;
+				add[nbadd++]=(*obj);
+				addsize=(*obj)->GetSize();
+				break;
+			}
+		}
+	}
+
 
 
 //	// Try to add a second object

@@ -67,6 +67,11 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 	*/
 	cObj** tmpObjs;
 
+	/**
+	* Temporary array of objects used for the local optimisation.
+	*/
+	cObj** tmpObjs2;
+
 public:
 	
 	/**
@@ -110,7 +115,7 @@ public:
 	* @param max            Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RDebug *debug=0) throw(bad_alloc);
+	RInstBP(unsigned int popsize,RGA::RObjs<cObj>* objs,RGGA::HeuristicType h,const double max,RGA::RDebug *debug=0) throw(bad_alloc);
 
 	/**
 	* Initialisation of the instance.

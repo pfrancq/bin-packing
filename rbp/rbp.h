@@ -85,7 +85,7 @@ public:
 	*/
 	RFitnessBP& operator=(const RFitnessBP &f)
 	{
-		RFitness<double,true>::operator=(f);
+		RGA::RFitness<double,true>::operator=(f);
 		return(*this);
 	}
 
@@ -94,7 +94,7 @@ public:
 	*/
 	RFitnessBP& operator=(const double val)
 	{
-		RFitness<double,true>::operator=(val);
+		RGA::RFitness<double,true>::operator=(val);
 		return(*this);
 	}
 };

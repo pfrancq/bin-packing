@@ -55,6 +55,8 @@ namespace RBP{
 template<class cGroup,class cObj,class cGroupData,class cGroups>
 	class RFirstFitDesHeuristic : public RGGA::RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>
 {
+public:
+
 	/**
 	* This function is used to make a sort of the objects based on their size.
 	* @param a              The first object.
@@ -63,7 +65,14 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 	*/
 	static int sort_function_cObjs( const void *a, const void *b);
 
-public:
+	/**
+	* This function is used to make a sort of the objects based on their size
+	* in descending order.
+	* @param a              The first object.
+	* @param b              The second object.
+	* @return b-a
+	*/
+	static int sortdes_function_cObjs( const void *a, const void *b);
 
 	/**
 	* Construct the grouping heuristic.

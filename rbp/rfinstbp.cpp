@@ -37,6 +37,8 @@
 #include <rbp/rfinstbp.h>
 #include <rbp/rfchromobp.h>
 using namespace RBP;
+using namespace RGA;
+using namespace RGGA;
 
 
 
