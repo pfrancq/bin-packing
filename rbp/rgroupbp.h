@@ -128,7 +128,7 @@ public:
 	* Look if an object can be insert in the group.
 	* @param obj            Pointer to the object to insert.
 	*/
-	virtual bool CanInsert(const cObj* obj);
+	virtual bool CanInsert(const cObj* obj) const;
 
 	/**
 	* Return the actual size of the group.

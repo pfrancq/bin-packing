@@ -79,7 +79,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 //---------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::CanInsert(const cObj* obj)
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::CanInsert(const cObj* obj) const
 {
 	return(Size+obj->GetSize()<=MaxSize);
 }
