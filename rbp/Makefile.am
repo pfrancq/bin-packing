@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir) -I$(R_LIB)
 lib_LTLIBRARIES =  librbp.la
 AM_CFLAGS =
 AM_CXXFLAGS =
