@@ -45,11 +45,11 @@ using namespace R;
 // include files for Widgets
 #include <rga/qgamonitor.h>
 #include <rga/qxmlcontainer.h>
-#include <rbp/qdrawgroups.h>
 
 
 //-----------------------------------------------------------------------------
 // include files for current application
+#include "qdrawgroups.h"
 #include "kbpgaview.h"
 #include "kbinpackingdoc.h"
 

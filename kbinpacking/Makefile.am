@@ -3,15 +3,18 @@ bin_PROGRAMS = kbinpacking
 
 ## INCLUDES were found outside kdevelop specific part
 
-kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpprjview.cpp kbinpackingview.cpp kbinpackingdoc.cpp kbinpacking.cpp main.cpp 
-kbinpacking_LDADD   = $(R_LIB)/rgga/librgga.la $(R_LIB)/rbp/librbp.la $(R_LIB)/rstd/librstd.la $(R_LIB)/rga/librga.la $(QTWIDGETS_LIB)/rga/libkde_rga.la $(QTWIDGETS_LIB)/rbp/libkde_rbp.la $(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
+kbinpacking_SOURCES = kappoptions.ui kbpgaview.cpp kbpprjview.cpp kbinpackingview.cpp \
+	kbinpackingdoc.cpp kbinpacking.cpp main.cpp qdrawgroups.cpp
+kbinpacking_LDADD   = $(R_LIB)/rgga/librgga.la $(RBP_LIB)/rbp/librbp.la $(R_LIB)/rstd/librstd.la \
+	$(R_LIB)/rga/librga.la $(QTWIDGETS_LIB)/rga/libkde_rga.la \
+	$(LIB_KFILE) $(LIB_KDEUI) $(LIB_KDECORE) $(LIB_QT) $(LIBSOCKET)
 
 SUBDIRS =
 
 EXTRA_DIST = main.cpp kbinpacking.cpp kbinpacking.h kbinpackingdoc.cpp kbinpackingdoc.h \
 	kbinpackingview.cpp kbinpackingview.h kbinpackingui.rc kbinpacking.desktop \
 	lo32-app-kbinpacking.png lo16-app-kbinpacking.png kbpprjview.cpp kbpprjview.h \
-	kbpgaview.cpp kbpgaview.h kappoptions.ui
+	kbpgaview.cpp kbpgaview.h kappoptions.ui qdrawgroups.cpp qdrawgroups.h
 
 install-data-local:
 	$(mkinstalldirs) $(kde_appsdir)/Applications/
@@ -41,7 +44,7 @@ uninstall-local:
 # kde_wallpaperdir  Where general wallpapers should go to.
 
 # set the include path for X, qt and KDE
-INCLUDES= $(all_includes) -I$(R_LIB) -I$(QTWIDGETS_LIB)
+INCLUDES= $(all_includes) -I$(R_LIB) -I$(QTWIDGETS_LIB) -I$(RBP_LIB)
 
 METASOURCES = AUTO
 
