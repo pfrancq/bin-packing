@@ -6,7 +6,7 @@
 
 	GA Node - Header.
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles.
+	Copyright 2001-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -97,8 +97,9 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	cObj** thObjs2=this->Owner->thObjs2;
 
 	// fill thObjs2 with the objects of the group and order it by ascending order
-	for(i=0,cur1=thObjs2;i<this->NbSubObjects;i++,cur1++)
-		(*cur1)=this->Owner->GetObj(this->SubObjects+i);
+	RCursor<cObj> obj=this->Owner->GetObjs(*static_cast<cGroup*>(this));
+	for(obj.Start(),cur1=thObjs2;!obj.End();obj.Next(),cur1++)
+		(*cur1)=obj();
 	qsort(static_cast<void*>(thObjs2),this->NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
 
 	// New Size if addsize is added.

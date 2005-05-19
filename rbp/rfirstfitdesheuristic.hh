@@ -6,7 +6,7 @@
 
 	Generic Heuristic for Grouping - Inline Implemenation
 
-	Copyright 1998-2003 by the Université Libre de Bruxelles.
+	Copyright 1998-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.Be).
