@@ -46,6 +46,26 @@ using namespace R;
 
 //------------------------------------------------------------------------------
 //
+// class RFGroupBP
+//
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+RFGroupBP::RFGroupBP(RFChromoBP* owner,const unsigned int id,RGroupDataBP* data)
+	: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(owner,id,data)
+{
+}
+
+//------------------------------------------------------------------------------
+RFGroupBP::RFGroupBP(RFGroupBP* grp)
+	: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(grp)
+{
+}
+
+
+
+//------------------------------------------------------------------------------
+//
 // class RDataBPFile
 //
 //------------------------------------------------------------------------------

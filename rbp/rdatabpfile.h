@@ -60,15 +60,13 @@ public:
 	* @param id             Identificator of the group.
 	* @param data           Data for the group.
 	*/
-	RFGroupBP(RFChromoBP* owner,const unsigned int id,RGroupDataBP* data)
-		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(owner,id,data) {}
+	RFGroupBP(RFChromoBP* owner,const unsigned int id,RGroupDataBP* data);
 
 	/**
 	* Construct the group.
 	* @param grp            Group used as source.
 	*/
-	RFGroupBP(RFGroupBP* grp)
-		: RGroupBP<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>(grp) {}
+	RFGroupBP(RFGroupBP* grp);
 };
 
 
@@ -106,7 +104,7 @@ public:
 	/**
 	*/
 	RDataBPFile(void);
-	
+
 	void Load(char* name);
 	void Clear(void);
 
