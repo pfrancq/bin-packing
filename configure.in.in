@@ -62,7 +62,6 @@ AC_DEFUN(RBP_INC_CHK,[
 		for t in $i/rbp $i; do
 			str="$t/librbp.*"
 			for j in `echo $str`; do
-				echo "$j"
 				if test -r $j; then
 					RBP_LIB_DIR=$j
 					break 2
