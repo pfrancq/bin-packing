@@ -37,9 +37,9 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rga/rinstg.h>
-#include <rbp/rbp.h>
-#include <rbp/rfirstfitdesheuristic.h>
+#include <rinstg.h>
+#include <rbp.h>
+#include <rfirstfitdesheuristic.h>
 
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ public:
 
 //------------------------------------------------------------------------------
 // inline implementation
-#include <rbp/rinstbp.hh>
+#include <rinstbp.hh>
 
 
 }//------- End of namespace R --------------------------------------------------

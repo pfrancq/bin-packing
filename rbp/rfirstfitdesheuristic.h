@@ -37,8 +37,8 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rga/rfirstfitheuristic.h>
-#include <rga/rdebug.h>
+#include <rfirstfitheuristic.h>
+#include <rdebug.h>
 
 
 //------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ public:
 
 //------------------------------------------------------------------------------
 // Definitions of templates
-#include <rbp/rfirstfitdesheuristic.hh>
+#include <rfirstfitdesheuristic.hh>
 
 
 }  //------- End of namespace R ------------------------------------------------

@@ -32,8 +32,8 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rbp/rfchromobp.h>
-#include <rbp/rfinstbp.h>
+#include <rfchromobp.h>
+#include <rfinstbp.h>
 using namespace R;
 
 

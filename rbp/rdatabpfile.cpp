@@ -36,10 +36,10 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rstd/rxmlstruct.h>
-#include <rstd/rxmlfile.h>
-#include <rbp/rdatabpfile.h>
-#include <rbp/rfchromobp.h>
+#include <rxmlstruct.h>
+#include <rxmlfile.h>
+#include <rdatabpfile.h>
+#include <rfchromobp.h>
 using namespace R;
 
 

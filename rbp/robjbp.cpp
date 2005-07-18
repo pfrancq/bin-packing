@@ -6,7 +6,7 @@
 
 	Bin Packing Objects - Implementation.
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles.
+	Copyright 2001-2003 by the Universitï¿½Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -30,7 +30,7 @@
 
 
 //------------------------------------------------------------------------------
-#include <rbp/robjbp.h>
+#include <robjbp.h>
 using namespace R;
 
 

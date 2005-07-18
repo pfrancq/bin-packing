@@ -31,11 +31,11 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rstd/rcursor.h>
-#include <rga/robjs.h>
-#include <rbp/rbp.h>
-#include <rbp/robjbp.h>
-#include <rbp/rgroupbp.h>
+#include <rcursor.h>
+#include <robjs.h>
+#include <rbp.h>
+#include <robjbp.h>
+#include <rgroupbp.h>
 
 
 //------------------------------------------------------------------------------

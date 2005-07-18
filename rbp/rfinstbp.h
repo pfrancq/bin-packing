@@ -33,9 +33,9 @@
 
 
 //-----------------------------------------------------------------------------
-// include files for Rainbow
-#include <rbp/rdatabpfile.h>
-#include <rbp/rinstbp.h>
+// include files for R Project
+#include <rdatabpfile.h>
+#include <rinstbp.h>
 
 
 //-----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public:
 	/**
 	* Construct the instance.
 	* @param max            Maximal number of generations.
-	* @param popsize        The size of the population.	
+	* @param popsize        The size of the population.
 	* @param prob           The problem.
 	* @param h              The type of heuristic to be used.
 	* @param maxv           Maximal size of the groups.

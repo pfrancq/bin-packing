@@ -36,8 +36,8 @@
 
 //------------------------------------------------------------------------------
 // includes files for R Project
-#include <rga/rfitness.h>
-#include <rga/rgga.h>
+#include <rfitness.h>
+#include <rgga.h>
 
 
 //------------------------------------------------------------------------------

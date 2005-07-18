@@ -42,8 +42,8 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rga/rgroups.h>
-#include <rbp/rfirstfitdesheuristic.h>
+#include <rgroups.h>
+#include <rfirstfitdesheuristic.h>
 
 
 //------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ protected:
 
 //------------------------------------------------------------------------------
 // inline implementation
-#include <rbp/rgroupbp.hh>
+#include <rgroupbp.hh>
 
 
 }  //------- End of namespace R ------------------------------------------------

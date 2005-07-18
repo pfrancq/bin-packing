@@ -33,9 +33,9 @@
 
 
 //-----------------------------------------------------------------------------
-// include files for Rainbow
-#include <rbp/rdatabpfile.h>
-#include <rbp/rchromobp.h>
+// include files for R Project
+#include <rdatabpfile.h>
+#include <rchromobp.h>
 
 
 //------------------------------------------------------------------------

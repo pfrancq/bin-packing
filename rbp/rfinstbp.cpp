@@ -32,9 +32,9 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rbp/rdatabpfile.h>
-#include <rbp/rfinstbp.h>
-#include <rbp/rfchromobp.h>
+#include <rdatabpfile.h>
+#include <rfinstbp.h>
+#include <rfchromobp.h>
 using namespace R;
 
 

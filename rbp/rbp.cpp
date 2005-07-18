@@ -32,4 +32,4 @@
 
 //------------------------------------------------------------------------------
 // includes files for R Project
-#include <rbp/rbp.h>
+#include <rbp.h>

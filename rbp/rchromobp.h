@@ -41,9 +41,9 @@
 
 //------------------------------------------------------------------------------
 // include files for R Project
-#include <rga/rchromog.h>
-#include <rbp/rbp.h>
-#include <rbp/rfirstfitdesheuristic.h>
+#include <rchromog.h>
+#include <rbp.h>
+#include <rfirstfitdesheuristic.h>
 
 
 //------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ public:
 
 //------------------------------------------------------------------------------
 // inline implementation
-#include <rbp/rchromobp.hh>
+#include <rchromobp.hh>
 
 
 }//------- End of namespace R --------------------------------------------------
