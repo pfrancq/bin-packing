@@ -26,8 +26,8 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rbp/rfinstbp.h>
-#include <rbp/rfchromobp.h>
+#include <rfinstbp.h>
+#include <rfchromobp.h>
 using namespace R;
 
 
@@ -39,8 +39,8 @@ using namespace R;
 
 //-----------------------------------------------------------------------------
 // include files for Widgets
-#include <frontend/kde/qgamonitor.h>
-#include <frontend/kde/qxmlcontainer.h>
+#include <qgamonitor.h>
+#include <qxmlcontainer.h>
 
 
 //-----------------------------------------------------------------------------
@@ -148,7 +148,7 @@ void KBPGAView::RunGA(void)
 	if(Instance)
 	{
 		try
-		{		
+		{
 			if(theApp->GAMaxGen>Gen)
 			{
 				if(theApp->GAStepGen==0)

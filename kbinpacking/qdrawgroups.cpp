@@ -35,11 +35,11 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rga/robjs.h>
-#include <rbp/robjbp.h>
-#include <rbp/rfchromobp.h>
-#include <rbp/rdatabpfile.h>
-#include <frontend/kde/rqt.h>
+#include <robjs.h>
+#include <robjbp.h>
+#include <rfchromobp.h>
+#include <rdatabpfile.h>
+#include <rqt.h>
 using namespace R;
 
 
@@ -285,7 +285,7 @@ void QDrawGroups::paintEvent(QPaintEvent*)
 				}
 			}
 		}
-        
+
 		delete Painter;
 		Painter=0;
 		Changed=false;

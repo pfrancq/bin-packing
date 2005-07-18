@@ -30,7 +30,7 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <frontend/kde/rqt.h>
+#include <rqt.h>
 using namespace R;
 
 

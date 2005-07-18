@@ -1,125 +1,106 @@
 #MIN_CONFIG(3)
 
-#--------------- Check R and GALILEI ------------------
-R_CHK(kde)
-
-
-#--------------------- CHECK FOR RDEBUG ----------------------
-if test "$enable_debug" != "no"; then
-	CXXFLAGS="$CXXFLAGS -D_RDEBUG"
-fi
+#--------------- Check R and RBP ------------------
+R_CHK("rcore rmath roptimization",kde)
 
 
 #--------------------- RBP LIB -----------------------------
-#VARIABLES USE :
-#	$RBP_LIB environnement variable used for developpment
-#	$RBP_INC_PATH = the path specified in the --with-rbp-includes
-#	$RBP_LIB_PATH = the path specified in the --with-rbp-libs
-#	$RBP_INC_DIR = the directory where the includes were found
-#	$RBP_LIB_DIR = the directory where the libraries were found
-#	$KBINPACKING_ADD = the library needed by KBINPACKING_LDADD
-
-#---------------------------------------------------------
-# ---- add configure option : --with-rbp-includes=DIR ----
-if test "x$RBP_LIB" != "x" ; then
-	RBP_INC_PATH=$RBP_LIB
-else
-	RBP_INC_PATH=" /usr/include /usr/include/rbp /usr/local /usr/local/include /usr/local/include/rbp ${prefix}/include/rbp"
-fi
-AC_ARG_WITH(rbp-includes,
-	AC_HELP_STRING(
-		[--with-rbp-includes=DIR],
-		[where the RBP includes are, like [/usr/include/rbp]. ]),
-	RBP_INC_PATH="$withval")
-
-
-# ---- add configure option : --with-rbp-libs=DIR ----
-if test "x$RBP_LIB" != "x" ; then
-	RBP_LIB_PATH=$RBP_LIB
-else
-	RBP_LIB_PATH="/usr/lib /usr/lib/rbp /usr/local/lib /usr/local/lib/rbp ${prefix}/lib/rbp"
-fi
-AC_ARG_WITH(rbp-libs,
-	AC_HELP_STRING(
-		[--with-rbp-libs=DIR],
-		[where the RBP libraries are installed, like [/usr/lib]. ]),
-	RBP_LIB_PATH="$withval")
-
-
-# ---- end arg for configure ----
-
-# ---- end arg for configure ----
-
-# ---- def function to check for a specific RBP library on the system
-AC_DEFUN(RBP_LIB_CHK,[
-	str="$1/lib$2.*"
-	RBP_LIB_DIR=""
-	for j in `echo $str`; do
-		if test -r $j; then
-		RBP_LIB_DIR=$1
-		break 2
-	fi
-	done
-])
-# --- end def function -----
-
-
 # ---- def function to check for a specific RBP includes on the system
 AC_DEFUN(RBP_INC_CHK,[
 	RBP_INC_DIR=""
-	str="$1/$2"
 	for i in $RBP_INC_PATH ; do
-		test -f $i/$str                    && RBP_INC_DIR=$i/$1 && break
-		#test -f $i/rbp/$str              && RBP_INC_DIR=$i/rbp/$1 && break
+		if test -f $i/$1/$2 ; then
+			RBP_INC_DIR="-I$i/$1"
+			add="$i/$1"
+			break
+		fi
+		if test -f $i/rbp/$2 ; then
+			RBP_INC_DIR="-I$i/rbp"
+			RBP_INSTALL="yes"
+			add="$i/rbp"
+			break
+		fi
+		if test -f $i/$2 ; then
+			RBP_INC_DIR="-I$i"
+			RBP_INSTALL="yes"
+			add="$i"
+			break
+		fi
 	done
-	AC_MSG_CHECKING(for $1/$2)
 	if test -z "$RBP_INC_DIR"; then
 		if test "x$RBP_INC_PATH" != "x"; then
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR(Cannot find $1 header files under $RBP_INC_PATH)
+			AC_MSG_ERROR($3)
 		else
-			AC_MSG_RESULT(no)
-			AC_MSG_ERROR(Cannot find $2 headers.  Use --with-rbp-includes= to specify non-default path.)
+			AC_MSG_ERROR($3 Use --with-rbp-includes=DIR to specify non-default path.)
 		fi
 	fi
-	AC_MSG_RESULT(yes in $RBP_INC_DIR)
-
-	if test "x$i" != "x$PAST_RBP_INC_DIR"; then
-		CPPFLAGS="-I$i $CPPFLAGS"
+	if test "x$add" != "x$PAST_RBP_INC_DIR"; then
+		CPPFLAGS="$RBP_INC_DIR $CPPFLAGS"
 	fi
-	PAST_RBP_INC_DIR="$i"
-
+	PAST_RBP_INC_DIR="$add"
 ])
-# --- end def function -----
 
-# ---- check the presence of the includes for the RBP library
-RBP_INC_CHK(rbp,rbp.h)
+	AC_MSG_CHECKING(for RBP)
 
-
-# ---- check the presence of all R libraries
-for l in rbp; do
-
-	#AC_MSG_CHECKING(for lib$l)
-	for i in $RBP_LIB_PATH ; do
-		RBP_LIB_CHK($i/$l,$l)  #check for local presence
-		RBP_LIB_CHK($i,$l)
-		RBP_LIB_CHK($i/r,$l)
-	done
-	AC_MSG_CHECKING(for lib$l)
-	if test -z "$RBP_LIB_DIR"; then
-		AC_MSG_RESULT(no)
-		AC_MSG_ERROR(Cannot find lib$l)
+	# ---- add configure option : --with-rbp-libs=DIR ----
+	if test "x$RBP_LIB" != "x" ; then
+		RBP_LIB_PATH=$RBP_LIB
 	else
-		AC_MSG_RESULT(yes in $RBP_LIB_DIR)
+		RBP_LIB_PATH="/usr/lib /usr/local/lib ${prefix}/lib"
 	fi
-	if test "x$RBP_LIB_DIR" != "x$PAST_RBP_LIB_DIR"; then
-		LDFLAGS="-L$RBP_LIB_DIR $LDFLAGS"
+	AC_ARG_WITH(rbp-libs,
+		AC_HELP_STRING(
+			[--with-rbp-libs=DIR],
+			[where the RBP libraries are installed, default: [/usr/lib]. ]),
+		RB_LIB_PATH="$withval")
+
+	# ---- end arg for configure ----
+
+	# ---- check the presence of all RBP libraries
+	RBP_LIB_DIR=""
+	for i in $RBP_LIB_PATH ; do
+		for t in $i/rbp $i; do
+			str="$t/librbp.*"
+			for j in `echo $str`; do
+				echo "$j"
+				if test -r $j; then
+					RBP_LIB_DIR=$j
+					break 2
+				fi
+			done
+		done
+		if test -z "$RBP_LIB_DIR"; then
+			AC_MSG_ERROR(Cannot find RBP libraries)
+		fi
+		if test "x$RBP_LIB_DIR" != "x$PAST_RBP_LIB_DIR"; then
+			LDFLAGS="-L$RBP_LIB_DIR $LDFLAGS"
+		fi
+		PAST_RBP_LIB_DIR="$RBP_LIB_DIR"
+		LIB_RBP="$RBP_LIB_DIR $LIB_RBP"
+	done
+	MSG="libraries $i"
+
+	if test "x$RBP_LIB" != "x" ; then
+		RBP_INC_PATH=$RBP_LIB
+	else
+		RBP_INC_PATH=" /usr/include /usr/local/include ${prefix}/include/rbp"
 	fi
-	PAST_RBP_LIB_DIR="$RBP_LIB_DIR"
-	KBINPACKING_ADD="$RBP_LIB_DIR/lib$l.la $KBINPACKING_ADD"
+	AC_ARG_WITH(rbp-includes,
+		AC_HELP_STRING(
+			[--with-rbp-includes=DIR],
+			[where the RBP includes are, like [/usr/include/rbp]. ]),
+		RBP_INC_PATH="$withval")
+	if test "x$RBP_LIB" != "x" ; then
+		RBP_LIB_PATH=$RBP_LIB
+	else
+		RBP_LIB_PATH="/usr/lib /usr/lib/rbp /usr/local/lib /usr/local/lib/rbp ${prefix}/lib/rbp"
+	fi
 
-done
+	RBP_INC_CHK(rbp,rbp.h,Cannot find RBP headers.)
 
+	MSG="$MSG, headers $i"
+	AC_MSG_RESULT($MSG)
+	AC_SUBST(LIB_RBP)
 #--------------------- END RBP LIB -----------------------------
 
 

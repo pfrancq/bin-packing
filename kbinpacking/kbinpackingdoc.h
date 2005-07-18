@@ -40,7 +40,7 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rbp/rdatabpfile.h>
+#include <rdatabpfile.h>
 using namespace R;
 
 

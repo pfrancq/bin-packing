@@ -31,9 +31,9 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rga/rgasignals.h>
-#include <rbp/rdatabpfile.h>
-#include <rga/rdebug.h>
+#include <rgasignals.h>
+#include <rdatabpfile.h>
+#include <rdebug.h>
 using namespace R;
 
 
@@ -74,32 +74,32 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	* The tab widget.
 	*/
 	QTabWidget* TabWidget;
-	
+
 	/**
-	* The widget that handle statistics about the running GA.	
+	* The widget that handle statistics about the running GA.
 	*/
 	QGAMonitor* Monitor;
-	
+
 	/**
 	* The widget that handle the debug information of the running GA.
 	*/
 	QXMLContainer* Debug;
-	
+
 	/**
 	* The splitter that separate the monitor and the debug part.
 	*/
 	QSplitter* StatSplitter;
-	
+
 	/**
 	* The best solution.
 	*/
 	QDrawGroups* Best;
-	
+
 	/**
 	* The solutions.
 	*/
 	QDrawGroups* Sol;
-	
+
 	/**
 	* Identificator of the current showed solution.
 	*/
@@ -141,7 +141,7 @@ public:
 	* GA signal to indicate that a new generation has been done.
 	*/
 	virtual void receiveGenSig(GenSig* sig);
-	
+
 	/**
 	* GA signal to interact with the system.
 	*/
