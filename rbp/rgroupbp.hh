@@ -6,7 +6,7 @@
 
 	GA Node - Header.
 
-	Copyright 2001-2003 by the Universit�Libre de Bruxelles.
+	Copyright 2001-2005 by the Université Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -54,7 +54,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 //------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void) throw(eGA)
+	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void)
 {
 	char tmp[200];
 
@@ -191,7 +191,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 //------------------------------------------------------------------------------
 template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs) throw(eGA)
+	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
 {
 	unsigned int idx[2];           // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.

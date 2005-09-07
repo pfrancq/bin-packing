@@ -6,7 +6,7 @@
 
 	Final Chromosome for Bin Packing Problem - Implementation
 
-	Copyright 1999-2003 by the Université Libre de Bruxelles.
+	Copyright 1999-2005 by the UniversitÃ© Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -45,7 +45,7 @@ using namespace R;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-RFChromoBP::RFChromoBP(RFInstBP* inst,unsigned int id) throw(std::bad_alloc)
+RFChromoBP::RFChromoBP(RFInstBP* inst,unsigned int id)
   : RChromoBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(inst,id)
 {
 }

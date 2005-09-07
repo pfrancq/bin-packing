@@ -4,7 +4,7 @@
 
 	Class representing a chromosome for a GGA - Inline implementation
 
-	Copyright 2001-2003 by the Universit�Libre de Bruxelles.
+	Copyright 2001-2005 by the Université Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -30,7 +30,7 @@
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id) throw(std::bad_alloc)
+	RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RChromoBP(cInst *inst,unsigned id)
 		: RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(inst,id),
 		  HeuristicFFD(0), thObjs(0)
 {
@@ -39,7 +39,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cThreadData *thData) throw(std::bad_alloc)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cThreadData *thData)
 {
 	// Initialisation of the parent
 	RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(thData);
@@ -52,7 +52,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2) throw(eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Crossover(cChromo* parent1,cChromo* parent2)
 {
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("Crossover","RChromoBP");
@@ -69,7 +69,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change to default heuristic
 	this->Heuristic=Hold;
-	
+
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->EndFunc("Crossover","RChromoBP");
 	#endif
@@ -78,12 +78,12 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void) throw(eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Mutation(void)
 {
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("Mutation","RChromoBP");
 	#endif
-	
+
 	double worstratio=1.1,actratio;
 	cGroup* worst=0;
 	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* Hold;
@@ -99,7 +99,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 			worst=Cur();
 		}
 	}
-	ReleaseGroup(worst->GetId());
+	ReleaseGroup(worst);
 
 	// Change default heuristic to FFB
 	Hold=this->Heuristic;
@@ -110,7 +110,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 	// Change to default heuristic
 	this->Heuristic=Hold;
-	
+
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->EndFunc("Mutation","RChromoBP");
 	#endif
@@ -119,7 +119,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void) throw(eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::LocalOptimisation(void)
 {
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->BeginFunc("LocalOptimisation","RChromoBP");
@@ -160,7 +160,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 			}
 		}
 	}
-	
+
 	#ifdef RGADEBUG
 		if(this->Instance->Debug) this->Instance->Debug->EndFunc("LocalOptimisation","RChromoBP");
 	#endif
@@ -178,7 +178,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void) throw(eGA)
+	void RChromoBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Evaluate(void)
 {
 	double sum;
 

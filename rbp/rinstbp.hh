@@ -4,7 +4,7 @@
 
 	Class representing an instance of a Bin Packing - Implementation
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles.
+	Copyright 2001-2005 by the UniversitÃ© Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -36,7 +36,7 @@
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner) throw(std::bad_alloc)
+	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner)
 		: RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
 		  HeuristicFFD(0), tmpObjs(0)
 {
@@ -45,7 +45,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void) throw(std::bad_alloc)
+	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void)
 {
 	RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
 	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(this->Owner->Random,this->Owner->Objs,this->Owner->Debug);
@@ -76,7 +76,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug) throw(std::bad_alloc)
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug)
 		: RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,debug), MaxSize(max)
 {
 }
@@ -84,7 +84,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cGroupData* gdata) throw(std::bad_alloc)
+	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cGroupData* gdata)
 {
 	RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(gdata);
 }

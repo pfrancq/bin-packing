@@ -6,7 +6,7 @@
 
 	Final Instance for Bin Packing Problem - Implementation
 
-	Copyright 1999-2003 by the Université Libre de Bruxelles.
+	Copyright 1999-2005 by the UniversitÃ© Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -60,7 +60,7 @@ RFThreadDataBP::RFThreadDataBP(RFInstBP* owner)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug) throw(std::bad_alloc)
+RFInstBP::RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug)
 	: RInstBP<RFInstBP,RFChromoBP,RFThreadDataBP,RFGroupBP,RObjBP,RGroupDataBP>(popsize,objs,h,maxv,debug),
 		MaxGen(max)
 {

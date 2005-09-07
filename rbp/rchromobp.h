@@ -4,7 +4,7 @@
 
 	Class representing a chromosome of a GGA - Header
 
-	Copyright 2001-2003 by the Universit�Libre de Bruxelles.
+	Copyright 2001-2005 by the Université Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -81,14 +81,14 @@ public:
 	* @param inst           The instance.
 	* @param id             Identificator of the chromosome.
 	*/
-	RChromoBP(cInst* inst,unsigned int id) throw(std::bad_alloc);
+	RChromoBP(cInst* inst,unsigned int id);
 
 	/**
 	* Initialisation of the chromosome.
 	* @param thData         Pointer to the "thread-dependent" data of the
 	*                       chromosome.
 	*/
-	virtual void Init(cThreadData *thData) throw(std::bad_alloc);
+	virtual void Init(cThreadData *thData);
 
 	/**
 	* Do a crossover by using the chromosome as child. The crossover select
@@ -97,13 +97,13 @@ public:
 	* @param parent1        First parent used.
 	* @param parent2        Second parent used.
 	*/
-	virtual void Crossover(cChromo* parent1,cChromo* parent2) throw(eGA);
+	virtual void Crossover(cChromo* parent1,cChromo* parent2);
 
 	/**
 	* Do a mutation of the chromosome, by destroy the less filled group and
 	* then call the default mutation of the GGA.
 	*/
-	virtual void Mutation(void) throw(eGA);
+	virtual void Mutation(void);
 
 	/**
 	* Perform a local optimisation. This function is called by the crossover
@@ -112,7 +112,7 @@ public:
 	* This local optimisation is the one described in the Bin Packing Crossover
 	* with remplacement (RPRX) operator.
 	*/
-	virtual void LocalOptimisation(void) throw(eGA);
+	virtual void LocalOptimisation(void);
 
 	/**
 	* The assigment operator.
@@ -123,7 +123,7 @@ public:
 	/**
 	* Evaluate the fitness of the chromosome.
 	*/
-	virtual void Evaluate(void) throw(eGA);
+	virtual void Evaluate(void);
 
 	/**
 	* Destruct the chromosome.

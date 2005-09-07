@@ -6,7 +6,7 @@
 
 	Generic Heuristic for Grouping - Header
 
-	Copyright 1998-2003 by the Universit�Libre de Bruxelles.
+	Copyright 1998-2005 by the Université Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).

@@ -6,7 +6,10 @@
 
 	Final Instance for Bin Packing Problem - Header
 
-	(C) 1999-2000 by P. Francq.
+	Copyright 1999-2005 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -85,7 +88,7 @@ public:
 	* @param maxv           Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug=0) throw(std::bad_alloc);
+	RFInstBP(unsigned int max,unsigned int popsize,RObjs<RObjBP>* objs,HeuristicType h,const double maxv,RDebug *debug=0);
 
 	/**
 	* This function determines if the GA must be stopped. Actually, it is the case

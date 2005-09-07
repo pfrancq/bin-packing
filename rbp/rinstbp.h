@@ -6,7 +6,7 @@
 
 	Instance of the Bin Packing Problem - Header
 
-	Copyright 2001-2003 by the Universit�Libre de Bruxelles.
+	Copyright 2001-2005 by the Université Libre de Bruxelles.
 
 	Authors:
 		Pascal Francq (pfrancq@ulb.ac.be).
@@ -77,12 +77,12 @@ public:
 	* Construct the data.
 	* @param data           Owner of the data.
 	*/
-	RThreadDataBP(cInst *owner) throw(std::bad_alloc);
+	RThreadDataBP(cInst *owner);
 
 	/**
 	* Initialise the data.
 	*/
-	virtual void Init(void) throw(std::bad_alloc);
+	virtual void Init(void);
 
 	/**
 	* Destruct the data.
@@ -114,13 +114,13 @@ public:
 	* @param max            Maximal size of the groups.
 	* @param debug          Debugger.
 	*/
-	RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug=0) throw(std::bad_alloc);
+	RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug=0);
 
 	/**
 	* Initialisation of the instance.
 	* @param gdata          The Data to use for the construction of the groups.
 	*/
-	virtual void Init(cGroupData* gdata) throw(std::bad_alloc);
+	virtual void Init(cGroupData* gdata);
 
 	/**
 	* Destruct the instance.

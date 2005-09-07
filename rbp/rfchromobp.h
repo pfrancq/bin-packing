@@ -6,7 +6,10 @@
 
 	Final Chromosome for Bin Packing Problem - Header
 
-	(C) 1999-2000 by P. Francq.
+	Copyright 1999-2005 by the Université Libre de Bruxelles.
+
+	Authors:
+		Pascal Francq (pfrancq@ulb.ac.be).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -58,7 +61,7 @@ public:
 	* @param inst           The instance of the problem.
 	* @param id             The identificator of the chromosome.
 	*/
-	RFChromoBP(RFInstBP* inst,unsigned int id) throw(std::bad_alloc);
+	RFChromoBP(RFInstBP* inst,unsigned int id);
 };
 
 
