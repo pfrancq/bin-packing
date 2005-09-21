@@ -100,11 +100,11 @@ void RDataBPFile::Load(char* name)
 	if(tag)
 	{
 		// Read number objects info
-		Objs=new RObjs<RObjBP>(tag->GetNb());
+		Objs=new RObjs<RObjBP>(tag->GetNbNodes());
 
 		// Read each objects
-		RCursor<RXMLTag> tab(*tag);
-		for(i=0,tab.Start();i<tag->GetNb();i++,tab.Next())
+		RCursor<RXMLTag> tab(tag->GetNodes());
+		for(i=0,tab.Start();i<tag->GetNbNodes();i++,tab.Next())
 			if(tab()->GetName()=="Object")
 			{
 				double d;
