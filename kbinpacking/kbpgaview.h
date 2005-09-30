@@ -120,8 +120,6 @@ class KBPGAView : public KBinPackingView, public RGASignalsReceiver<RFInstBP,RFC
 	*/
 	RGroupDataBP Data;
 
-	RDebugXML DebugFile;
-
 public:
 
 	/**

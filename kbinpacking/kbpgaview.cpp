@@ -59,7 +59,7 @@ using namespace R;
 
 //-----------------------------------------------------------------------------
 KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int wflags)
-	: KBinPackingView(pDoc,parent,name,wflags), CurId(0), Instance(0), Data(pDoc->MaxSize), DebugFile("/home/pfrancq/debug.xml","BP","Pascal Francq")
+	: KBinPackingView(pDoc,parent,name,wflags), CurId(0), Instance(0), Data(pDoc->MaxSize)
 {
 	static char tmp[100];
 	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, sizePolicy().hasHeightForWidth() ) );
@@ -76,7 +76,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	Monitor->setMaxGen(theApp->GAMaxGen);
 	Monitor->setMaxFitness(pDoc->GetNbObjs()/2);
 	connect(this,SIGNAL(signalSetGen(const unsigned int,const unsigned int,const double)),Monitor,SLOT(slotSetGen(const unsigned int,const unsigned int,const double)));
-	Debug=new QXMLContainer(StatSplitter,"KBinPacking","Pascal Francq");
+	Debug=new QXMLContainer(StatSplitter,"KBinPacking");
 
 	// Solution part
 	Best = new QDrawGroups(TabWidget,pDoc->Objs);
@@ -91,7 +91,7 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 	try
 	{
 		Gen=0;
-		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,&DebugFile);
+		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,Debug);
 		Instance->AddReceiver(this);
 		Instance->Init(&Data);
 	}
