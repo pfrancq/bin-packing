@@ -77,7 +77,7 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 //------------------------------------------------------------------------------
 template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
 	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug)
-		: RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,debug), MaxSize(max)
+		: RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,"BinPacking",debug), MaxSize(max)
 {
 }
 
