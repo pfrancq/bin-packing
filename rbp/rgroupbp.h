@@ -1,15 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing Library
 
-	RGroup.h
+	RGroupBP.h
 
-	Group of a GGA - Header.
+	Group for a Bin Packing Problem - Header.
 
-	Copyright 2001-2005 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -47,33 +44,8 @@
 
 
 //------------------------------------------------------------------------------
-namespace R{
+namespace RBP{
 //------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-/**
-* The RGroupDataBP provides a representation of the information needed to
-* construct a group in the Bin Packing Problem.
-* @author Pascal Francq
-* @short Data for Bin Packing Group.
-*/
-class RGroupDataBP
-{
-public:
-
-	/**
-	* Maximum size of the groups.
-	*/
-	unsigned int MaxSize;
-
-	/**
-	* Constructor of the group data.
-	* @param m              Maximum size of the groups.
-	*/
-	RGroupDataBP(const unsigned int m) : MaxSize(m) {}
-};
-
 
 //------------------------------------------------------------------------------
 /**
@@ -82,20 +54,20 @@ public:
 * @author Pascal Francq
 * @short Bin Packing Group.
 */
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	class RGroupBP : public RGroup<cGroup,cObj,cGroupData,cChromo>
+template<class cGroup,class cObj,class cChromo>
+	class RGroupBP : public R::RGroup<cGroup,cObj,cChromo>
 {
 protected:
 
 	/**
 	* The size of the group.
 	*/
-	unsigned int Size;
+	size_t Size;
 
 	/**
 	* Maximum size of the group.
 	*/
-	unsigned int MaxSize;
+	size_t MaxSize;
 
 public:
 
@@ -109,9 +81,8 @@ public:
 	* Construct the group.
 	* @param owner          Owner of the group.
 	* @param id             Identificator of the group.
-	* @param data           Data needed for the group.
 	*/
-	RGroupBP(cChromo* owner,const unsigned int id,const cGroupData* data);
+	RGroupBP(cChromo* owner,size_t id);
 
 	/**
 	* Verify if the group is not violating the integrity of the system.
@@ -127,29 +98,37 @@ public:
 	* Look if an object can be insert in the group.
 	* @param obj            Pointer to the object to insert.
 	*/
-	virtual bool CanInsert(const cObj* obj) const;
+	virtual bool CanInsert(const cObj* obj);
 
 	/**
 	* Return the actual size of the group.
 	*/
-	unsigned int GetSize(void) {return(Size);}
+	size_t GetSize(void) const {return(Size);}
 
 	/**
 	* Return the maximal size of the group.
 	*/
-	unsigned int GetMaxSize(void) {return(MaxSize);}
+	size_t GetMaxSize(void) const {return(MaxSize);}
+
+	/**
+	 * Get the percentage of volume occupied.
+    */
+	double GetPerc(void) const
+	{
+		return(static_cast<double>(Size*100)/static_cast<double>(MaxSize));
+	}
 
 	/**
 	* Method call after an object was inserted in the group.
 	* @param obj            Pointer to the object to insert.
 	*/
-	virtual void PostInsert(const cObj* obj) {Size+=obj->GetSize();}
+	virtual void PostInsert(const cObj* obj);
 
 	/**
 	* Method call after an object was deleted from the group.
 	* @param obj            Pointer to the object to delete.
 	*/
-	virtual void PostDelete(const cObj* obj) {Size-=obj->GetSize();}
+	virtual void PostDelete(const cObj* obj);
 
 	/**
 	* Do a local optimisation by checking whether it is possible to replace up
@@ -158,7 +137,7 @@ public:
 	* changes in the group and in objs.
 	* @return true if at least one exchange has been done.
 	*/
-	bool DoOptimisation(cObj** objs,unsigned int& nbobjs);
+	bool DoOptimisation(cObj** objs,size_t& nbobjs);
 
 	/**
 	* Assignment operator.
@@ -177,7 +156,7 @@ protected:
 	* Test if a new better size can be assigned to group by deleting maximum 3
 	* objects.
 	*/
-	bool TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size);
+	bool TestNewSize(cObj** del,size_t& nbdel,size_t addsize,size_t size);
 };
 
 

@@ -1,15 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing Library
 
-	RBP.cpp
+	RObjBP.cpp
 
-	GA for the Bin Packing Problem - Implementation.
+	Bin Packing - Implementation.
 
-	Copyright 2001-2003 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -29,7 +26,27 @@
 */
 
 
+//------------------------------------------------------------------------------
+#include <rbp.h>
+using namespace R;
+using namespace RBP;
+
+
 
 //------------------------------------------------------------------------------
-// includes files for R Project
-#include <rbp.h>
+//
+// class RObjBP
+//
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+RObjBP::RObjBP(size_t id,const RString& name,size_t size)
+	: RObjG(id,name), Size(size)
+{
+}
+
+
+//------------------------------------------------------------------------------
+RObjBP::~RObjBP(void)
+{
+}

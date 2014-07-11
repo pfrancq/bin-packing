@@ -1,15 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing Library
 
-	RNodeGA.hh
+	RGroupBP.hh
 
-	GA Node - Header.
+	Group for a Bin Packing Problem - Header.
 
-	Copyright 2001-2005 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -32,79 +29,96 @@
 
 //------------------------------------------------------------------------------
 //
-// class RGroupBP<cGroup,cObj,cGroupData,cChromo>
+// class RGroupBP<cGroup,cObj,cChromo>
 //
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(RGroupBP* grp)
-		: RGroup<cGroup,cObj,cGroupData,cChromo>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
+template<class cGroup,class cObj,class cChromo>
+	RGroupBP<cGroup,cObj,cChromo>::RGroupBP(RGroupBP* grp)
+		: R::RGroup<cGroup,cObj,cChromo>(grp), Size(grp->Size), MaxSize(grp->MaxSize)
 {
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	RGroupBP<cGroup,cObj,cGroupData,cChromo>::RGroupBP(cChromo* owner,const unsigned int id,const cGroupData* data)
-		: RGroup<cGroup,cObj,cGroupData,cChromo>(owner,id,data), Size(0), MaxSize(data->MaxSize)
+template<class cGroup,class cObj,class cChromo>
+	RGroupBP<cGroup,cObj,cChromo>::RGroupBP(cChromo* owner,size_t id)
+		: R::RGroup<cGroup,cObj,cChromo>(owner,id), Size(0), MaxSize(owner->Instance->GetMaxSize())
 {
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Verify(void)
+template<class cGroup,class cObj,class cChromo>
+	void RGroupBP<cGroup,cObj,cChromo>::Verify(void)
 {
 	char tmp[200];
 
-	RGroup<cGroup,cObj,cGroupData,cChromo>::Verify();
+	R::RGroup<cGroup,cObj,cChromo>::Verify();
 	if(Size>MaxSize)
 	{
-		sprintf(tmp,"Size(%u) > MaxSize(%u) for group %u",Size,MaxSize,this->Id);
-		throw eGAVerify(tmp);
+		sprintf(tmp,"Size(%lu) > MaxSize(%lu) for group %lu",Size,MaxSize,this->Id);
+		mThrowRGAException("Verify",tmp);
 	}
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	void RGroupBP<cGroup,cObj,cGroupData,cChromo>::Clear(void)
+template<class cGroup,class cObj,class cChromo>
+	void RGroupBP<cGroup,cObj,cChromo>::Clear(void)
 {
-	RGroup<cGroup,cObj,cGroupData,cChromo>::Clear();
+	R::RGroup<cGroup,cObj,cChromo>::Clear();
 	Size=0;
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::CanInsert(const cObj* obj) const
+template<class cGroup,class cObj,class cChromo>
+	bool RGroupBP<cGroup,cObj,cChromo>::CanInsert(const cObj* obj)
 {
 	return(Size+obj->GetSize()<=MaxSize);
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::TestNewSize(cObj** del,unsigned int& nbdel,unsigned int addsize,unsigned int size)
+template<class cGroup,class cObj,class cChromo>
+	void RGroupBP<cGroup,cObj,cChromo>::PostInsert(const cObj* obj)
 {
-	unsigned int newsize,maxsize;
-	unsigned int s1,s2,s3;
+	Size+=obj->GetSize();
+}
+
+
+//------------------------------------------------------------------------------
+template<class cGroup,class cObj,class cChromo>
+	void RGroupBP<cGroup,cObj,cChromo>::PostDelete(const cObj* obj)
+{
+	Size-=obj->GetSize();
+}
+
+
+//------------------------------------------------------------------------------
+template<class cGroup,class cObj,class cChromo>
+	bool RGroupBP<cGroup,cObj,cChromo>::TestNewSize(cObj** del,size_t& nbdel,size_t addsize,size_t size)
+{
+	size_t newsize;
+	//size_t maxsize;
+	size_t s1,s2,s3;
 	cObj** cur1;
 	cObj** cur2;
 	cObj** cur3;
-	unsigned int i,j,k;
+	size_t i,j,k;
 	cObj** thObjs2=this->Owner->thObjs2;
 
 	// fill thObjs2 with the objects of the group and order it by ascending order
-	RCursor<cObj> obj=this->Owner->GetObjs(*static_cast<cGroup*>(this));
+	R::RCursor<cObj> obj=this->Owner->GetObjs(*static_cast<cGroup*>(this));
 	for(obj.Start(),cur1=thObjs2;!obj.End();obj.Next(),cur1++)
 		(*cur1)=obj();
-	qsort(static_cast<void*>(thObjs2),this->NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>::sort_function_cObjs);
+	qsort(static_cast<void*>(thObjs2),this->NbSubObjects,sizeof(cObj*),RFirstFitDesHeuristic<cGroup,cObj,cChromo>::sort_function_cObjs);
 
 	// New Size if addsize is added.
 	newsize=Size+size+addsize;
-	if(addsize>size) maxsize=addsize; else maxsize=size;
+	//if(addsize>size) maxsize=addsize; else maxsize=size;
 //	if(size==0.0)
 //		size=addsize;
 //	for(i=0;i<nbdel;i++)
@@ -190,18 +204,18 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	bool RGroupBP<cGroup,cObj,cGroupData,cChromo>::DoOptimisation(cObj** objs,unsigned int& nbobjs)
+template<class cGroup,class cObj,class cChromo>
+	bool RGroupBP<cGroup,cObj,cChromo>::DoOptimisation(cObj** objs,size_t& nbobjs)
 {
-	unsigned int idx[2];           // Indexed of the objects to add in objs.
+	size_t idx[2];                 // Indexed of the objects to add in objs.
 	cObj* del[3];                  // Pointers to the objects to delete.
 	cObj* add[2];                  // Pointers to the objects to add.
-	unsigned int nbdel;            // Number of objects to delete.
-	unsigned int nbadd;            // Number of objects to add.
+	size_t nbdel;                  // Number of objects to delete.
+	size_t nbadd;                  // Number of objects to add.
 	cObj** obj;                    // Current object eventually to add.
 	cObj** obj2;
-	unsigned int i,j;
-	unsigned int addsize;
+	size_t i,j;
+//	size_t addsize;
 
 	// If the groups is maximum filled, no optimisation needed.
 	if(Size==MaxSize)
@@ -209,7 +223,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 	// Init Part
 	add[0]=add[1]=del[0]=del[1]=del[2]=0;   // No objs added or deleted
-	idx[0]=idx[1]=NoObject;
+	idx[0]=idx[1]=R::cNoRef;
 	nbdel=nbadd=0;
 
 	// Try to add two objects
@@ -241,7 +255,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 			{
 				idx[nbadd]=i;
 				add[nbadd++]=(*obj);
-				addsize=(*obj)->GetSize();
+//				addsize=(*obj)->GetSize();
 				break;
 			}
 		}
@@ -265,7 +279,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	// Delete the objects from the group and insert them in objs.
 	for(i=0;i<nbdel;i++)
 	{
-		Delete(del[i]);
+		this->Delete(del[i]);
 		objs[nbobjs++]=del[i];
 	}
 
@@ -274,18 +288,18 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 	if(idx[1]>idx[0]) idx[1]--;
 	for(i=0;i<nbadd;i++)
 	{
-		Insert(add[i]);
-		memcpy(&objs[idx[i]],&objs[idx[i]+1],((--nbobjs)-idx[i])*sizeof(cObj*));
+		this->Insert(add[i]);
+		memmove(&objs[idx[i]],&objs[idx[i]+1],((--nbobjs)-idx[i])*sizeof(cObj*));
 	}
 	return(true);
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	RGroupBP<cGroup,cObj,cGroupData,cChromo>& RGroupBP<cGroup,cObj,cGroupData,cChromo>::operator=(const RGroupBP<cGroup,cObj,cGroupData,cChromo>& grp)
+template<class cGroup,class cObj,class cChromo>
+	RGroupBP<cGroup,cObj,cChromo>& RGroupBP<cGroup,cObj,cChromo>::operator=(const RGroupBP<cGroup,cObj,cChromo>& grp)
 {
-	RGroup<cGroup,cObj,cGroupData,cChromo>::operator=(grp);
+	R::RGroup<cGroup,cObj,cChromo>::operator=(grp);
 	MaxSize=grp.MaxSize;
 	Size=grp.Size;
 	return(*this);
@@ -293,7 +307,7 @@ template<class cGroup,class cObj,class cGroupData,class cChromo>
 
 
 //---------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cChromo>
-	RGroupBP<cGroup,cObj,cGroupData,cChromo>::~RGroupBP(void)
+template<class cGroup,class cObj,class cChromo>
+	RGroupBP<cGroup,cObj,cChromo>::~RGroupBP(void)
 {
 }

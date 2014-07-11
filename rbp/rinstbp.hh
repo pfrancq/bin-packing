@@ -1,13 +1,12 @@
 /*
 
+	Bin Packing Library
+
 	RInstBP.hh
 
-	Class representing an instance of a Bin Packing - Implementation
+	Instance for a Bin Packing Problem - Implementation
 
-	Copyright 2001-2005 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -30,33 +29,33 @@
 
 //------------------------------------------------------------------------------
 //
-// class RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
+// class RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>
 //
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RThreadDataBP(cInst *owner)
-		: RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(owner),
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>::RThreadDataBP(cInst *owner)
+		: R::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj>(owner),
 		  HeuristicFFD(0), tmpObjs(0)
 {
 }
 
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	void RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>::Init(void)
 {
-	RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init();
-	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cChromo>(this->Owner->Random,this->Owner->Objs,this->Owner->Debug);
-	tmpObjs=new cObj*[this->Owner->Objs->GetNb()];
-	tmpObjs2=new cObj*[this->Owner->Objs->GetNb()];
+	R::RThreadDataG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj>::Init();
+	HeuristicFFD = new RFirstFitDesHeuristic<cGroup,cObj,cChromo>(this->Owner->Random,this->Owner->Objs,this->Owner->Debug);
+	tmpObjs=new cObj*[this->Owner->Objs.GetNb()];
+	tmpObjs2=new cObj*[this->Owner->Objs.GetNb()];
 }
 
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RThreadDataBP(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	RThreadDataBP<cInst,cChromo,cThreadData,cGroup,cObj>::~RThreadDataBP(void)
 {
 	if(HeuristicFFD)
 		delete HeuristicFFD;
@@ -70,28 +69,28 @@ template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,cla
 
 //------------------------------------------------------------------------------
 //
-// class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>
+// class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>
 //
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::RInstBP(unsigned int popsize,RObjs<cObj>* objs,HeuristicType h,const double max,RDebug *debug)
-		: RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>(popsize,objs,h,"BinPacking",debug), MaxSize(max)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>::RInstBP(size_t popsize,R::RCursor<cObj> objs,double max,const R::RString& h,R::RDebug* debug)
+		: R::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj>(popsize,objs,h,"BinPacking",debug), MaxSize(max)
 {
 }
 
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::Init(cGroupData* gdata)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	void RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>::Init(void)
 {
-	RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>::Init(gdata);
+	R::RInstG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj>::Init();
 }
 
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>::~RInstBP(void)
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>::~RInstBP(void)
 {
 }

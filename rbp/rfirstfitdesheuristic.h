@@ -1,15 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing Library
 
-	RGroupingHeuristic.h
+	RFirstFirtDesHeuristic.h
 
-	Generic Heuristic for Grouping - Header
+	First-fit Heuristic in Descending Order - Header
 
-	Copyright 1998-2005 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -42,7 +39,7 @@
 
 
 //------------------------------------------------------------------------------
-namespace R{
+namespace RBP{
 //------------------------------------------------------------------------------
 
 
@@ -52,8 +49,8 @@ namespace R{
 * @author Pascal Francq
 * @short First Fit Descending Heuristic.
 */
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	class RFirstFitDesHeuristic : public RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>
+template<class cGroup,class cObj,class cGroups>
+	class RFirstFitDesHeuristic : public R::RFirstFitHeuristic<cGroup,cObj,cGroups>
 {
 public:
 
@@ -80,7 +77,7 @@ public:
 	* @param objs           Pointer to the objects.
 	* @param debug          Debugger.
 	*/
-	RFirstFitDesHeuristic(RRandom* r,RCursor<cObj>* objs,RDebug* debug=0);
+	RFirstFitDesHeuristic(R::RRandom& r,R::RCursor<cObj> objs,R::RDebug* debug=0);
 
 	/**
 	* Initialize the heuristic.

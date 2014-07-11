@@ -1,15 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing Library
 
-	RGroupingHeuristic.hh
+	RFirstFitDesHeuristic.hh
 
-	Generic Heuristic for Grouping - Inline Implemenation
+	First-fit Heuristic in Descending Order - Inline Implemenation
 
-	Copyright 1998-2005 by the Université Libre de Bruxelles.
-
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.Be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -32,22 +29,22 @@
 
 //------------------------------------------------------------------------------
 //
-// class RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>
+// class RFirstFitDesHeuristic<cGroup,cObj,cGroups>
 //
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::RFirstFitDesHeuristic(RRandom* r,RCursor<cObj>* objs,RDebug* debug)
-	: RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>(r,objs,debug)
+template<class cGroup,class cObj,class cGroups>
+	RFirstFitDesHeuristic<cGroup,cObj,cGroups>::RFirstFitDesHeuristic(R::RRandom& r,R::RCursor<cObj> objs,R::RDebug* debug)
+	: R::RFirstFitHeuristic<cGroup,cObj,cGroups>(r,objs,debug)
 {
 	this->Name="First-Fit Descending Heuristic";
 }
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::sort_function_cObjs( const void *a, const void *b)
+template<class cGroup,class cObj,class cGroups>
+	int RFirstFitDesHeuristic<cGroup,cObj,cGroups>::sort_function_cObjs( const void *a, const void *b)
 {
 	unsigned int as=(*(cObj**)a)->GetSize();
 	unsigned int bs=(*(cObj**)b)->GetSize();
@@ -57,8 +54,8 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	int RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::sortdes_function_cObjs( const void *a, const void *b)
+template<class cGroup,class cObj,class cGroups>
+	int RFirstFitDesHeuristic<cGroup,cObj,cGroups>::sortdes_function_cObjs( const void *a, const void *b)
 {
 	unsigned int as=(*(cObj**)a)->GetSize();
 	unsigned int bs=(*(cObj**)b)->GetSize();
@@ -68,10 +65,10 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	void RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(cGroups* groups)
+template<class cGroup,class cObj,class cGroups>
+	void RFirstFitDesHeuristic<cGroup,cObj,cGroups>::Init(cGroups* groups)
 {
-	RFirstFitHeuristic<cGroup,cObj,cGroupData,cGroups>::Init(groups);
+	R::RFirstFitHeuristic<cGroup,cObj,cGroups>::Init(groups);
 
 	// Order by size descending
 	qsort(static_cast<void*>(this->Order),this->NbObjs,sizeof(cObj*),sortdes_function_cObjs);
@@ -79,7 +76,7 @@ template<class cGroup,class cObj,class cGroupData,class cGroups>
 
 
 //------------------------------------------------------------------------------
-template<class cGroup,class cObj,class cGroupData,class cGroups>
-	RFirstFitDesHeuristic<cGroup,cObj,cGroupData,cGroups>::~RFirstFitDesHeuristic(void)
+template<class cGroup,class cObj,class cGroups>
+	RFirstFitDesHeuristic<cGroup,cObj,cGroups>::~RFirstFitDesHeuristic(void)
 {
 }

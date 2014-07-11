@@ -1,13 +1,12 @@
 /*
 
-	RChromoG.h
+ 	Bin Packing Library
 
-	Class representing a chromosome of a GGA - Header
+	RChromoBP.h
 
-	Copyright 2001-2005 by the Université Libre de Bruxelles.
+	Chromosome for a Bin Packing Problem - Header
 
-	Authors:
-		Pascal Francq (pfrancq@ulb.ac.be).
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -37,6 +36,7 @@
 // includes files for ANSI C/C++
 #include <math.h>
 #include <iostream>
+#include <limits>
 
 
 //------------------------------------------------------------------------------
@@ -47,20 +47,20 @@
 
 
 //------------------------------------------------------------------------------
-namespace R{
+namespace RBP{
 //------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
-template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj,class cGroupData>
-	class RChromoBP : public RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj,cGroupData>
+template<class cInst,class cChromo,class cThreadData,class cGroup,class cObj>
+	class RChromoBP : public R::RChromoG<cInst,cChromo,RFitnessBP,cThreadData,cGroup,cObj>
 {
 protected:
 
 	/**
 	* FFB Heuristic used for the crossover.
 	*/
-	RGroupingHeuristic<cGroup,cObj,cGroupData,cChromo>* HeuristicFFD;
+	R::RGroupingHeuristic<cGroup,cObj,cChromo>* HeuristicFFD;
 
 	/**
 	* Temporary array of objects used for the local optimisation. Thread-depend
@@ -130,8 +130,8 @@ public:
 	*/
 	virtual ~RChromoBP(void);
 
-	friend class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj,cGroupData>;
-	friend class RGroupBP<cGroup,cObj,cGroupData,cChromo>;
+	friend class RInstBP<cInst,cChromo,cThreadData,cGroup,cObj>;
+	friend class RGroupBP<cGroup,cObj,cChromo>;
 };
 
 
