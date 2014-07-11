@@ -1,53 +1,48 @@
 /*
 
-  KBPGAView.cpp
+	Bin Packing GUI
 
-  Description - Implementation.
+	KBPGAView.cpp
 
-  (c) 2001 by P. Francq.
+	GA Window - Implementation.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  any later version.
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	any later version.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
 
 
 //-----------------------------------------------------------------------------
-// include files for R Project
-#include <rfinstbp.h>
-#include <rfchromobp.h>
-using namespace R;
-
-
-//-----------------------------------------------------------------------------
 // include files for Qt/KDE
-#include <klocale.h>
 #include <kmessagebox.h>
+#include <QtGui/QKeyEvent>
 
 
 //-----------------------------------------------------------------------------
 // include files for Widgets
-#include <qgamonitor.h>
-#include <qxmlcontainer.h>
+#include <qrgamonitor.h>
+#include <qrdebug.h>
 
 
 //-----------------------------------------------------------------------------
 // include files for current application
-#include "qdrawgroups.h"
-#include "kbpgaview.h"
-#include "kbinpackingdoc.h"
+#include <qdrawgroups.h>
+#include <kbpgaview.h>
+#include <kbinpacking.h>
 
 
 
@@ -58,50 +53,34 @@ using namespace R;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int wflags)
-	: KBinPackingView(pDoc,parent,name,wflags), CurId(0), Instance(0), Data(pDoc->MaxSize)
+size_t KBPGAView::WinNb=0;
+
+//-----------------------------------------------------------------------------
+KBPGAView::KBPGAView(RBPProblem* problem)
+	: QMdiSubWindow(), Ui_KBPGAView(), RObject("GAView "+RString::Number(++WinNb)), CurId(0), Instance(0), Gen(0), Running(false)
 {
-	static char tmp[100];
-	setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)1, (QSizePolicy::SizeType)1, sizePolicy().hasHeightForWidth() ) );
-	TabWidget = new QTabWidget( this, "TabWidget" );
-	TabWidget->setGeometry(rect());
-	TabWidget->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, TabWidget->sizePolicy().hasHeightForWidth() ) );
-	TabWidget->setBackgroundOrigin( QTabWidget::ParentOrigin );
+ 	QWidget* ptr=new QWidget();
+	setupUi(ptr);
+	setWidget(ptr);
+	setAttribute(Qt::WA_DeleteOnClose);
+	setWindowTitle("Bin Packing Genetic Algorithm");
+	Monitor->setParams(theApp->MaxGen,0.0,1.0);
 
-	// Stat part
-	StatSplitter=new QSplitter(QSplitter::Vertical,TabWidget,"Statistic");
-	TabWidget->insertTab(StatSplitter,"Statistic");
-	StatSplitter->setGeometry(rect());
-	Monitor=new	QGAMonitor(StatSplitter);
-	Monitor->setMaxGen(theApp->GAMaxGen);
-	Monitor->setMaxFitness(pDoc->GetNbObjs()/2);
-	connect(this,SIGNAL(signalSetGen(const unsigned int,const unsigned int,const double)),Monitor,SLOT(slotSetGen(const unsigned int,const unsigned int,const double)));
-	Debug=new QXMLContainer(StatSplitter,"KBinPacking");
-
-	// Solution part
-	Best = new QDrawGroups(TabWidget,pDoc->Objs);
-	TabWidget->insertTab(Best,"Best Solution");
-
-	// Solution part
-	Sol = new QDrawGroups(TabWidget,pDoc->Objs);
-	sprintf(tmp,"Solution (0/%u)",((KBinPackingApp*)parentWidget()->parentWidget()->parentWidget())->GAPopSize-1);
-	TabWidget->insertTab(Sol,tmp);
-
-	// Create GA
+ 	// Create GA
 	try
 	{
 		Gen=0;
-		Instance=new RFInstBP(theApp->GAMaxGen,theApp->GAPopSize,pDoc->Objs,theApp->GAHeur,pDoc->MaxSize,Debug);
-		Instance->AddReceiver(this);
-		Instance->Init(&Data);
-	}
-	catch(eGA& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
+		Instance=new RFInstBP(theApp->PopSize,problem->GetObjs(),problem->GetBinMaxSize(),"",theApp->MaxGen,Debug);
+		Instance->Init();
+		reinterpret_cast<RObject*>(this)->InsertObserver(reinterpret_cast<tNotificationHandler>(&KBPGAView::Generation),"RInst::Generation",Instance);
+		reinterpret_cast<RObject*>(this)->InsertObserver(reinterpret_cast<tNotificationHandler>(&KBPGAView::BestChromo),"RInst::Best",Instance);
+		reinterpret_cast<RObject*>(this)->InsertObserver(reinterpret_cast<tNotificationHandler>(&KBPGAView::Interact),"RInst::Interact",Instance);
+		Main->setTabText(1,"Best Solution - Fitness=?");
+		Main->setTabText(2,"Solution Undefined  - Fitness=?");
 	}
 	catch(RException& e)
 	{
-		KMessageBox::error(this,e.GetMsg());
+		KMessageBox::error(this,ToQString(e.GetMsg()));
 	}
 	catch(std::exception& e)
 	{
@@ -115,63 +94,32 @@ KBPGAView::KBPGAView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int 
 
 
 //---------------------------------------------------------------------------
-void KBPGAView::receiveGenSig(GenSig* sig)
-{
-	emit signalSetGen(sig->Gen,sig->BestGen,sig->Best->Used.GetNb()/*Fitness->Value*/);
-	Sol->setGroups(Instance->Chromosomes[CurId]);
-	Sol->setChanged();
-}
-
-
-//---------------------------------------------------------------------------
-void KBPGAView::receiveInteractSig(InteractSig* /*sig*/)
-{
-	KApplication::kApplication()->processEvents();
-}
-
-
-////---------------------------------------------------------------------------
-void KBPGAView::receiveBestSig(BestSig* sig)
-{
-	static char tmp[100];
-
-	sprintf(tmp,"Best Solution (Id=%u) - Fitness=%f",sig->Best->Id,sig->Best->Fitness->Value);
-	TabWidget->changeTab(Best,tmp);
-	Best->setGroups(sig->Best);
-	Best->setChanged();
-}
-
-
-//---------------------------------------------------------------------------
 void KBPGAView::RunGA(void)
 {
 	if(Instance)
 	{
 		try
 		{
-			if(theApp->GAMaxGen>Gen)
+			if(theApp->MaxGen>Gen)
 			{
-				if(theApp->GAStepGen==0)
-					Gen=theApp->GAMaxGen;
+				if(theApp->StepGen==0)
+					Gen=theApp->MaxGen;
 				else
 				{
-					Gen+=theApp->GAStepGen;
-					if(Gen>theApp->GAMaxGen) Gen=theApp->GAMaxGen;
+					Gen+=theApp->StepGen;
+					if(Gen>theApp->MaxGen) Gen=theApp->MaxGen;
 				}
 			}
 			Instance->MaxGen=Gen;
+			Running=true;
+			theApp->subWindowActivated(this);
 			Instance->Run();
-			if(Gen==theApp->GAMaxGen)
-				theApp->GAPause->setEnabled(false);
+			Running=false;
 			KMessageBox::information(this,"Done");
-		}
-		catch(eGA& e)
-		{
-			KMessageBox::error(this,e.GetMsg());
 		}
 		catch(RException& e)
 		{
-			KMessageBox::error(this,e.GetMsg());
+			KMessageBox::error(this,ToQString(e.GetMsg()));
 		}
 		catch(std::exception& e)
 		{
@@ -186,59 +134,64 @@ void KBPGAView::RunGA(void)
 
 
 //---------------------------------------------------------------------------
-void KBPGAView::PauseGA(void)
+bool KBPGAView::End(void) const
 {
-	ExternBreak=true;
+	return(Gen==theApp->MaxGen);
 }
 
 
 //---------------------------------------------------------------------------
-void KBPGAView::StopGA(void)
+void KBPGAView::PauseGA(void)
 {
+	if(Running)
+	{
+		ExternBreak=true;
+		Running=false;
+	}
+}
+
+
+//---------------------------------------------------------------------------
+void KBPGAView::Generation(const R::RNotification& notification)
+{
+	Monitor->setGenInfo(GetData<size_t>(notification),Instance->GetAgeBest(),Instance->GetBestChromosome()->Fitness->Value);
+	Main->setTabText(2," Solutions ("+QString::number(CurId)+"/"+QString::number(Instance->GetPopSize()-1)+") - Fitness="+QString::number(Instance->Chromosomes[CurId]->Fitness->Value));
+	Sol->setGroups(Instance->Chromosomes[CurId]);
+}
+
+
+//---------------------------------------------------------------------------
+void KBPGAView::BestChromo(const R::RNotification&)
+{
+	Main->setTabText(1," Best Solution - Fitness="+QString::number(Instance->GetBestChromosome()->Fitness->Value));
+	Best->setGroups(Instance->GetBestChromosome());
+}
+
+
+//---------------------------------------------------------------------------
+void KBPGAView::Interact(const R::RNotification&)
+{
+	QCoreApplication::processEvents();
 }
 
 
 //---------------------------------------------------------------------------
 void KBPGAView::keyReleaseEvent(QKeyEvent* e)
 {
-	static char tmp[100];
-//	QGoToPopDlg *dlg;
-
-	if(TabWidget->currentPage()!=Sol)
-	{
-		KBinPackingView::keyReleaseEvent(e);
+ 	if(Main->currentIndex()!=2)
 		return;
-	}
 	switch(e->key())
 	{
-		case Key_PageUp:
-			if(CurId<Instance->PopSize-1) CurId++; else CurId=0;
-			sprintf(tmp,"Solution (%u/%u) - Fitness=%f",CurId,Instance->PopSize-1,Instance->Chromosomes[CurId]->Fitness->Value);
-			TabWidget->changeTab(Sol,tmp);
+		case Qt::Key_PageUp:
+			if(CurId<Instance->GetPopSize()-1) CurId++; else CurId=0;
+			Main->setTabText(2," Solutions ("+QString::number(CurId)+"/"+QString::number(Instance->GetPopSize()-1)+") - Fitness="+QString::number(Instance->Chromosomes[CurId]->Fitness->Value));
 			Sol->setGroups(Instance->Chromosomes[CurId]);
-			Sol->setChanged();
 			break;
 
-		case Key_PageDown:
-			if(CurId>0) CurId--; else CurId=Instance->PopSize-1;
-			sprintf(tmp,"Solution (%u/%u) - Fitness=%f",CurId,Instance->PopSize-1,Instance->Chromosomes[CurId]->Fitness->Value);
-			TabWidget->changeTab(Sol,tmp);
-			Sol->setGroups(Instance->Chromosomes[CurId]);
-			Sol->setChanged();
+		case Qt::Key_PageDown:
+			if(CurId>0) CurId--; else CurId=Instance->GetPopSize()-1;
+			Main->setTabText(2," Solutions ("+QString::number(CurId)+"/"+QString::number(Instance->GetPopSize()-1)+") - Fitness="+QString::number(Instance->Chromosomes[CurId]->Fitness->Value));			Sol->setGroups(Instance->Chromosomes[CurId]);
 			break;
-
-//		case Key_G:
-//			if(e->state()==ControlButton)
-//			{
-//				dlg= new QGoToPopDlg(Doc->getPopSize());
-//				if(dlg->exec())
-//				{
-//					CurId=dlg->PopIndex->value();
-//					slotNewChromo();
-//				}
-//				delete dlg;
-//			}
-//			break;
 
 		default:
 			e->ignore();
@@ -247,14 +200,7 @@ void KBPGAView::keyReleaseEvent(QKeyEvent* e)
 
 
 //-----------------------------------------------------------------------------
-void KBPGAView::resizeEvent(QResizeEvent*)
-{
-	TabWidget->resize(size());
-}
-
-
-//-----------------------------------------------------------------------------
-KBPGAView::~KBPGAView()
+KBPGAView::~KBPGAView(void)
 {
 	if(Instance)
 		delete Instance;

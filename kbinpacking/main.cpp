@@ -1,12 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing GUI
 
-	main.cpp
+	Main.cpp
 
-	Description - Implementation.
+	Main file - Implementation.
 
-	(C) 2001 by Pascal Francq
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -29,64 +29,65 @@
 
 //-----------------------------------------------------------------------------
 // include files for KDE
-#include <kcmdlineargs.h>
+#include <kapplication.h>
 #include <kaboutdata.h>
-#include <klocale.h>
+#include <kcmdlineargs.h>
+#include <KDE/KLocale>
 
 
 //-----------------------------------------------------------------------------
 // include files for current project
 #include "kbinpacking.h"
+using namespace std;
 
 
 //-----------------------------------------------------------------------------
 static const char *description =I18N_NOOP("KBinPacking\nApplication for the Bin Packing Problem");
-
-
-//-----------------------------------------------------------------------------
-static KCmdLineOptions options[] =
-{
-  { "+[File]", I18N_NOOP("file to open"), 0 },
-  { 0, 0, 0 }
-  // INSERT YOUR COMMANDLINE OPTIONS HERE
-};
-
-
-//-----------------------------------------------------------------------------
-KBinPackingApp* theApp;
+KBinPacking* theApp;
 
 
 //-----------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
+	setlocale(LC_CTYPE,"");
 
-	KAboutData aboutData( "kbinpacking", I18N_NOOP("KBinPacking"),
-		VERSION, description, KAboutData::License_GPL,
-		"(c) 2001, Université Libre de Bruxelles", 0, "http://www.ulb.ac.be", "pfrancq@ulb.ac.be");
-	aboutData.addAuthor("Pascal Francq",I18N_NOOP("Project Manager"), "pfrancq@ulb.ac.be");
+    // Information about the application
+	KAboutData aboutData("kbinpacking",0,ki18n("KBinPacking"),"1.89",ki18n(description),
+			KAboutData::License_GPL,ki18n("(C) 2001-2014 by Pascal Francq\n"),
+			KLocalizedString(),"http://www.otlet-institute.org", "pascal@francq.info");
+	aboutData.addAuthor(ki18n("Pascal Francq"),ki18n("Project Manager"),"pascal@francq.info");
+
+	// Init
 	KCmdLineArgs::init( argc, argv, &aboutData );
-	KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
+   KCmdLineOptions options;
+	KCmdLineArgs::addCmdLineOptions(options);
 
-	KApplication app;
-
-	if (app.isRestored())
+	// Run
+	try
 	{
-		RESTORE(KBinPackingApp);
-	}
-	else
-	{
-		theApp = new KBinPackingApp();
-		theApp->show();
-		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		if (args->count())
+		KApplication app;
+		theApp=new KBinPacking(argc,argv);
+		if(app.isSessionRestored())
 		{
-			for(int i=0;i<args->count();i++)
-			{
-				theApp->openDocumentFile(args->arg(i));
-			}
+//			RESTORE(theApp);
 		}
-		args->clear();
+		else
+		{
+			theApp->show();
+		}
+		return(app.exec());
 	}
-
-	return app.exec();
-}  
+	catch(RException& e)
+	{
+		cout<<e.GetMsg()<<endl;
+	}
+	catch(exception& e)
+	{
+		cout<<e.what()<<endl;
+	}
+	catch(...)
+	{
+		cout<<"Unknown problem"<<endl;
+	}
+ 	return(0);
+}

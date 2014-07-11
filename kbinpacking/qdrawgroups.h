@@ -1,12 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing GUI
 
 	QDrawGroups.h
 
-	Widget to draw the bins - Header.
+	Widget to Draw Bins - Header.
 
-	(C) 2001-2002 by Pascal Francq
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -36,71 +36,33 @@
 // include files for Qt
 #include <qwidget.h>
 #include <qpixmap.h>
-#include <qpopupmenu.h>
+#include <qmenu.h>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsPolygonItem>
 
 
 //-----------------------------------------------------------------------------
-namespace R{
-//-----------------------------------------------------------------------------
+// include files for Bin Packing
+#include <rbpproblem.h>
+using namespace std;
+using namespace R;
+using namespace RBP;
 
 
 //-----------------------------------------------------------------------------
-// forward class declaration
-template<class cGroup,class cObj,class cGroupData,class cGroups> class RGroups;
-template<class cObj> class RObjs;
-class RFGroupBP;
-class RFChromoBP;
-class RObjBP;
-class RGroupDataBP;
+// include files for current application
+#include <ui_qdrawgroups.h>
 
-
-//-----------------------------------------------------------------------------
-/**
-* The QInfoBox class provides a popupmenu that display informartion about a
-* specific object and geometric information.
-* @author Pascal Francq
-* @short Popup object information
-*/
-class QInfoBox : public QPopupMenu
-{
-	/**
-	* Widget that must have the focus after.
-	*/
-	QWidget* afterFocus;
-
-public:
-
-	/**
-	* Constructor of the popup.
-	* @param parent        Parent of the widget.
-	* @param grp           Group.
-	* @param objs          Objects.
-	*/
-	QInfoBox(QWidget* parent,RFGroupBP* grp,RObjs<RObjBP>* objs);
-
-	/**
-	* Constructor of the popup.
-	* @param parent        Parent of the widget.
-	* @param grps          Groups.
-	*/
-	QInfoBox(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps);
-
-protected:
-
-	/**
-	* Mouse release event method. When the mouse bouton is released, the popup
-	* is closed.
-	*/
-	virtual void mouseReleaseEvent(QMouseEvent*);
-};
 
 
 //-----------------------------------------------------------------------------
 /**
 * @author Pascal Francq
 */
-class QDrawGroups : public QWidget
+class QDrawGroups : public QWidget, public Ui_QDrawGroups
 {
+	class QBin;
+
 	Q_OBJECT
 
 	/**
@@ -134,11 +96,6 @@ class QDrawGroups : public QWidget
 	unsigned int MaxGroups;
 
 	/**
-	* A pixmap to hold the display.
-	*/
-	QPixmap* pixmap;
-
-	/**
 	* Number of rows for groups.
 	*/
 	unsigned int Rows;
@@ -149,53 +106,47 @@ class QDrawGroups : public QWidget
 	unsigned int Cols;
 
 	/**
-	* Has the display changed.
+	* A red brush.
 	*/
-	bool Changed;
+	QBrush RedBrush;
 
 	/**
-	* A black brush.
-	*/
-	QBrush brRed;
+	 * A black pen.
+	 */
+	QPen BlackPen;
+
+	/**
+	 * A red pen.
+	 */
+	QPen RedPen;
+
+	/**
+	 * The scene.
+	 */
+	QGraphicsScene Scene;
 
 	/**
 	* Groups to paint.
 	*/
-	RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* Groups;
-
-	/**
-	* Objects that were placed.
-	*/
-	RObjs<RObjBP>* Objs;
+	RGroups<RFGroupBP,RObjBP,RFChromoBP>* Groups;
 
 public:
 
 	/**
 	* Constructor of the Widget.
 	* @param parent         Parent of the widget.
-	* @param objs           Objects.
-	* @param name           Name of the widget.
 	*/
-	QDrawGroups(QWidget* parent,RObjs<RObjBP>* objs,const char* name=0);
-
-	/**
-	* Constructor of the Widget.
-	* @param parent         Parent of the widget.
-	* @param grps           Groups.
-	* @param objs           Objects.
-	* @param name           Name of the widget.
-	*/
-	QDrawGroups(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps,RObjs<RObjBP>* objs,const char* name=0);
-
-	/**
-	* The widget has changed and has to be repainted.
-	*/
-	void setChanged(void) {Changed=true;repaint();}
+	QDrawGroups(QWidget* parent);
 
 	/**
 	* Set the groups.
 	*/
-	void setGroups(RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps);
+	void setGroups(RGroups<RFGroupBP,RObjBP,RFChromoBP>* grps);
+
+	/**
+	* Create a scene with the bins.
+	*/
+	void paintBins(void);
 
 protected:
 
@@ -210,25 +161,9 @@ protected:
 	void ComputeXY(int& x,int &y,const unsigned idx);
 
 	/**
-	* Compute the index of a group given (X,Y) or NoGroup if nothing.
-	*/
-	unsigned int ComputeId(const unsigned int x,const unsigned int y);
-
-	/**
-	* Paint event method.
-	*/
-	virtual void paintEvent(QPaintEvent*);
-
-	/**
 	* Resize event method.
 	*/
 	virtual void resizeEvent(QResizeEvent*);
-
-	/**
-	* Mouse button press event method.
-	* @param e             MouseEvent info.
-	*/
-	virtual void mousePressEvent(QMouseEvent* e);
 
 public:
 
@@ -237,9 +172,6 @@ public:
 	*/
 	~QDrawGroups();
 };
-
-
-}  //------- End of namespace RBP ---------------------------------------------
 
 
 //-----------------------------------------------------------------------------

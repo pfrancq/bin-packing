@@ -1,12 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing GUI
 
-	kbinpacking.h
+	KBinPacking.h
 
-	Description - Header.
+	Main Window - Header.
 
-	(C) 2001 by Pascal Francq
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -28,9 +28,9 @@
 
 
 //-----------------------------------------------------------------------------
-#ifndef KBINPACKING_H
-#define KBINPACKING_H
- 
+#ifndef KBinPacking_H
+#define KBinPacking_H
+
 
 //-----------------------------------------------------------------------------
 #ifdef HAVE_CONFIG_H
@@ -40,314 +40,153 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <rbp.h>
+#include <rqt.h>
+#include <rapplication.h>
 using namespace R;
 
 
 //-----------------------------------------------------------------------------
-// include files for Qt
-#include <qstrlist.h>
-
-
-//-----------------------------------------------------------------------------
-// include files for KDE
-#include <kapp.h>
-#include <kmainwindow.h>
+// include files for Qt/KDE
+#include <QtGui/QMdiArea>
+#include <QtGui/QLabel>
+#include <QtCore/QList>
 #include <kaction.h>
-#include <kurl.h>
+#include <krecentfilesaction.h>
+#include <kxmlguiwindow.h>
 
 
 //-----------------------------------------------------------------------------
-// forward declaration of the KBinPacking classes
-class KBinPackingDoc;
-class KBinPackingView;
-class QWorkspace;
+// include files for the Bin Packing
+#include <rbpproblem.h>
+using namespace RBP;
 
 
 //-----------------------------------------------------------------------------
 /**
-* The base class for KBinPacking application windows.
-* @see KMainWindow
-* @see KApplication
-* @see KConfig
-* @see KAccel
+* The KBinPacking application windows.
 *
 * @author Pascal Francq
 * @short Bin Packing Application.
 */
-class KBinPackingApp : public KMainWindow
+class KBinPacking : public KXmlGuiWindow, public RApplication
 {
 	Q_OBJECT
 
 	/**
-	* The configuration object of the application.
-	*/
-	KConfig* config;
+	 * Desktop of the application.
+	 */
+	QMdiArea* Desktop;
 
 	/**
-	* pWorkspace is the MDI frame widget that handles MDI child widgets.
-	* Inititalized in initView().
-	*/
-	QWorkspace* pWorkspace;
+	 * Label to hold an image representing the status of the file opened.
+	 */
+	QLabel* Status;
 
 	/**
-	* The printer instance.
-	*/
-	QPrinter* printer;
+	 * Connect to the session.
+	 */
+	KAction* aFileOpen;
 
 	/**
-	* A counter that gets increased each time the user creates a new document
-	* with "File"->"New".
-	*/
-	int untitledCount;
+	 * Initialize a new GA.
+	 */
+	KAction* aGAInit;
 
 	/**
-	* A list of all open documents. If the last window of a document gets
-	* closed, the installed eventFilter removes this document from the list.
-	* The document list is checked for modified documents when the user is
-	* about to close the application.
-	*/
-	QList<KBinPackingDoc> *pDocList;
+	 * Satrt a GA.
+	 */
+	KAction* aGAStart;
+
+	/**
+	 * Pause a GA.
+	 */
+	KAction* aGAPause;
+
+	/**
+	 * Open a recent file.
+	 */
+	KRecentFilesAction* aFileOpenRecent;
+
+	/**
+	 * All available actions once a file is connected.
+	 */
+	QList<KAction*> Actions;
 
 	/**
 	* Run the heuristics in step mode.
 	*/
-	bool step;
-
-	/**
-	* Heuristic to used for the GA.
-	*/
-	HeuristicType GAHeur;
+	bool Step;
 
 	/**
 	* Maximum number of generation.
 	*/
-	unsigned int GAMaxGen;
+	size_t MaxGen;
 
 	/**
 	* Step of generation.
 	*/
-	unsigned int GAStepGen;
+	size_t StepGen;
 
 	/**
 	* Size of the Population.
 	*/
-	unsigned int GAPopSize;
+	size_t PopSize;
+
+	/**
+	* A log file.
+	*/
+	RTextFile* Log;
+
+	/**
+	* Debug file.
+	*/
+	RDebugXML* Debug;
+
+	/**
+	* The Log file.
+	*/
+	RString LogFileName;
+
+	/**
+	* The debug file.
+	*/
+	RString DebugFileName;
+
+	/**
+	 * Bin packing problem.
+    */
+	 RBPProblem* Problem;
 
 public:
 
 	/**
-	* Construtor of KBinPackingApp, calls all init functions to create the
-	* application.
-	* @see initMenuBar initToolBar
+	* Construtor of KBinPackingApp.
+	* @param argc            Number of arguments.
+	* @param argv            Values of arguments.
 	*/
-	KBinPackingApp(void);
+	KBinPacking(int argc, char *argv[]);
 
 	/**
-	* Opens a file specified by commandline option.
-	*/
-	void openDocumentFile(const KURL& url=0);
-
-protected:
-
-	/**
-	* queryClose is called by KTMainWindow on each closeEvent of a window.
-	* Against the default implementation (only returns true), this overridden
-	* function retrieves all modified documents from the open document list and
-	* asks the user to select which files to save before exiting the
-	* application.
-	* @see KTMainWindow#queryClose
-	* @see KTMainWindow#closeEvent
-	*/
-	virtual bool queryClose(void);
-
-	/**
-	* queryExit is called by KTMainWindow when the last window of the
-	* application is going to be closed during the closeEvent(). Against the
-	* default implementation that just returns true, this calls saveOptions()
-	* to save the settings of the last window's properties.
-	* @see KTMainWindow#queryExit
-	* @see KTMainWindow#closeEvent
-	*/
-	virtual bool queryExit(void);
-
-	/**
-	* Saves the window properties for each open window during session end to
-	* the session config file, including saving the currently opened file by a
-	* temporary filename provided by KApplication.
-	* @see KTMainWindow#saveProperties
-	*/
-	virtual void saveProperties(KConfig* _cfg);
-
-	/**
-	* Reads the session config file and restores the application's state
-	* including the last opened files and documents by reading the temporary
-	* files saved by saveProperties().
-	* @see KTMainWindow#readProperties
-	*/
-	virtual void readProperties(KConfig* _cfg);
-
-	/**
-	* Event filter to catch close events for MDI child windows and is installed
-	* in createClient() on every child window. Closing a window calls the
-	* eventFilter first which removes the view from the connected documents'
-	* view list. If the last view is going to be closed, the eventFilter()
-	* tests if the document is modified; if yes, it asks the user to save the
-	* document. If the document title contains "Untitled", slotFileSaveAs()
-	* gets called to get a save name and path.
-	*/
-	virtual bool eventFilter(QObject* object,QEvent* event);
-
-	/**
-	* Creates a new child window. The document that will be connected to it has
-	* to be created before and the instances filled, with e.g. openDocument().
-	* Then call createClient() to get a new MDI child window.
-	* @see KBinPackingDoc#addView
-	* @see KBinPackingDoc#openDocument
-	* @param doc            pointer to the document instance that the view will
-	*                       be connected to.
-	*/
-	void createClient(KBinPackingDoc* doc);
-
-private slots:
-
-/**
-	* Initialize the GA.
-	*/
-	void slotGAInit(void);
-
-	/**
-	* Start the GA.
-	*/
-	void slotGAStart(void);
-
-	/**
-	* Pause the GA.
-	*/
-	void slotGAPause(void);
-
-	/**
-	* Stop the GA.
-	*/
-	void slotGAStop(void);
-
-	/**
-	* Show the dialog box for the options.
-	*/
-	void slotSettingsOptions(void);
-
-	/**
-	* Clears the document in the actual view to reuse it as the new document.
-	*/
-	void slotFileNew(void);
-
-	/**
-	* Open a file and load it into the document.
-	*/
-	void slotFileOpen(void);
-
-	/**
-	* Opens a file from the recent files menu.
-	*/
-	void slotFileOpenRecent(const KURL& url);
-
-	/**
-	* Save a document.
-	*/
-	void slotFileSave(void);
-
-	/**
-	* Save a document by a new filename.
-	*/
-	void slotFileSaveAs(void);
-
-	/**
-	* Asks for saving if the file is modified, then closes the actual file and
-	* window.
-	*/
-	void slotFileClose(void);
-
-	/**
-	* Print the actual file.
-	*/
-	void slotFilePrint(void);
-
-	/**
-	* Closes all documents and quits the application.
-	*/
-	void slotFileQuit(void);
-
-	/**
-	* Reverts the last user action for the active window.
-	*/
-	void slotEditUndo(void);
-
-	/**
-	* Put the marked text/object into the clipboard and remove it from the
-	* document.
-	*/
-	void slotEditCut(void);
-
-	/**
-	* Put the marked text/object into the clipboard.
-	*/
-	void slotEditCopy(void);
-
-	/**
-	* Paste the clipboard into the document.
-	*/
-	void slotEditPaste(void);
-
-	/**
-	* Toggles the toolbar.
-	*/
-	void slotViewToolBar(void);
-
-	/**
-	* Toggles the statusbar.
-	*/
-	void slotViewStatusBar(void);
-
-	/**
-	* Creates a new view for the document in the active child window and adds
-	* the new view to the list of views the document maintains.
-	*/
-	void slotWindowNewWindow(void);
-
-	/**
-	* Changes the statusbar contents for the standard label permanently, used
-	* to indicate current actions.
-	* @param text           Text to display in the statusbar.
-	*/
-	void slotStatusMsg(const QString& text);
-
-	/**
-	* Gets called when the window menu is activated; recreates the window menu
-	* with all opened window titles.
-	*/
-	void windowMenuAboutToShow(void);
-
-	/**
-	* Activates the MDI child widget when it gets selected from the window menu.
-	*/
-	void windowMenuActivated(int id);
-
-	/**
-	* Tile all the windows.
-	*/
-	void slotWindowTile(void);
-
-	/**
-	* Cascade all the windows.
-	*/
-	void slotWindowCascade(void);
-
-	/**
-	* Called when a window is activated.
-	*/
-	void slotWindowActivated(QWidget* w);
+	 * Get the problem.
+    */
+	RBPProblem* GetProblem(void) const {return(Problem);}
 
 private:
+
+	/**
+	 * Create an action for a given menu item.
+	 * @param title          Title of the menu item.
+	 * @param name           Name of the action (as appearing in .rc file).
+	 * @param slot           Corresponding slot.
+	 * @param icon           Icon associated.
+	 * @param key            Shortcut associated.
+	 */
+	KAction* addAction(const char* title,const char* name,const char* slot,const char* icon=0,const char* key=0);
+
+	/**
+	* Initializes the KActions of the application.
+	*/
+	void initActions(void);
 
 	/**
 	* Save general Options like all bar positions and status as well as the
@@ -362,55 +201,107 @@ private:
 	void readOptions(void);
 
 	/**
-	* Initializes the KActions of the application.
+	* Create the configuration structure. New parameters can be added by
+	* defining a new method.
 	*/
-	void initActions(void);
+	virtual void CreateConfig(void);
 
 	/**
-	* Sets up the statusbar for the main window by initialzing a status label.
+	* Initialization of the application.
 	*/
-	void initStatusBar(void);
+	virtual void Init(void);
+
+public:
 
 	/**
-	* Creates the main view of the KTMainWindow instance and initializes the
-	* MDI view area including any needed connections.
+	 * Apply the configuration.
+    */
+	void Apply(void);
+
+private:
+
+	/**
+	* Changes the status bar contents for the standard label permanently, used
+	* to indicate current actions.
+	* @param text            Text that is displayed in the status bar.
 	*/
-	void initView(void);
+	void statusMsg(const QString& text);
+
+	/**
+	 * Call when a file is opened or not. Basically, it enable/disable
+	 * the menu items.
+	 * @param opened      Opened?
+	 */
+	void fileOpened(bool opened);
+
+	/**
+	* Open a specific file.
+	* @param url             URL of the file.
+	*/
+	void openDocumentFile(const KUrl& url);
+
+private slots:
+
+	/**
+	 * Set the preferences.
+	 */
+	void optionsPreferences(void);
+
+public slots:
+
+	/**
+	 * Called when a window was activated.
+	 * @param window          Window activated (or 0 if no more window).
+    */
+	void subWindowActivated(QMdiSubWindow* window);
+
+private slots:
+	
+	/**
+	* Open a file and load it into the document.
+	*/
+	void openFile(void);
+
+	/**
+	* Opens a file from the recent files menu.
+	*/
+	void openRecentFile(const KUrl& url);
+
+	/**
+	* Asks for saving if the file is modified, then closes the actual file and
+	* window.
+	*/
+	void closeFile(void);
+
+	/**
+	* Closes all documents and quits the application.
+	*/
+	void applicationQuit(void);
+
+	/**
+	* Initialize the GA.
+	*/
+	void GAInit(void);
+
+	/**
+	* Start the GA.
+	*/
+	void GAStart(void);
+
+	/**
+	* Pause the GA.
+	*/
+	void GAPause(void);
 
 public:
 
 	/**
 	* Destructor of the Application.
 	*/
-	~KBinPackingApp(void);
-
-	// KAction pointers to enable/disable actions.
-	KAction* fileNew;
-	KAction* fileOpen;
-	KRecentFilesAction* fileOpenRecent;
-	KAction* fileSave;
-	KAction* fileSaveAs;
-	KAction* fileClose;
-	KAction* filePrint;
-	KAction* GAInit;
-	KAction* GAStart;
-	KAction* GAPause;
-	KAction* GAStop;
-	KAction* fileQuit;
-	KAction* editCut;
-	KAction* editCopy;
-	KAction* editPaste;
-	KAction* windowNewWindow;
-	KAction* windowTile;
-	KAction* windowCascade;
-	KAction* settingsOptions;
-	KToggleAction* viewToolBar;
-	KToggleAction* viewStatusBar;
-	KActionMenu* windowMenu;
+	~KBinPacking(void);
 
 	// friend classes
 	friend class KBPGAView;
-	friend class KBPHeuristicView;
 };
 
 
@@ -418,7 +309,7 @@ public:
 /**
 * Global pointer to the KMainWindow of the Application.
 */
-extern KBinPackingApp* theApp;
+extern KBinPacking* theApp;
 
 
 //-----------------------------------------------------------------------------

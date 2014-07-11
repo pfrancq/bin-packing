@@ -1,12 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing GUI
 
 	QDrawGroups.cpp
 
-	Widget to draw the bins - Implementation.
+	Widget to Draw Bins - Implementation.
 
-	(C) 2001-2002 by Pascal Francq
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -35,22 +35,26 @@
 
 //-----------------------------------------------------------------------------
 // include files for R Project
-#include <robjs.h>
-#include <robjbp.h>
-#include <rfchromobp.h>
-#include <rdatabpfile.h>
 #include <rqt.h>
+#include <rbp.h>
+using namespace std;
 using namespace R;
+using namespace RBP;
 
 
 //-----------------------------------------------------------------------------
 // include files for Qt
 #include <qpainter.h>
+#include <QMouseEvent>
+#include <QtGui/QGraphicsRectItem>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 
 //-----------------------------------------------------------------------------
-// include files for Qt Widgets
-#include "qdrawgroups.h"
+// include files for the current application
+#include <qdrawgroups.h>
+#include "kbinpacking.h"
+
 
 
 //-----------------------------------------------------------------------------
@@ -58,69 +62,121 @@ using namespace R;
 // QInfoBox
 //
 //-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-QInfoBox::QInfoBox(QWidget* parent,RFGroupBP* grp,RObjs<RObjBP>* objs)
-	: QPopupMenu(0,"Info Box")
+class QInfoBox : public QMenu
 {
-	char Tmp[50];
-	unsigned int* o;
-	unsigned int* ptr;
+public:
 
-	if(!grp)
+	static bool Enable;
+
+	QInfoBox(QWidget* parent,RFGroupBP* grp)
+		: QMenu("Info Box",parent)
 	{
-		insertItem("This group isn't used");
+		addAction(" Group: '"+QString::number(grp->GetId())+"'");
+		addAction("Use: "+QString::number(grp->GetSize())+"/"+QString::number(grp->GetMaxSize())+" ("+QString::number(grp->GetPerc())+")");
+		addAction("Objects:");
+		RCursor<RObjBP> Obj(grp->GetObjs());
+		for(Obj.Start();!Obj.End();Obj.Next())
+			addAction("   "+ToQString(Obj()->GetName())+" ("+QString::number(Obj()->GetSize())+")");
+		QInfoBox::Enable=true;
 	}
-	else
+
+	QInfoBox(QWidget* parent,RGroups<RFGroupBP,RObjBP,RFChromoBP>* grps)
+	: QMenu("Info Box",parent)
 	{
-		sprintf(Tmp,"Group: '%u'",grp->GetId());
-		insertItem(Tmp);
-		sprintf(Tmp,"Use: %u/%u (%.1f%%)",grp->GetSize(),grp->GetMaxSize(),((double)grp->GetSize()*100)/((double)grp->GetMaxSize()));
-		insertItem(Tmp);
-		ptr=o=grp->GetObjectsId();
-		if((*ptr)!=NoObject)
+		addAction(" Nb Groups: '"+QString::number(grps->Used.GetNb())+"'");
+		if(grps->Used.GetNb())
 		{
-			insertItem("Objects:");
-			for(;(*ptr)!=NoObject;ptr++)
-			{
-				insertItem("   "+ToQString((*objs)[*ptr]->GetName())+" ("+QString::number((*objs)[*ptr]->GetSize())+")");
-			}
+			double sum=0.0;
+			RCursor<RFGroupBP> Used(grps->Used);
+			for(Used.Start();!Used.End();Used.Next())
+				sum+=Used()->GetPerc();
+			addAction("Avg use: "+QString::number(sum/static_cast<double>(grps->Used.GetNb()))+"%");
 		}
-		delete[] o;
+		QInfoBox::Enable=true;
 	}
-	afterFocus=parent;
-	afterFocus->parentWidget()->setFocus();
-}
 
-
-//-----------------------------------------------------------------------------
-QInfoBox::QInfoBox(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps)
-	: QPopupMenu(0,"Info Box")
-{
-	char Tmp[50];
-	double sum=0.0;
-
-	sprintf(Tmp,"Nb Groups: '%u'",grps->Used.GetNb());
-	insertItem(Tmp);
-	if(grps->Used.GetNb())
+	virtual void mouseReleaseEvent(QMouseEvent*)
 	{
-		RCursor<RFGroupBP> Used(grps->Used);
-		for(Used.Start();!Used.End();Used.Next())
-			sum+=Used()->GetSize()/Used()->GetMaxSize();
-		sprintf(Tmp,"Avg use: %.1f%%",(sum*100.0)/((double)grps->Used.GetNb()));
-		insertItem(Tmp);
+		QInfoBox::Enable=false;
+		delete(this);
 	}
-	afterFocus=parent;
-	afterFocus->parentWidget()->setFocus();
-}
+};
+
+//-----------------------------------------------------------------------------
+bool QInfoBox::Enable=false;
+
 
 
 //-----------------------------------------------------------------------------
-void QInfoBox::mouseReleaseEvent(QMouseEvent*)
+//
+// QBin
+//
+//-----------------------------------------------------------------------------
+class QDrawGroups::QBin : public QGraphicsRectItem
 {
-	afterFocus->parentWidget()->setFocus();
-	delete(this);
-}
+public:
+	QWidget* Parent;
+	RFGroupBP* Grp;
+
+	QBin(QWidget* parent,RFGroupBP* grp)
+		: QGraphicsRectItem(), Parent(parent), Grp(grp)
+	{
+	}
+
+	void addScene(QGraphicsScene& scene,int x,int y,int w,int h,const QPen& black,const QPen& red,const QBrush& brush,double factor)
+	{
+		setRect(x,y,w,h);
+		setPen(black);
+		setBrush(Qt::NoBrush);
+		scene.addItem(this);
+		if(Grp->GetSize()==Grp->GetMaxSize())
+				scene.addRect(x+1,y+1,w-2,h-2,red,brush);
+		else
+		{
+			int l=(int)(Grp->GetSize()*factor);
+			scene.addRect(x+1,h-l+y+1,w-2,l,red,brush);
+		}
+	}
+
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event)
+	{
+		QGraphicsItem::mousePressEvent(event);
+		if(event->button()!=Qt::RightButton)
+			return;
+		QInfoBox* InfoBox(new QInfoBox(Parent,Grp));
+		InfoBox->popup(event->screenPos());
+	}
+
+	int Compare(const QBin&) const {return(-1);}
+};
+
+
+
+//-----------------------------------------------------------------------------
+//
+// class QBoard
+//
+//-----------------------------------------------------------------------------
+class QBoard : public QGraphicsRectItem
+{
+public:
+	QWidget* Parent;
+	RGroups<RFGroupBP,RObjBP,RFChromoBP>* Groups;
+
+	QBoard(QWidget* parent,RGroups<RFGroupBP,RObjBP,RFChromoBP>* groups,const QRect& rect)
+		: QGraphicsRectItem(rect), Parent(parent), Groups(groups)
+	{
+	}
+
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event)
+	{
+		QGraphicsItem::mousePressEvent(event);
+		if((event->button()!=Qt::RightButton)||(QInfoBox::Enable))
+			return;
+		QInfoBox* InfoBox(new QInfoBox(Parent,Groups));
+		InfoBox->popup(event->screenPos());
+	}
+};
 
 
 
@@ -131,38 +187,30 @@ void QInfoBox::mouseReleaseEvent(QMouseEvent*)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-QDrawGroups::QDrawGroups(QWidget* parent,RObjs<RObjBP>* objs,const char* name)
-	: QWidget(parent,name),MaxSize(0),pixmap(0),Rows(1), Cols(0),
-	  Changed(false),brRed(red,BDiagPattern),Groups(0), Objs(objs)
+QDrawGroups::QDrawGroups(QWidget* parent)
+	: QWidget(parent),MaxSize(0), Rows(1), Cols(0),
+	  RedBrush(Qt::red,Qt::BDiagPattern), BlackPen(Qt::black),
+	  RedPen(Qt::red), Groups(0)
 {
 	IncX=5;
+	setupUi(this);
+	Draw->setScene(&Scene);
 }
 
 
 //-----------------------------------------------------------------------------
-QDrawGroups::QDrawGroups(QWidget* parent,RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps,RObjs<RObjBP>* objs,const char* name)
-	: QWidget(parent,name),MaxSize(0),pixmap(0), Rows(1), Cols(0),
-	  Changed(false),brRed(red,BDiagPattern), Groups(grps), Objs(objs)
-{
-	IncX=5;
-	MaxGroups=Groups->GetNb();
-	RCursor<RFGroupBP> Cur(*Groups);
-	for(Cur.Start();!Cur.End();Cur.Next())
-		if(Cur()->GetMaxSize()>MaxSize)
-			MaxSize=Cur()->GetMaxSize();
-}
-
-
-//-----------------------------------------------------------------------------
-void QDrawGroups::setGroups(RGroups<RFGroupBP,RObjBP,RGroupDataBP,RFChromoBP>* grps)
+void QDrawGroups::setGroups(RGroups<RFGroupBP,RObjBP,RFChromoBP>* grps)
 {
 	Groups=grps;
 	MaxGroups=Groups->GetNb();
-	RCursor<RFGroupBP> Cur(*Groups);
+	RCursor<RFGroupBP> Cur(Groups->GetUsedGroups());
 	for(Cur.Start();!Cur.End();Cur.Next())
+	{
 		if(Cur()->GetMaxSize()>MaxSize)
 			MaxSize=Cur()->GetMaxSize();
-	Groups=grps;
+	}
+	paintBins();
+	repaint();
 }
 
 
@@ -193,6 +241,8 @@ void QDrawGroups::ComputeGroupsDim(QRect& r)
 
 	// Compute Vertical dimensions
 	MaxY=(int)((h-20.0-(Rows*10.0))/(double)Rows);
+	if(MaxY<0)
+		MaxY=10;
 	FactorY=(h-20.0-(Rows*12.0))/(Rows*MaxSize);
 }
 
@@ -208,122 +258,39 @@ void QDrawGroups::ComputeXY(int& x,int &y,const unsigned idx)
 	y=(int)(10+row*(10+MaxY));
 }
 
-
-//-----------------------------------------------------------------------------
-unsigned int QDrawGroups::ComputeId(const unsigned int x,const unsigned int y)
+//------------------------------------------------------------------------------
+void QDrawGroups::paintBins(void)
 {
-	unsigned int row,col,tmp;
+	int x,y;
 
-	// Compute the row
-	for(row=0;row<Rows;row++)
+	if(!Groups)
+		return;
+
+	QRect Rect(Draw->viewport()->rect());
+	Scene.clear();
+	Scene.setSceneRect(Rect);
+	ComputeGroupsDim(Rect);
+	Scene.addItem(new QBoard(this,Groups,Rect));
+
+	// Paint the bins
+	RCursor<RFGroupBP> Cur(Groups->GetUsedGroups());
+	for(Cur.Start();!Cur.End();Cur.Next())
 	{
-		tmp=10+row*(10+MaxY);
-		if((y>=tmp)&&(y<=tmp+MaxY))
-			break;
-	}
-	if(row==Rows) return(NoGroup);
-
-	// Compute the col
-	for(col=0;col<Cols;col++)
-	{
-		tmp=(unsigned int)((col+1)*IncX+(col*Width));
-		if((x>=tmp)&&(x<=tmp+Width))
-			break;
-	}
-	if(col==Cols) return(NoGroup);
-
-	// Return the index
-	tmp=row*Cols+col;
-	if(tmp>=MaxGroups) tmp=NoGroup;
-	return(tmp);
-}
-
-
-//-----------------------------------------------------------------------------
-void QDrawGroups::paintEvent(QPaintEvent*)
-{
-	QRect r=rect();
-	if(!pixmap)
-	{
-		ComputeGroupsDim(r);
-		pixmap=new QPixmap(r.size());
-		Changed=true;
-	}
-	if(Changed)
-	{
-		unsigned int i;
-		int x,y,l;
-
-		pixmap->fill(this,r.topLeft());
-		QPainter* Painter=new QPainter(pixmap);
-		CHECK_PTR(Painter);
-
-		if(Groups)
-		{
-			// Paint all groups rectangle
-			Painter->setBrush(NoBrush);
-			Painter->setPen(black);
-			for(i=0;i<MaxGroups;i++)
-			{
-				ComputeXY(x,y,i);
-				Painter->drawRect(x,y,(int)Width,MaxY);
-			}
-
-			// Paint all use groups
-			Painter->setPen(red);
-			Painter->setBrush(brRed);
-			RCursor<RFGroupBP> Used(Groups->Used);
-			for(i=0,Used.Start();!Used.End();i++,Used.Next())
-			{
-				ComputeXY(x,y,i);
-				if(Used()->GetSize()==Used()->GetMaxSize())
-					Painter->drawRect(x+1,y+1,((int)Width)-2,MaxY-2);
-				else
-				{
-					l=(int)(Used()->GetSize()*FactorY);
-					Painter->drawRect(x+1,MaxY-l+y+1,(int)(Width-2),l);
-				}
-			}
-		}
-
-		delete Painter;
-		Painter=0;
-		Changed=false;
-	}
-	bitBlt(this,r.topLeft(),pixmap);
-}
-
-
-//-----------------------------------------------------------------------------
-void QDrawGroups::resizeEvent(QResizeEvent*)
-{
-	if(pixmap)
-	{
-		QRect r=rect();
-		pixmap->resize(r.size());
-		ComputeGroupsDim(r);
-		Changed=true;
+		ComputeXY(x,y,Cur.GetPos());
+		QBin* Bin(new QBin(this,Cur()));
+		Bin->addScene(Scene,x,y,(int)Width,MaxY,BlackPen,RedPen,RedBrush,FactorY);
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-void QDrawGroups::mousePressEvent(QMouseEvent* e)
+void QDrawGroups::resizeEvent(QResizeEvent* event)
 {
-	QInfoBox* InfoBox;
-
-	if((e->button()==RightButton)&&Groups)
-	{
-		unsigned int idx=ComputeId((unsigned int)e->x(),(unsigned int)e->y());
-		if(idx==NoGroup)
-			InfoBox=new QInfoBox(this,Groups);
-		else
-			InfoBox = new QInfoBox(this,(*Groups)[idx],Objs);
-		InfoBox->popup(e->globalPos());
-	}
-	else
-		QWidget::mousePressEvent(e);
+	QWidget::resizeEvent(event);
+	paintBins();
+	repaint();
 }
+
 
 
 //-----------------------------------------------------------------------------

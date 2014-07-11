@@ -1,32 +1,30 @@
 /*
 
-  kvlsiprjview.cpp
+	Bin Packing GUI
 
-  Description - Implementation.
+	KBPPrjView.cpp
 
-  (c) 2000 by P. Francq.
+	Project Window - Implementation.
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  any later version.
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	any later version.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
 
 
-
-//-----------------------------------------------------------------------------
-// include files for ANSI C/C++
-#include <stdio.h>
 
 //-----------------------------------------------------------------------------
 // include files for R Project
@@ -36,8 +34,7 @@ using namespace R;
 
 //-----------------------------------------------------------------------------
 // include files for current application
-#include "kbpprjview.h"
-#include "kbinpackingdoc.h"
+#include <kbpprjview.h>
 
 
 
@@ -48,13 +45,14 @@ using namespace R;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-KBPPrjView::KBPPrjView(KBinPackingDoc* pDoc,QWidget *parent,const char *name,int wflags)
-	: KBinPackingView(pDoc,parent,name,wflags),prj(0)
+KBPPrjView::KBPPrjView(RBPProblem* problem,const QString& uri)
+	: QMdiSubWindow(), Ui_KBPPrjView(), Problem(problem)
 {
-	prj=new QListView(this,"Project Elements"+doc->URL().path());
-	prj->addColumn("Elements");
-	prj->addColumn("Sizes");
-	prj->setRootIsDecorated(true);
+	QWidget* ptr=new QWidget();
+	setupUi(ptr);
+	setWidget(ptr);
+	setAttribute(Qt::WA_DeleteOnClose);
+	setWindowTitle(uri);
 	createPrj();
 }
 
@@ -62,40 +60,33 @@ KBPPrjView::KBPPrjView(KBinPackingDoc* pDoc,QWidget *parent,const char *name,int
 //-----------------------------------------------------------------------------
 void KBPPrjView::createPrj(void)
 {
-	char tmp[100];
-	QListViewItem *item=0,*item2=0;
-	unsigned int total=0;
+	QTreeWidgetItem* item=0,*item2=0,*item3=0;
 
 	// Problem
-	sprintf(tmp,"%u",doc->MaxSize);
-	item=new QListViewItem(prj,"Problem",tmp);
-	sprintf(tmp,"%u",doc->MinGroups);
-	item=new QListViewItem(prj,"Best Solution Known",tmp);
+	item=new QTreeWidgetItem(Elements,QStringList()<<"Problem");
 
-	// Construct Objects
-	sprintf(tmp,"Objects (%u)",doc->Objs->GetNb());
-	item = new QListViewItem(prj,item,tmp,"");
-	item2=0;
-	RCursor<RObjBP> obj(*doc->Objs);
-	for(obj.Start();!obj.End();obj.Next())
+	// Problem
+	new QTreeWidgetItem(item,QStringList()<<"Maximal size of the bins: "+QString::number(Problem->GetBinMaxSize()));
+	new QTreeWidgetItem(item,QStringList()<<"Minimal number of the bins: "+QString::number(Problem->GetMinBins()));
+
+	// Objects
+	item2=new QTreeWidgetItem(item,item2);
+	item2->setText(0,"Objects ("+QString::number(Problem->GetNbObjs())+")");
+	RCursor<RObjBP> Cur(Problem->GetObjs());
+	for(Cur.Start(),item3=0;!Cur.End();Cur.Next())
 	{
-		total+=obj()->GetSize();
-		item2 = new QListViewItem(item,item2,ToQString(obj()->GetName())+" ("+QString::number(obj()->GetId())+")",QString::number(obj()->GetSize()));
+		if(item3)
+		{
+			item3=new QTreeWidgetItem(item2,item3);
+			item3->setText(0,ToQString(Cur()->GetName())+" ("+QString::number(Cur()->GetSize())+")");
+		}
+		else
+			item3=new QTreeWidgetItem(item2,QStringList()<<ToQString(Cur()->GetName())+" ("+QString::number(Cur()->GetSize())+")");
 	}
-	sprintf(tmp,"%u",total);
-	item->setText(1,tmp);
-	prj->setColumnWidth(0,prj->columnWidth(0)+20);
 }
 
 
 //-----------------------------------------------------------------------------
-void KBPPrjView::resizeEvent(QResizeEvent *)
-{
-	prj->resize(width(),height());
-}
-
-
-//-----------------------------------------------------------------------------
-KBPPrjView::~KBPPrjView()
+KBPPrjView::~KBPPrjView(void)
 {
 }

@@ -1,12 +1,12 @@
 /*
 
-	R Project Library
+	Bin Packing GUI
 
-	kbinpacking.cpp
+	KBinPacking.cpp
 
-	Description - Implementation.
+	Main Window - Implementation.
 
-	(C) 2001 by Pascal Francq
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Library General Public
@@ -30,8 +30,6 @@
 //-----------------------------------------------------------------------------
 // include files for Qt
 #include <qdir.h>
-#include <qprinter.h>
-#include <qvbox.h>
 #include <qwhatsthis.h>
 #include <qtooltip.h>
 #include <qtoolbutton.h>
@@ -44,25 +42,23 @@
 
 //-----------------------------------------------------------------------------
 // include files for KDE
-#include <kiconloader.h>
+
+#include <kstatusbar.h>
+#include <kactioncollection.h>
+#include <kstandardaction.h>
+#include <KDE/KLocale>
+#include <kapplication.h>
+#include <KDE/KConfigGroup>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
-#include <kmenubar.h>
-#include <kstatusbar.h>
-#include <klocale.h>
-#include <kconfig.h>
-#include <kstdaction.h>
-#include <kpopupmenu.h>
 
 
 //-----------------------------------------------------------------------------
 // application specific includes
-#include "kbinpacking.h"
-#include "kbinpackingview.h"
-#include "kbinpackingdoc.h"
-#include "kbpprjview.h"
-#include "kbpgaview.h"
-#include "kappoptions.h"
+#include <kbinpacking.h>
+#include <kbpprjview.h>
+#include <kbpgaview.h>
+#include <kappoptions.h>
 
 
 
@@ -73,763 +69,327 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-KBinPackingApp::KBinPackingApp(void)
-	: KMainWindow(0,"KBinPacking")
+KBinPacking::KBinPacking(int argc, char *argv[])
+	: KXmlGuiWindow(0), RApplication("KDevVLSI",argc,argv),
+	  Desktop(new QMdiArea(this)), Status(new QLabel(statusBar())), Problem(0)
 {
-	config=kapp->config();
-	printer = new QPrinter;
-	untitledCount=0;
-	pDocList = new QList<KBinPackingDoc>();
-	pDocList->setAutoDelete(true);
-
-	initStatusBar();
-	initView();
-	initActions();
+   setAcceptDrops(true);
+   setCentralWidget(Desktop);
+   initActions();
+	Status->setPixmap(KIconLoader::global()->loadIcon("project-development-close",KIconLoader::Small));
+	statusBar()->insertWidget(0,Status);
+	statusBar()->insertItem(i18n("Ready."),1);
+   statusBar()->show();
+   setupGUI();
+   Init();
+	connect(Desktop,SIGNAL(subWindowActivated(QMdiSubWindow*)),this,SLOT(subWindowActivated(QMdiSubWindow*)));
 	readOptions();
-
-	// disable actions at startup
-	fileNew->setEnabled(false);
-	fileSave->setEnabled(false);
-	fileSaveAs->setEnabled(false);
-	filePrint->setEnabled(false);
-	editCut->setEnabled(false);
-	editCopy->setEnabled(false);
-	editPaste->setEnabled(false);
-	windowNewWindow->setEnabled(false);
-	GAInit->setEnabled(false);
-	GAStart->setEnabled(false);
-	GAPause->setEnabled(false);
-	GAStop->setEnabled(false);
+	fileOpened(false);
 }
 
-//-----------------------------------------------------------------------------
-void KBinPackingApp::initActions(void)
-{
-	// Menu "File"
-	fileNew = KStdAction::openNew(this, SLOT(slotFileNew()), actionCollection());
-	fileOpen = KStdAction::open(this, SLOT(slotFileOpen()), actionCollection());
-	fileOpenRecent = KStdAction::openRecent(this, SLOT(slotFileOpenRecent(const KURL&)), actionCollection());
-	fileSave = KStdAction::save(this, SLOT(slotFileSave()), actionCollection());
-	fileSaveAs = KStdAction::saveAs(this, SLOT(slotFileSaveAs()), actionCollection());
-	fileClose = KStdAction::close(this, SLOT(slotFileClose()), actionCollection());
-	filePrint = KStdAction::print(this, SLOT(slotFilePrint()), actionCollection());
-	fileQuit = KStdAction::quit(this, SLOT(slotFileQuit()), actionCollection());
-	fileNew->setStatusText(i18n("Creates a new document"));
-	fileOpen->setStatusText(i18n("Opens an existing document"));
-	fileOpenRecent->setStatusText(i18n("Opens a recently used file"));
-	fileSave->setStatusText(i18n("Saves the actual document"));
-	fileSaveAs->setStatusText(i18n("Saves the actual document as..."));
-	fileClose->setStatusText(i18n("Closes the actual document"));
-	filePrint ->setStatusText(i18n("Prints out the actual document"));
-	fileQuit->setStatusText(i18n("Quits the application"));
 
-	// Menu "Edit"
-	editCut = KStdAction::cut(this, SLOT(slotEditCut()), actionCollection());
-	editCopy = KStdAction::copy(this, SLOT(slotEditCopy()), actionCollection());
-	editPaste = KStdAction::paste(this, SLOT(slotEditPaste()), actionCollection());
-	editCut->setStatusText(i18n("Cuts the selected section and puts it to the clipboard"));
-	editCopy->setStatusText(i18n("Copies the selected section to the clipboard"));
-	editPaste->setStatusText(i18n("Pastes the clipboard contents to actual position"));
+//-----------------------------------------------------------------------------
+KAction* KBinPacking::addAction(const char* title,const char* name,const char* slot,const char* icon,const char* key)
+{
+	KAction* ptr(new KAction(i18n(title),this));
+	if(icon)
+		ptr->setIcon(KIcon(icon));
+	if(key)
+		ptr->setShortcut(QKeySequence(tr(key)));
+	actionCollection()->addAction(QLatin1String(name),ptr);
+	connect(ptr,SIGNAL(triggered(bool)),this,slot);
+	return(ptr);
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPacking::initActions(void)
+{
+	// Menu "file"
+	aFileOpen= KStandardAction::open(this, SLOT(openFile()), actionCollection());
+	aFileOpenRecent = KStandardAction::openRecent(this, SLOT(openRecentFile(const KUrl&)), actionCollection());
+	Actions.insert(Actions.size(),KStandardAction::close(this, SLOT(closeFile()), actionCollection()));
+	KStandardAction::quit(this, SLOT(applicationQuit()), actionCollection());
+
+	// Menu "Window"
+	KAction* windowCloseAll(new KAction(i18n("&Close All"),this));
+	actionCollection()->addAction(QLatin1String("window_closeall"),windowCloseAll);
+	connect(windowCloseAll,SIGNAL(triggered(bool)),Desktop,SLOT(closeAllSubWindows()));
+	KAction* windowTile(new KAction(i18n("&Tile"),this));
+	actionCollection()->addAction(QLatin1String("window_tile"),windowTile);
+	connect(windowTile,SIGNAL(triggered(bool)),Desktop,SLOT(tileSubWindows()));
+	KAction* windowCascade(new KAction(i18n("&Cascade"),this));
+	actionCollection()->addAction(QLatin1String("window_cascade"),windowCascade);
+	connect(windowCascade,SIGNAL(triggered(bool)),Desktop,SLOT(cascadeSubWindows()));
 
 	// Menu "GA"
-	GAInit=new KAction(i18n("&Initialize"),"reload",KKey("Alt+I").keyCodeQt(),this,SLOT(slotGAInit(void)),actionCollection(),"ga_init");
-	GAStart=new KAction(i18n("&Start"),"exec",KKey("Alt+S").keyCodeQt(),this,SLOT(slotGAStart(void)),actionCollection(),"ga_start");
-	GAPause=new KAction(i18n("&Pause"),"player_pause",KKey("Alt+P").keyCodeQt(),this,SLOT(slotGAPause(void)),actionCollection(),"ga_pause");
-	GAStop=new KAction(i18n("&Stop"),"stop",KKey("Alt+T").keyCodeQt(),this,SLOT(slotGAStop(void)),actionCollection(),"ga_stop");
+	Actions.insert(Actions.size(),aGAInit=addAction("&Initialize","ga_init",SLOT(GAInit()),"reload","ALT+I"));
+	Actions.insert(Actions.size(),aGAStart=addAction("&Start","ga_start",SLOT(GAStart()),"exec","ALT+S"));
+	Actions.insert(Actions.size(),aGAPause=addAction("&Pause","ga_pause",SLOT(GAPause()),"player_pause","ALT+P"));
 
-	// Menu "View"
-	viewToolBar = KStdAction::showToolbar(this, SLOT(slotViewToolBar()), actionCollection());
-	viewStatusBar = KStdAction::showStatusbar(this, SLOT(slotViewStatusBar()), actionCollection());
-	settingsOptions = new KAction(i18n("&Options"),"configure",0,this,SLOT(slotSettingsOptions(void)),actionCollection(),"settings_options");
-	viewToolBar->setStatusText(i18n("Enables/disables the toolbar"));
-	viewStatusBar->setStatusText(i18n("Enables/disables the statusbar"));
-	settingsOptions->setStatusText(i18n("Set the options"));
-	
-	// Menu "Window"
-	windowNewWindow = new KAction(i18n("New &Window"), 0, this, SLOT(slotWindowNewWindow()), actionCollection(),"window_new_window");
-	windowTile = new KAction(i18n("&Tile"), 0, this, SLOT(slotWindowTile()), actionCollection(),"window_tile");
-	windowCascade = new KAction(i18n("&Cascade"), 0, this, SLOT(slotWindowCascade()), actionCollection(),"window_cascade");
-	windowMenu = new KActionMenu(i18n("&Window"), actionCollection(), "window_menu");
-	connect(windowMenu->popupMenu(), SIGNAL(aboutToShow()), this, SLOT(windowMenuAboutToShow()));
-
-	createGUI();
+	// Menu Settings
+	KStandardAction::preferences(this,SLOT(optionsPreferences()),actionCollection());
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::initStatusBar(void)
+void KBinPacking::fileOpened(bool opened)
 {
-	statusBar()->insertItem(i18n("Ready."),1);
+	aFileOpen->setEnabled(!opened);
+	aFileOpenRecent->setEnabled(!opened);
+	for(int i=0;i<Actions.count();i++)
+		Actions.at(i)->setEnabled(opened);
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::initView(void)
+void KBinPacking::saveOptions(void)
 {
-	QVBox* view_back = new QVBox(this);
-	view_back->setFrameStyle(QFrame::StyledPanel|QFrame::Sunken);
-	pWorkspace = new QWorkspace(view_back);
-	connect(pWorkspace, SIGNAL(windowActivated(QWidget*)), this, SLOT(slotWindowActivated(QWidget*)));
-	setCentralWidget(view_back);
+	KConfig Config;
+	KConfigGroup General(&Config,"KBinPacking");
+	KAppOptions::saveOptions();
+	aFileOpenRecent->saveEntries(General);
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::createClient(KBinPackingDoc* doc)
+void KBinPacking::readOptions(void)
 {
-	KBPPrjView* w = new KBPPrjView(doc,pWorkspace,"Project: "+doc->URL().fileName(),WDestructiveClose);
-	w->installEventFilter(this);
-	doc->addView(w);
-	w->setIcon(kapp->miniIcon());
-	w->show();
-	w->resize(pWorkspace->sizeHint());
+	KConfig Config;
+	KConfigGroup General(&Config,"KBinPacking");
+	KAppOptions::readOptions();
+	aFileOpenRecent->loadEntries(General);
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::openDocumentFile(const KURL& url)
+void KBinPacking::CreateConfig(void)
 {
-	slotStatusMsg(i18n("Opening file..."));
-	KBinPackingDoc* doc;
-	// check, if document already open. If yes, set the focus to the first view
-	for(doc=pDocList->first();doc>0;doc=pDocList->next())
-	{
-		if(doc->URL()==url)
-		{
-			KBinPackingView* view=doc->firstView();
-			view->setFocus();
-			return;
-		}
-	}
-	doc = new KBinPackingDoc();
-	pDocList->append(doc);
-	doc->newDocument();
-	// Creates an untitled window if file is 0	
-	if(url.isEmpty())
-	{
-		untitledCount+=1;
-		QString fileName=QString(i18n("Untitled%1")).arg(untitledCount);
-		KURL url;
-		url.setFileName(fileName);
-		doc->setURL(url);
-	}
-	else
-	{
-		if(!doc->openDocument(url))
-		{
-			KMessageBox::error (this,i18n("Could not open document !"), i18n("Error !"));
-			delete doc;
-			return;	
-		}
-		fileOpenRecent->addURL(url);
-	}
-	createClient(doc);
-	slotStatusMsg(i18n("Ready."));
+	Config.InsertParam(new RParamValue("Log File","/home/pfrancq/bp.log"));
+	Config.InsertParam(new RParamValue("Debug File","/home/pfrancq/debug-bp.xml"));
+	Config.InsertParam(new RParamValue("Population Size",16));
+	Config.InsertParam(new RParamValue("Max Gen",30));
+	Config.InsertParam(new RParamValue("Step",false));
+	Config.InsertParam(new RParamValue("Step Gen",0));
 }
 
 
-//-----------------------------------------------------------------------------
-void KBinPackingApp::saveOptions(void)
+//------------------------------------------------------------------------------
+void KBinPacking::Init(void)
 {
-	config->setGroup("General Options");
-	config->writeEntry("Geometry", size());
-	config->writeEntry("Show Toolbar", toolBar()->isVisible());
-	config->writeEntry("Show Statusbar",statusBar()->isVisible());
-	config->writeEntry("ToolBarPos", (int) toolBar("mainToolBar")->barPos());
-	fileOpenRecent->saveEntries(config,"Recent Files");
-	config->setGroup("Heuristic Options");
-	config->writeEntry("Step Mode",step);
-	config->setGroup("GA Options");
-	config->writeEntry("Heuristic Type",GAHeur);
-	config->writeEntry("Maximum Generation",GAMaxGen);
-	config->writeEntry("Step Generation",GAStepGen);
-	config->writeEntry("Population Size",GAPopSize);
-}
+	// Parent initialization
+	RApplication::Init();
 
+	// Get the parameters
+	Apply();
 
-//-----------------------------------------------------------------------------
-void KBinPackingApp::readOptions(void)
-{
-	config->setGroup("General Options");
-
-	// bar status settings
-	bool bViewToolbar = config->readBoolEntry("Show Toolbar", true);
-	viewToolBar->setChecked(bViewToolbar);
-	slotViewToolBar();
-
-	bool bViewStatusbar = config->readBoolEntry("Show Statusbar", true);
-	viewStatusBar->setChecked(bViewStatusbar);
-	slotViewStatusBar();
-
-	// bar position settings
-	KToolBar::BarPosition toolBarPos;
-	toolBarPos=(KToolBar::BarPosition) config->readNumEntry("ToolBarPos", KToolBar::Top);
-	toolBar("mainToolBar")->setBarPos(toolBarPos);
-
-	// initialize the recent file list
-	fileOpenRecent->loadEntries(config,"Recent Files");
-
-	QSize size=config->readSizeEntry("Geometry");
-	if(!size.isEmpty())
-	{
-		resize(size);
-	}
-
-	// Specific settings
-	config->setGroup("Heuristic Options");
-	step=config->readBoolEntry("Step Mode",false);
-	config->setGroup("GA Options");
-	GAHeur=static_cast<HeuristicType>(config->readNumEntry("Heuristic Type",FirstFit));
-	GAMaxGen=config->readUnsignedLongNumEntry("Maximum Generation",100);
-	GAStepGen=config->readUnsignedLongNumEntry("Step Generation",0);
-	GAPopSize=config->readUnsignedLongNumEntry("Population Size",16);
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::saveProperties(KConfig* /*_cfg*/)
-{
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::readProperties(KConfig* /*_cfg*/)
-{
-}
-
-
-//-----------------------------------------------------------------------------
-bool KBinPackingApp::queryClose(void)
-{
-	QStringList saveFiles;
-	KBinPackingDoc* doc;
-	if(pDocList->isEmpty())
-		return true;
-
-	for(doc=pDocList->first();doc!=0;doc=pDocList->next())
-	{
-		if(doc->isModified())
-			saveFiles.append(doc->URL().fileName());
-	}
-	if(saveFiles.isEmpty())
-		return true;
-
-	switch(KMessageBox::questionYesNoList(this,i18n("One or more documents have been modified.\nSave changes before exiting?"),saveFiles))
-	{
-		case KMessageBox::Yes:
-			for(doc=pDocList->first(); doc!=0;doc=pDocList->next())
-			{
-				if(doc->URL().fileName().contains(i18n("Untitled")))
-					slotFileSaveAs();
-				else
-				{
-					if(!doc->saveDocument(doc->URL()))
-					{
-						KMessageBox::error (this,i18n("Could not save the current document !"), i18n("I/O Error !"));
-						return false;
-					}
-				}
-			}
-			return true;
-
-		case KMessageBox::No:
-		default:
-			return true;
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-bool KBinPackingApp::queryExit(void)
-{
-	saveOptions();
-	return true;
-}
-
-
-//-----------------------------------------------------------------------------
-bool KBinPackingApp::eventFilter(QObject* object,QEvent* event)
-{
-	if((event->type() == QEvent::Close)&&((KBinPackingApp*)object!=this))
-	{
-		QCloseEvent* e=(QCloseEvent*)event;
-
-		KBinPackingView* pView=(KBinPackingView*)object;
-		KBinPackingDoc* pDoc=pView->getDocument();
-		if(pDoc->canCloseFrame(pView))
-		{
-			pDoc->removeView(pView);
-			if(!pDoc->firstView())
-				pDocList->remove(pDoc);
-			e->accept();
-		}
-		else
-			e->ignore();
-	}
-	return QWidget::eventFilter(object,event);    // standard event processing
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotGAInit(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m&&(m->getType()==Project))
-	{
-		KBinPackingDoc* doc = m->getDocument();
-		KBPGAView* w = new KBPGAView(doc,pWorkspace,0,WDestructiveClose);
-		w->installEventFilter(this);
-		doc->addView(w);
-		w->setIcon(kapp->miniIcon());
-		w->resize(pWorkspace->sizeHint());
-		w->show();
-		w->setFocus();
-	}
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotGAStart(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
 	try
 	{
-		if(m&&(m->getType()==GA))
-			((KBPGAView*)m)->RunGA();
-	}
-	catch(eGA& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(RException& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(std::exception& e)
-	{
-		KMessageBox::error(this,e.what());
+		// Create (if necessary) Log file
+		if(LogFileName!=RString::Null)
+		{
+			//cout<<"Create log file "<<LogFileName<<"...";
+			//cout.flush();
+			Log=new RTextFile(LogFileName,"utf8");
+			Log->Open(RIO::Append);
+			//cout<<"OK"<<endl;
+		}
 	}
 	catch(...)
 	{
-		KMessageBox::error(this,"Unknown problem");
+		std::cerr<<"Error: Cannot create log file "<<LogFileName<<std::endl;
 	}
-}
 
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotGAPause(void)
-{
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
 	try
 	{
-		if(m&&(m->getType()==GA))
-			((KBPGAView*)m)->PauseGA();
-	}
-	catch(eGA& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(RException& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(std::exception& e)
-	{
-		KMessageBox::error(this,e.what());
+		// Create (if necessary) the debug file
+		if(DebugFileName!=RString::Null)
+			Debug=new RDebugXML(DebugFileName);
 	}
 	catch(...)
 	{
-		KMessageBox::error(this,"Unknown problem");
+		std::cerr<<"Error: Cannot create debug file "<<DebugFileName<<std::endl;
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::slotGAStop(void)
+void  KBinPacking::Apply(void)
 {
-	KApplication::kApplication()->processEvents(1000);
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	try
-	{
-		if(m&&(m->getType()==GA))
-			((KBPGAView*)m)->StopGA();
-	}
-	catch(eGA& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(RException& e)
-	{
-		KMessageBox::error(this,e.GetMsg());
-	}
-	catch(std::exception& e)
-	{
-		KMessageBox::error(this,e.what());
-	}
-	catch(...)
-	{
-		KMessageBox::error(this,"Unknown problem");
-	}
+	LogFileName=Config.Get("Log File");
+	DebugFileName=Config.Get("Debug File");
+	PopSize=Config.GetUInt("Population Size");
+	MaxGen=Config.GetUInt("Max Gen");
+	Step=Config.GetBool("Step");
+	StepGen=Config.GetUInt("Step Gen");
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::slotSettingsOptions(void)
+void  KBinPacking::statusMsg(const QString& text)
 {
-	slotStatusMsg(i18n("Set the options..."));
-	KAppOptions dlg(this,"Options",true);
-	dlg.cbStep->setChecked(step);
-	dlg.txtMaxGen->setText(QString::number(GAMaxGen));
-	dlg.txtStepGen->setText(QString::number(GAStepGen));
-	dlg.cbGAHeuristicType->insertItem("First-Fit",FirstFit);
-	dlg.cbGAHeuristicType->setCurrentItem(GAHeur);
-	dlg.txtPopSize->setText(QString::number(GAPopSize));
-	if(dlg.exec())
-	{
-		step=dlg.cbStep->isChecked();
-		GAMaxGen=dlg.txtMaxGen->text().toULong();
-		GAStepGen=dlg.txtStepGen->text().toULong();
-		GAHeur=static_cast<HeuristicType>(dlg.cbGAHeuristicType->currentItem())/*FirstFit*/;
-		GAPopSize=dlg.txtPopSize->text().toULong();
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileNew(void)
-{
-	slotStatusMsg(i18n("Creating new document..."));
-	openDocumentFile();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileOpen(void)
-{
-	slotStatusMsg(i18n("Opening file..."));
-	KURL url=KFileDialog::getOpenURL("/home/pfrancq/data/projects/hp/data",i18n("*.bp|Bin Packing files"), this, i18n("Open File..."));
-	if(!url.isEmpty())
-	{
-		openDocumentFile(url);
-		fileOpenRecent->addURL(url);
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileOpenRecent(const KURL& url)
-{
-	slotStatusMsg(i18n("Opening file..."));
-	openDocumentFile(url);
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileSave(void)
-{
-	slotStatusMsg(i18n("Saving file..."));
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m)
-	{
-		KBinPackingDoc* doc = m->getDocument();
-		if(doc->URL().fileName().contains(i18n("Untitled")))
-			slotFileSaveAs();
-		else
-			if(!doc->saveDocument(doc->URL()))
-				KMessageBox::error (this,i18n("Could not save the current document !"), i18n("I/O Error !"));
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileSaveAs(void)
-{
-	slotStatusMsg(i18n("Saving file with a new filename..."));
-	KURL url=KFileDialog::getSaveURL(QDir::currentDirPath(),i18n("*|All files"), this, i18n("Save as..."));
-	if(!url.isEmpty())
-	{
-		KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-		if(m)
-		{
-			KBinPackingDoc* doc = m->getDocument();
-			if(!doc->saveDocument(url))
-			{
-				KMessageBox::error (this,i18n("Could not save the current document !"), i18n("I/O Error !"));
-				return;
-			}
-			doc->changedViewList();
-//      setWndTitle(m);
-			fileOpenRecent->addURL(url);
-		}
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileClose(void)
-{
-	slotStatusMsg(i18n("Closing file..."));
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m)
-	{
-		KBinPackingDoc* doc=m->getDocument();
-		doc->closeDocument();
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFilePrint(void)
-{
-	slotStatusMsg(i18n("Printing..."));
-	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-	if(m)
-		m->print(printer);
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotFileQuit(void)
-{
-	slotStatusMsg(i18n("Exiting..."));
-	saveOptions();
-	// close the first window, the list makes the next one the first again.
-	// This ensures that queryClose() is called on each window to ask for closing
-//	KMainWindow* w;
-//	if(memberList)
-//	{
-//		for(w=memberList->first(); w!=0; w=memberList->first())
-//		{
-//			// only close the window if the closeEvent is accepted. If the user presses Cancel on the saveModified() dialog,
-//			// the window and the application stay open.
-//			if(!w->close())
-//				break;
-//		}
-//	}
-	close();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotEditUndo(void)
-{
-	slotStatusMsg(i18n("Reverting last action..."));
-//	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-//	if(m)
-//		m->undo();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotEditCut(void)
-{
-	slotStatusMsg(i18n("Cutting selection..."));
-//	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-//	if ( m )
-//		m->cut();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotEditCopy(void)
-{
-	slotStatusMsg(i18n("Copying selection to clipboard..."));
-//	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-//	if(m)
-//		m->copy();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotEditPaste(void)
-{
-	slotStatusMsg(i18n("Inserting clipboard contents..."));
-//	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-//	if(m)
-//    m->paste();
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotViewToolBar(void)
-{
-	slotStatusMsg(i18n("Toggle the toolbar..."));
-	if(!viewToolBar->isChecked())
-	{
-		toolBar("mainToolBar")->hide();
-	}
-	else
-	{
-		toolBar("mainToolBar")->show();
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotViewStatusBar(void)
-{
-	slotStatusMsg(i18n("Toggle the statusbar..."));
-	if(!viewStatusBar->isChecked())
-	{
-		statusBar()->hide();
-	}
-	else
-	{
-		statusBar()->show();
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotWindowNewWindow(void)
-{
-	slotStatusMsg(i18n("Opening a new application window..."));
-	KBinPackingView* m = (KBinPackingView*) pWorkspace->activeWindow();
-	if(m)
-	{
-		KBinPackingDoc* doc = m->getDocument();
-		createClient(doc);
-	}
-	slotStatusMsg(i18n("Ready."));
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotWindowTile(void)
-{
-	pWorkspace->tile();
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotWindowCascade(void)
-{
-	pWorkspace->cascade();
-}
-
-
-//-----------------------------------------------------------------------------
-void KBinPackingApp::slotStatusMsg(const QString& text)
-{
-	statusBar()->clear();
 	statusBar()->changeItem(text,1);
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::windowMenuAboutToShow(void)
+void  KBinPacking::openDocumentFile(const KUrl& url)
 {
-	windowMenu->popupMenu()->clear();
-	windowMenu->insert(windowNewWindow);
-	windowMenu->insert(windowCascade);
-	windowMenu->insert(windowTile);
+	bool DestroyDoc(false);
 
-	if(pWorkspace->windowList().isEmpty())
+	statusMsg(i18n("Opening file..."));
+
+	// check, if document already open.
+	if(Problem)
+		mThrowRException("Big Problem : No Bin Packing session should exist");
+
+	// Create the document
+	try
 	{
-		windowNewWindow->setEnabled(false);
-		windowCascade->setEnabled(false);
-		windowTile->setEnabled(false);
+		DestroyDoc=true;
+		Problem=new RBPProblem();
+		Problem->Load(FromQString(url.path()));
+		fileOpened(true);
+		KBPPrjView* ptr(new KBPPrjView(Problem,url.path()));
+		DestroyDoc=false;
+		Desktop->addSubWindow(ptr);
+		ptr->adjustSize();
+		ptr->show();
+		aFileOpenRecent->addUrl(url,url.fileName());
+		Status->setPixmap(QPixmap(KIconLoader::global()->loadIcon("project-open",KIconLoader::Small)));
+		statusMsg(i18n("Data Loaded"));
 	}
+	catch(RException& e)
+	{
+		KMessageBox::error(this,ToQString(e.GetMsg()),"R Exception");
+	}
+	catch(std::exception& e)
+	{
+		KMessageBox::error(this,e.what(),"std::exception");
+	}
+	catch(...)
+	{
+		KMessageBox::error(this,"Undefined Error");
+	}
+	if(DestroyDoc)
+	{
+		delete Problem;
+		Problem=0;
+	}
+	statusMsg(i18n("Ready."));
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPacking::optionsPreferences(void)
+{
+	statusMsg(i18n("Set the options..."));
+
+	KAppOptions Dlg(this);
+	Dlg.exec(this);
+	statusMsg(i18n("Ready."));
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPacking::subWindowActivated(QMdiSubWindow* window)
+{
+	KBPGAView* GA;
+
+	if(dynamic_cast<KBPPrjView*>(window))
+	{
+		aGAInit->setEnabled(true);
+		aGAStart->setEnabled(false);
+		aGAPause->setEnabled(false);
+	}
+	else if((GA=dynamic_cast<KBPGAView*>(window)))
+	{
+		aGAInit->setEnabled(false);
+		aGAStart->setEnabled((!GA->IsRunning())&&(!GA->End()));
+		aGAPause->setEnabled(GA->IsRunning());
+	}
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPacking::openFile(void)
+{
+	statusMsg(i18n("Opening file..."));
+	KUrl url(KFileDialog::getOpenFileName(KUrl("~"),"*.BPP|Bin Packing files",Desktop,"Open File..."));
+	if(url.isEmpty())
+		QMessageBox::critical(this,"KBinPacking","File could not be found");
 	else
 	{
-		windowNewWindow->setEnabled(true);
-		windowCascade->setEnabled(true);
-		windowTile->setEnabled(true);
+		openDocumentFile(url);
+		aFileOpenRecent->addUrl(url);
 	}
-	windowMenu->popupMenu()->insertSeparator();
-	QWidgetList windows = pWorkspace->windowList();
-	for(int i=0;i<int(windows.count());++i)
+	statusMsg(i18n("Ready."));
+}
+
+
+////-----------------------------------------------------------------------------
+void KBinPacking::openRecentFile(const KUrl& url)
+{
+	statusMsg(i18n("Opening file..."));
+	openDocumentFile(url);
+	statusMsg(i18n("Ready."));
+}
+
+
+//-----------------------------------------------------------------------------
+void KBinPacking::closeFile(void)
+{
+	if(Problem)
 	{
-		int id = windowMenu->popupMenu()->insertItem(QString("&%1 ").arg(i+1)+windows.at(i)->caption(),this,SLOT(windowMenuActivated(int)));
-		windowMenu->popupMenu()->setItemParameter(id,i);
-		windowMenu->popupMenu()->setItemChecked(id,pWorkspace->activeWindow()==windows.at(i));
+		Desktop->closeAllSubWindows();
+		delete Problem;
+		Problem=0;
+		fileOpened(false);
+		statusMsg(i18n("No VLSI !"));
+		Status->setPixmap(KIconLoader::global()->loadIcon("project-development-close",KIconLoader::Small));
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::windowMenuActivated(int id)
+void KBinPacking::applicationQuit(void)
 {
-	QWidget* w=pWorkspace->windowList().at(id);
-	if (w)
-		w->setFocus();
+	statusMsg(i18n("Exiting..."));
+	saveOptions();
+	closeFile();
+	statusMsg(i18n("Ready."));
+	close();
+}
+
+//-----------------------------------------------------------------------------
+void KBinPacking::GAInit(void)
+{
+	KBPGAView* ptr(new KBPGAView(Problem));
+	Desktop->addSubWindow(ptr);
+	ptr->adjustSize();
+	ptr->show();
 }
 
 
 //-----------------------------------------------------------------------------
-void KBinPackingApp::slotWindowActivated(QWidget*)
+void KBinPacking::GAStart(void)
 {
-	bool bPrj,bGA,bHeuristic;
-
-	KBinPackingView* m = (KBinPackingView*)pWorkspace->activeWindow();
-	if(m)
-	{
-		// Update caption
-		setCaption(m->caption());
-
-		// Update menu
-		switch(m->getType())
-		{
-			case Project:
-				bPrj=true;
-				bGA=false;
-				bHeuristic=false;
-				break;
-
-			case Heuristic:
-				bPrj=false;
-				bGA=false;
-				bHeuristic=true;
-				break;
-
-			case GA:
-				bPrj=false;
-				bGA=true;
-				bHeuristic=false;
-				break;
-
-			default:
-				bPrj=false;
-				bGA=false;
-				bHeuristic=false;
-				break;
-		}
-		GAInit->setEnabled(bPrj);
-		GAStart->setEnabled(bGA);
-		GAPause->setEnabled(bGA);
-		GAStop->setEnabled(bGA);
-	}
-	else
-	{
-		setCaption("");
-		GAInit->setEnabled(false);
-		GAStart->setEnabled(false);
-		GAPause->setEnabled(false);
-		GAStop->setEnabled(false);
-	}
+	KBPGAView* Win(dynamic_cast<KBPGAView*>(Desktop->activeSubWindow()));
+	if(Win)
+		Win->RunGA();
 }
 
 
 //-----------------------------------------------------------------------------
-KBinPackingApp::~KBinPackingApp(void)
+void KBinPacking::GAPause(void)
 {
-	delete printer;
+	KBPGAView* Win(dynamic_cast<KBPGAView*>(Desktop->activeSubWindow()));
+	if(Win)
+		Win->PauseGA();
+}
+
+
+//-----------------------------------------------------------------------------
+KBinPacking::~KBinPacking(void)
+{
 }

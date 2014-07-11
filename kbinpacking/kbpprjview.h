@@ -1,10 +1,12 @@
 /*
 
-  kbpprjview.h
+	Bin Packing GUI
 
-  Description - Header.
+	KBPPrjView.h
 
-  (c) 2000 by P. Francq.
+	Project Window - Header.
+
+	Copyright 2000-2014 by Pascal Francq (pascal@francq.info).
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -25,19 +27,25 @@
 
 
 //-----------------------------------------------------------------------------
-#ifndef KBPPRJVIEW_H
-#define KBPPRJVIEW_H
+#ifndef KBPPrjView_H
+#define KBPPrjView_H
 
 
 //-----------------------------------------------------------------------------
-// include files for Qt
-#include <qwidget.h>
-#include <qlistview.h>
+// include files for Bin Packing
+#include <rbpproblem.h>
+using namespace R;
+using namespace RBP;
 
 
 //-----------------------------------------------------------------------------
+// include files for KDE/Qt
+#include <QtGui/QMdiSubWindow>
+
+
+//---------------------------------------------------------------------------
 // include files for current application
-#include "kbinpackingview.h"
+#include <ui_kbpprjview.h>
 
 
 //-----------------------------------------------------------------------------
@@ -45,50 +53,33 @@
 * The KBPPrjView provides a representation of a project window.
 * @author Pascal Francq
 */
-class KBPPrjView : public KBinPackingView
+class KBPPrjView : public QMdiSubWindow, public Ui_KBPPrjView
 {
 	Q_OBJECT
 
 	/**
-	* List representing the elements of the projects.
+	* Problem
 	*/
-	QListView *prj;
+	RBPProblem* Problem;
 
 public:
 
 	/**
 	* Construct the project view.
+	* @param problem         The problem
+	* @param uri             URI of the project file.
 	*/
-	KBPPrjView(KBinPackingDoc* pDoc,QWidget *parent, const char *name,int wflags);
-
-	/**
-	* Return the type of the window.
-	*/
-	virtual BPViewType getType(void) {return(Project);}
-
-	/**
-	* Ask for setting the title.
-	*/
-	virtual void setTitle(QString _title) {setCaption("Project: "+_title);}
+	KBPPrjView(RBPProblem* problem,const QString& uri);
 
 	/**
 	* Construct the project tree.
 	*/
 	void createPrj(void);
 
-protected:
-
-	/**
-	* Handle the resize of this window.
-	*/
-	void resizeEvent(QResizeEvent *);
-
-public:
-
 	/**
 	* Destruct the project view.
 	*/
-	~KBPPrjView();
+	~KBPPrjView(void);
 };
 
 
