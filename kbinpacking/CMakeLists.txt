@@ -4,9 +4,11 @@ INCLUDE_DIRECTORIES(.)
 SET (KBINPACKING_SOURCES
 	main.cpp
 	kbinpacking.cpp
+	kappoptions.cpp
 	kbpprjview.cpp
 	qdrawgroups.cpp
 	kbpgaview.cpp
+	
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
