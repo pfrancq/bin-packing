@@ -13,7 +13,6 @@
 		<Separator/>
 		<Action name="ga_start"/>
 		<Action name="ga_pause"/>
-		<Action name="ga_stop"/>
 	</Menu>
 	<Menu name="settings">
 		<Action name="settings_options"/>

@@ -42,7 +42,6 @@
 
 //-----------------------------------------------------------------------------
 // include files for KDE
-
 #include <kstatusbar.h>
 #include <kactioncollection.h>
 #include <kstandardaction.h>
@@ -70,7 +69,7 @@
 
 //-----------------------------------------------------------------------------
 KBinPacking::KBinPacking(int argc, char *argv[])
-	: KXmlGuiWindow(0), RApplication("KDevVLSI",argc,argv),
+	: KXmlGuiWindow(0), RApplication("KBinPacking",argc,argv),
 	  Desktop(new QMdiArea(this)), Status(new QLabel(statusBar())), Problem(0)
 {
    setAcceptDrops(true);
