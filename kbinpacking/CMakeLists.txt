@@ -24,7 +24,7 @@ KDE4_ADD_UI_FILES(KBINPACKING_SOURCES
 
 
 KDE4_ADD_EXECUTABLE(kbinpacking ${KBINPACKING_SOURCES})
-TARGET_LINK_LIBRARIES(kbinpacking rbp roptimization rcore rcorekde roptimizationkde rmath ${KDE4_KDEUI_LIBS} ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS})
+TARGET_LINK_LIBRARIES(kbinpacking rbp roptimization rcore rcoreqt roptimizationqt rmath ${KDE4_KDEUI_LIBS} ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS})
 
 
 ########### install files ###############
