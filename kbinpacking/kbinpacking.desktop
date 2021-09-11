@@ -1,0 +1,12 @@
+# KDE Config File  
+[Desktop Entry]
+Type=Application
+Exec=kbinpacking -caption "%c" %i %m  
+Icon=kbinpacking.png
+MiniIcon=kbinpacking.png
+DocPath=kbinpacking/index.html
+Comment=
+Comment[de]=
+Terminal=0
+Name=KBinPacking
+Name[de]=KBinPacking

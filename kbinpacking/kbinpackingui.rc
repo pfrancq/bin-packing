@@ -1,0 +1,30 @@
+<!DOCTYPE kpartgui>
+<kpartgui name="kbinpacking" version="0.2">
+<MenuBar>
+	<Menu name="file">
+		<Action name="openFile"/>
+		<Separator/>
+		<Action name="closeFile"/>
+		<Separator/>
+		<Action name="applicationQuit"/>
+	</Menu>
+	<Menu name="GA_menu"><text>&amp;GA</text>
+		<Action name="ga_init"/>
+		<Separator/>
+		<Action name="ga_start"/>
+		<Action name="ga_pause"/>
+	</Menu>
+	<Menu name="settings">
+		<Action name="settings_options"/>
+	</Menu>	
+	<Menu name="window"><text>&amp;Window</text>
+		<Action name="window_closeall"/>
+		<Separator/>
+		<Action name="window_tile" />
+		<Action name="window_cascade"/>
+	</Menu>		
+</MenuBar>
+<ToolBar fullWidth="true" name="mainToolBar">
+	<Action name="applicationQuit"/>
+</ToolBar>
+</kpartgui>
