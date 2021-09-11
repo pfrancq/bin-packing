@@ -1,33 +1,34 @@
-PROJECT(rbp)
-INCLUDE_DIRECTORIES(.)
+cmake_minimum_required(VERSION 2.6)
 
-SET(rbp_TARGET_SOURCES
-	rbp.cpp
-	rbpproblem.cpp
-)
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
 
-SET(rbp_INST_INCLUDES
-	rbp.h
-	rchromobp.h
-	rchromobp.hh
-	rfirstfitdesheuristic.h
-	rfirstfitdesheuristic.hh
-	rgroupbp.h
-	rgroupbp.hh
-	rinstbp.h
-	rinstbp.hh
-	rbpproblem.h
-)
+ADD_CUSTOM_TARGET(uninstall
+  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-INCLUDE_DIRECTORIES(${rp_INCLUDES})
+IF(CMAKE_COMPILER_IS_GNUCC)
+  MESSAGE(STATUS "Using GNU C Compiler, set -fmessage-length to 0 (Eclipse support)")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
+IF(CMAKE_COMPILER_IS_GNUCXX)
+    MESSAGE(STATUS "Using GNU C++ Compiler, set -fmessage-length to 0 (Eclipse support)")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+OPTION(rcmake-verbose "Enable verbose output during cmake construction" OFF)
 
-IF(WIN32)
-    ADD_LIBRARY(rbp STATIC ${rbp_TARGET_SOURCES})
-    SET_TARGET_PROPERTIES(rbp PROPERTIES LINK_FLAGS "/NODEFAULTLIB:MSVCRTD;MSVCRT;LIBCMT;LIBCMTD")
-    TARGET_LINK_LIBRARIES(rbp roptimization rmath rcore)
-ELSE(WIN32)
-    ADD_LIBRARY(rbp SHARED ${rbp_TARGET_SOURCES})
-    TARGET_LINK_LIBRARIES(rbp roptimization rcore rmath dl)
-ENDIF(WIN32)
+IF(UNIX)
+    ADD_DEFINITIONS("-fexceptions")
+    MESSAGE(STATUS "C++ exceptions will be re-enabled (since KDE4 detection disable them)")
+    ADD_DEFINITIONS("-pedantic")
+    ADD_DEFINITIONS("-Wno-long-long")
+    ADD_DEFINITIONS("-DPIC")
+    ADD_DEFINITIONS("-fvisibility=default")
+ELSE(UNIX)
+    ADD_DEFINITIONS("/D_RCORE_DLLAPI_")
+ENDIF(UNIX)
+
+INCLUDE(rfinder.cmake)
+INCLUDE(prj.cmake)
